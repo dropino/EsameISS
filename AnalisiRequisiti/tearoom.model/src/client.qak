@@ -5,27 +5,25 @@ System client
 //Entering sequence
 //client - smartbell
 Request ringBell : ringBell(TEMP)
-Reply tempOk : tempOk(ok) 
-Reply tempNotOk : tempStatus(ok)
+Reply tempStatus : tempStatus(status, ClientID) 
 
 //client - Waiter
-Dispatch accept : accept (ok) 
-Dispatch informWait : informWait (TIME)
+Dispatch admission : admission(time, clientID)
+ 
  
 //Ordering tea
 //client-waiter
-Dispatch endCons: endCons(ok) 
+Request readyToOrder: readyToOrder(TABLE,CLIENTID) 
+Reply   atTable: atTable(TABLE,CLIENTID) 
 
-Request readyToOrder: readyToOrder(TABLE) 
-Reply   atTable: atTable(TABLE) 
-
-Dispatch order : order(TEA) 
-Dispatch teaHasArrived : teaHasArrived(ok)
+Dispatch order : order(TEA, TABLE) 
+Dispatch deliver : deliver (TEA, TABLE)
 
 
 //pay for the tea
+//client - waiter
 Request readyToPay : readyToPay(TABLE) 
-Reply atTheTable : atTheTable(ok)
+Reply waiterAtTheTable : waiterAtTheTable(ok)
 Dispatch payed : payed(AMOUNT) 
 
 Context ctxclient ip [host="127.0.0.1" port=8050]
@@ -36,8 +34,10 @@ ExternalQActor waiter context ctxwaiter
 ExternalQActor smartbell context ctxsmartbell 
 
 QActor client context ctxclient{
-	
-	[# var Temp #]
+	[#
+	var waitTime
+	var admittanceStatus
+	#]
 	
 		State s0 initial{
 			println("client  s0")
@@ -45,56 +45,51 @@ QActor client context ctxclient{
 		}
 		Goto outside
 		
+		
 		State outside{
 			println("client is outside")
 			delay 2000
-			request smartbell -m ringBell: ringBell(36) //random temp
+			request smartbell -m ringBell: ringBell(36) //temperature of the client
+			onMsg ( tempStatus : tempStatus(status, ClientID)){
+				[# admittanceStatus = payloadArg(0).toString().toInt()#]
+			}		
 		}
-		Transition t0 
-			whenReply tempNotOk -> end
-			whenReply tempOk -> waitingInTheHall
+		Goto end if [# waitTime == 0 #] else waitingInTheHall
 			
 			
 		State waitingInTheHall{
 			println("client is waiting in the hall")
-			delay 2000			
+			delay 2000	
+			onMsg (admission : admission(time, clientID)){
+				[# waitTime = payloadArg(0).toString().toInt()#]
+			}		
 		}
-		Transition t1
-			whenMsg informWait -> waitingInTheHall
-			whenMsg accept -> seated
-		
+		Goto waitingInTheHall if [# waitTime != 0 #] else seated
 		
 		State seated{
-			println("client is waiting to order")
+			println("client is seated")
 			delay 2000
 			request waiter -m readyToOrder: readyToOrder(1)
 		}
-		Transition t3 
+		Transition t1
 			whenReply atTable -> ordering
 			
 			
 		State ordering{
-			println("client is ordering")
+			println("client is ordering some tea")
 			delay 2000
 			forward waiter -m order: order(tea)
 		}
-		Goto waitingForTea 
-		
-		
-		State waitingForTea{
-			println("client is waitingForTea")
-			delay 2000
-		}
-		Transition t4 
-			whenMsg order -> drinkingTea
-		
+		Transition t2 
+			whenMsg deliver -> drinkingTea
+				
 		
 		State drinkingTea{
-			println("client is drinkingTea")
+			println("client is drinking tea")
 			delay 10000
 			request waiter -m readyToPay: readyToPay(ok)
 		}
-		Transition t5 
+		Transition t3
 			whenReply atTable -> paying
 			
 				
@@ -102,7 +97,7 @@ QActor client context ctxclient{
 			println("client is paying")
 			delay 2000
 		}
-		Transition t6
+		Transition t4
 			whenMsg payed ->  end
 		
 		

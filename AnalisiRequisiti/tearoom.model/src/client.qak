@@ -8,7 +8,7 @@ Request ringBell : ringBell(TEMP)
 Reply tempStatus : tempStatus(status, ClientID) 
 
 //client - Waiter
-Dispatch admission : admission(time, clientID)
+Dispatch admission : admission(MAXWAITTIME, clientID)
  
  
 //Ordering tea
@@ -17,7 +17,7 @@ Request readyToOrder: readyToOrder(TABLE,CLIENTID)
 Reply   atTable: atTable(TABLE,CLIENTID) 
 
 Dispatch order : order(TEA, TABLE) 
-Dispatch deliver : deliver (TEA, TABLE)
+Dispatch deliver : deliver (TABLE, CLIENTID)
 
 
 //pay for the tea
@@ -25,6 +25,7 @@ Dispatch deliver : deliver (TEA, TABLE)
 Request readyToPay : readyToPay(TABLE) 
 Reply waiterAtTheTable : waiterAtTheTable(ok)
 Dispatch payed : payed(AMOUNT) 
+Dispatch exit : exit(ok)
 
 Context ctxclient ip [host="127.0.0.1" port=8050]
 Context ctxwaiter ip [host="127.0.0.1" port=8050]
@@ -87,22 +88,22 @@ QActor client context ctxclient{
 		State drinkingTea{
 			println("client is drinking tea")
 			delay 10000
-			request waiter -m readyToPay: readyToPay(ok)
+			request waiter -m readyToPay: readyToPay(tableX)
 		}
 		Transition t3
-			whenReply atTable -> paying
+			whenReply waiterAtTheTable -> paying
 			
 				
 		State paying{
 			println("client is paying")
 			delay 2000
+			forward waiter -m payed : payed(X)
 		}
-		Transition t4
-			whenMsg payed ->  end
-		
+		Transition t4 
+			whenMsg exit -> end	
 		
 		State end{
-			println("client | end")
+			println("client gets escorted to the exit door and leaves")
 			terminate 0
 		}
 			

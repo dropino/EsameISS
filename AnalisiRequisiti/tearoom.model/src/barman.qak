@@ -1,0 +1,35 @@
+System barman 
+
+Dispatch order : order(V, CLIENTID)
+Dispatch ready : ready (V, CLIENTID)
+
+
+Context ctxbarman ip [host="localhost" port=8072]
+Context ctxwaiter ip [host="localhost" port=8072]
+
+ExternalQActor waiter context ctxwaiter
+
+QActor barman context ctxbarman {
+	[#
+		var Order = 0
+		var ClientID = 0
+	#]
+	
+	State s0 initial {
+		println("--- Wait Order ---")
+	}
+	Goto prepare
+	
+	State prepare {
+		onMsg( order : order(V,CLIENTID) ){
+			delay 1000
+			println("--- Ready to serve ---")
+		}
+		[#
+			Order = payloadArg(0).toString().toInt()
+			ClientID = payloadArg(1).toString().toInt()
+		#]
+		forward waiter -m ready : ready($Order, $ClientID)
+	}
+	Goto s0
+}

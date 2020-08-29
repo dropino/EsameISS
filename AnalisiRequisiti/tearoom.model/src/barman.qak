@@ -4,7 +4,7 @@ Dispatch order : order(V, CLIENTID)
 Dispatch ready : ready (V, CLIENTID)
 
 
-Context ctxtearoom ip [host="localhost" port=8072]
+Context ctxtearoom ip [host="localhost" port=8072] 
 Context ctxwaiter ip [host="localhost" port=8071]
 
 ExternalQActor waiter context ctxwaiter
@@ -19,19 +19,25 @@ QActor barman context ctxtearoom {
 	#]
 	
 	State s0 initial {
-		println("--- Wait Order ---")
+		discardMsg Off  
+		println("--- Barman | Init ---")
 	}
-	Goto prepare
+	Goto waitForNewOrder
+
+	State waitForNewOrder {
+		println("--- Barman | Waiting Order ---")
+	}
+	Transition t0 whenMsg order -> prepare
 	
 	State prepare {
 		onMsg( order : order(V,CLIENTID) ){
 			delay 1000
-			println("--- Ready to serve ---")
+			println("--- Barman | Ready to serve ---")
+			[#
+				Order = payloadArg(0).toString().toInt()
+				ClientID = payloadArg(1).toString().toInt()
+			#]
 		}
-		[#
-			Order = payloadArg(0).toString().toInt()
-			ClientID = payloadArg(1).toString().toInt()
-		#]
 		forward waiter -m ready : ready($Order, $ClientID)
 	}
 	Goto s0

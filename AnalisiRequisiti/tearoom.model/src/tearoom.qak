@@ -1,0 +1,334 @@
+System tearoom
+
+//MESSAGES
+
+//Entering sequence
+//client - smartbell
+Request ringBell : ringBell(TEMP)
+Reply tempStatus : tempStatus(STATUS, CID) 
+
+//client - Waiter
+Dispatch admission : admission(MAXWAITTIME, clientID)
+ 
+ 
+//Ordering tea
+//client-waiter
+Request readyToOrder: readyToOrder(TABLE,CLIENTID) 
+Reply   atTable: atTable(TABLE,CLIENTID) 
+
+Dispatch order : order(TEA, TABLE) 
+Dispatch deliver : deliver (TABLE, CLIENTID) 
+
+
+//pay for the tea
+//client - waiter
+Request readyToPay : readyToPay(TABLE) 
+Reply waiterAtTheTable : waiterAtTheTable(ok)
+Dispatch payed : payed(AMOUNT) 
+Dispatch exit : exit(ok)
+
+Event freedTable : freedTable(N)
+
+Dispatch ready : ready(TEA, TABLE)
+
+
+//waiter to himself
+Dispatch rest			: rest(V)
+Event 	 tableToClean 	: tableToClean(TABLE)
+
+//smartbell - waiter
+Event clientID : clientID (CLIENTID) 
+
+Event freedTable : freedTable(N)
+
+Context ctxtearoomsys ip [host="localhost" port=8072] 
+
+QActor client context ctxtearoomsys{
+	[#
+		var WaitTime = 0
+		var AdmittanceStatus = 0 
+	#]
+	
+		State s0 initial{
+			println("client | init")
+		}
+		Goto outside
+		
+		
+		State outside{
+			println("client | is outside")
+			request smartbell -m ringBell: ringBell(36) //temperature of the client
+//			onMsg ( tempStatus : tempStatus(status, ClientID)){
+//				[# admittanceStatus = payloadArg(0).toString().toInt()#]
+//			}		
+		}
+		Transition t0 whenReply tempStatus -> evalTemperature
+		
+		State evalTemperature {
+			onMsg ( tempStatus : tempStatus(STATUS, CID)){
+				[# AdmittanceStatus = payloadArg(0).toString().toInt()#]
+				
+			}	
+			println("Client | admittance status $AdmittanceStatus")
+				
+		}
+		Goto end if [# AdmittanceStatus == 0 #] else waitForWaiter
+		
+		State waitForWaiter {
+			println("Client | waiting for the waiter to tell me if I can get in")
+		}
+		Transition t0 whenMsg admission -> evalAdmission
+		
+		State evalAdmission {			
+			onMsg ( admission : admission(WaitTime, ClientID)){
+				[# WaitTime = payloadArg(0).toString().toInt()#]
+			}
+			println("Client | evaluated waiter admission message")
+		}
+		Goto waitingInTheHall if [# WaitTime != 0 #] else seated
+		
+		State waitingInTheHall{
+			println("client | is waiting in the hall")			
+		}
+		Transition t0 whenTime 1000  -> seated
+		
+		
+		State seated{
+			println("client is seated")
+			delay 2000
+			request waiter -m readyToOrder: readyToOrder(1)
+		}
+		Transition t1
+			whenReply atTable -> ordering
+			
+			
+		State ordering{
+			println("client is ordering some tea")
+			delay 2000
+			forward waiter -m order: order(tea)
+		}
+		Transition t2 
+			whenMsg deliver -> drinkingTea
+				
+		
+		State drinkingTea{
+			println("client is drinking tea")
+			delay 10000
+			request waiter -m readyToPay: readyToPay(tableX)
+		}
+		Transition t3
+			whenReply waiterAtTheTable -> paying
+			
+				
+		State paying{
+			println("client is paying")
+			delay 2000
+			forward waiter -m payed : payed(X)
+		}
+		Transition t4 
+			whenMsg exit -> end	
+		
+		State end{
+			println("client gets escorted to the exit door and leaves")
+			terminate 0
+		}
+			
+}
+
+QActor waiter context ctxtearoomsys {
+	
+	[#
+		var v = 0
+		var CCID = ""	
+		var TABLE = 0
+		var AvailableTables = 2
+	#]
+	
+	State s0 initial {	
+		discardMsg Off
+		delay 1000 		  
+ 	}	
+  	Goto listening
+  	
+  	  	State listening {
+		[# 	v = 0
+			CCID = "" 
+			TABLE = 0
+			
+			#]
+ 		println("waiter | listening... ")
+	}
+	  Transition t0  	whenTime 5000	-> goHome
+	  					whenEvent clientID  	 -> handleClientEntranceRequest
+						whenRequest readyToOrder -> answerOrderRequest
+						whenRequest readyToPay 	 -> answerPaymentRequest
+						whenEvent tableToClean 	 -> cleanTable
+						whenMsg ready 		 -> deliverDrink
+						
+  	
+  	State goHome {
+ 		println("waiter | no tasks to do, going home... ")
+ 		delay 1000
+// 		[# atHome = true #]
+  	}
+	  Transition t0 
+	  					whenEvent clientID  	 -> handleClientEntranceRequest
+						whenRequest readyToOrder -> answerOrderRequest
+						whenRequest readyToPay 	 -> answerPaymentRequest
+						whenEvent tableToClean 	 -> cleanTable
+						whenMsg ready 		 -> deliverDrink
+  					
+  	
+  	State handleClientEntranceRequest {
+  		delay 100
+  		println("waiter | handling client request... ")
+  		
+  		[# AvailableTables-- #]
+  		//if there are free tables accompany the client to the table, otherwise tell them how long will the wait be
+  	}
+  	Goto deployClientEntrance if [# AvailableTables >= 0 #] else notifyClientToWait
+
+	State deployClientEntrance {
+		println("waiter | deploying client from entrance door to table... ")
+		forward client -m admission : admission(0, $CCID)
+		delay 1000
+	} 	
+	Goto listening
+
+	State deployClientExit {
+		println("waiter | deploying client from table to exit door... ")
+		forward client -m exit : exit(ok)
+		delay 1000
+		[# AvailableTables++ #]
+		emit freedTable : freedTable(1)
+	} 	
+	Goto listening
+	
+	State notifyClientToWait {
+		println("waiter | notifying client has to wait... ")
+		forward client -m admission : admission(1000, $CCID)
+	}
+	Goto listening
+						
+	State answerOrderRequest {
+		println("waiter | reaching table to serve client... ")
+		onMsg(readyToOrder : readyToOrder(table, CID)) {
+			[#  TABLE = payloadArg(0).toString().toInt()
+				CCID = payloadArg(1).toString() #
+			]
+		}
+		delay 1000
+		replyTo readyToOrder with atTable : atTable(ok)
+	}
+	Transition t0 whenMsg order -> transferOrder
+	
+	State transferOrder {
+		println("waiter | sending order to barman... ")
+		forward barman -m order : order(1, $TABLE)
+	}
+	Goto listening
+	
+	State answerPaymentRequest {
+		println("waiter | a client has finished consuming its tea... ")
+		onMsg(readyToPay : readyToPay(table, CID)) {
+			[#  TABLE = payloadArg(0).toString().toInt()
+				CCID = payloadArg(0).toString() #
+			]
+		}
+		delay 1000
+		replyTo readyToPay with waiterAtTheTable : waiterAtTheTable( ok )
+	}
+	Transition t0 whenMsg payed -> deployClientExit
+	
+	State cleanTable {
+		println("waiter | going to table... ")
+		delay 1000
+		println("waiter | cleaning table... ")
+		delay 1000
+	}
+	Goto listening
+	
+	State deliverDrink {
+		println("waiter | going to barman... ")
+		delay 1000
+		println("waiter | taking tea... ")
+		println("waiter | going to client table... ")
+		delay 1000
+		forward client -m deliver : deliver(table, cid)
+	}
+	Goto listening	
+}
+
+QActor smartbell context ctxtearoomsys {
+ [# 
+ 	var Temp = 0
+ 	var CID = 0 
+ #]
+ 
+	State s0 initial {
+		discardMsg Off
+		println("--- Init ---")
+	}
+	Goto waitForClient
+	
+	State waitForClient {
+		println("--- Wait Client ---")
+	}
+	Transition t0 whenRequest ringBell -> checkTemp
+	
+	State checkTemp {
+		onMsg ( ringBell : ringBell (T) ) {
+			println("--- Check Temp ---")
+			[#Temp = payloadArg(0).toString().toInt() #]
+		}
+	}
+	Goto handleEventTempOK if [# Temp <= 37.5 #] else handleEventTempKO
+	
+	State handleEventTempKO {
+		println("--- Temp is over ---")
+		println("--- Client Discard ---")
+		replyTo ringBell with tempStatus : tempStatus (0, $CID)
+	}
+	Goto waitForClient
+	
+	State handleEventTempOK {
+		println("--- Temp is OK ---")
+		println("--- Client Accepted ---")
+		[# CID = (1..100).random() #]
+		replyTo ringBell with tempStatus : tempStatus (1, $CID)
+		emit clientID : clientID ($CID)
+	}
+	Goto waitForClient		
+}
+
+
+QActor barman context ctxtearoomsys {
+	[#
+		var Order = 0
+		var ClientID = 0
+	#]
+	
+	State s0 initial {
+		discardMsg Off  
+		println("--- Barman | Init ---")
+	}
+	Goto waitForNewOrder
+
+	State waitForNewOrder {
+		println("--- Barman | Waiting Order ---")
+	}
+	Transition t0 whenMsg order -> prepare
+	
+	State prepare {
+		onMsg( order : order(V,CLIENTID) ){
+			delay 1000
+			println("--- Barman | Ready to serve ---")
+			[#
+				Order = payloadArg(0).toString().toInt()
+				ClientID = payloadArg(1).toString().toInt()
+			#]
+		}
+		forward waiter -m ready : ready($Order, $ClientID)
+	}
+	Goto s0
+}

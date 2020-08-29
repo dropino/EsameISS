@@ -1,8 +1,8 @@
-System tearoom
+System -trace waiter
 
 //Ordering tea
 //client-waiter
-Request readyToOrder: readyToOrder(TABLE,CLIENTID) 
+Request readyToOrder: readyToOrder(TABLE,CLIENTID)  
 Reply   atTable: atTable(TABLE,CLIENTID) 
 
 Dispatch order : order(TEA, TABLE) 
@@ -27,6 +27,7 @@ Event 	 tableToClean 	: tableToClean(TABLE)
 Event clientID : clientID (CLIENTID) 
 
 Event freedTable : freedTable(N)
+Dispatch ready : ready(TEA, TABLE)
 
 
 Context ctxclient ip [host="localhost" port=8070]
@@ -35,9 +36,9 @@ Context ctxtearoom ip [host="localhost" port=8072]
 
 ExternalQActor client context ctxclient
 ExternalQActor smartbell context ctxtearoom 
-//ExternalQActor barman context ctxtearoom
+ExternalQActor barman context ctxtearoom
 
-CodedQActor   barman context ctxtearoom className "it.unibo.barman.Barman"
+//CodedQActor   barman context ctxtearoom className "it.unibo.barman.Barman"
 //CodedQActor   smartbell context ctxtearoom className "it.unibo.smartbell.Smartbell"
 //CodedQActor   client context ctxclient className "it.unibo.client.Client"
 
@@ -51,7 +52,8 @@ QActor waiter context ctxwaiter {
 	#]
 	
 	State s0 initial {	
-		delay 1000 		 
+		discardMsg Off
+		delay 1000 		  
  	}	
   	Goto listening
   	
@@ -68,7 +70,7 @@ QActor waiter context ctxwaiter {
 						whenRequest readyToOrder -> answerOrderRequest
 						whenRequest readyToPay 	 -> answerPaymentRequest
 						whenEvent tableToClean 	 -> cleanTable
-						whenMsg deliver 		 -> deliverDrink
+						whenMsg ready 		 -> deliverDrink
 						
   	
   	State goHome {
@@ -81,7 +83,7 @@ QActor waiter context ctxwaiter {
 						whenRequest readyToOrder -> answerOrderRequest
 						whenRequest readyToPay 	 -> answerPaymentRequest
 						whenEvent tableToClean 	 -> cleanTable
-						whenMsg deliver 		 -> deliverDrink
+						whenMsg ready 		 -> deliverDrink
   					
   	
   	State handleClientEntranceRequest {
@@ -159,6 +161,8 @@ QActor waiter context ctxwaiter {
 		println("waiter | taking tea... ")
 		println("waiter | going to client table... ")
 		delay 1000
+		forward client -m deliver : deliver(table, cid)
 	}
 	Goto listening	
+
 }

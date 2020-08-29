@@ -5,7 +5,7 @@ Reply tempStatus : tempStatus(status, ClientID)
 
 Event clientID : clientID (CLIENTID) 
 
-Context ctxtearoom   ip [host="localhost" port=8072]
+Context ctxtearoom   ip [host="localhost" port=8072] 
 Context ctxclient 	ip [host="localhost" port=8070]
 
 ExternalQActor client context ctxclient
@@ -16,10 +16,11 @@ ExternalQActor client context ctxclient
 QActor smartbell context ctxtearoom {
  [# 
  	var Temp = 0
- 	var CID = 0
+ 	var CID = 0 
  #]
  
 	State s0 initial {
+		discardMsg Off
 		println("--- Init ---")
 	}
 	Goto waitForClient
@@ -40,7 +41,7 @@ QActor smartbell context ctxtearoom {
 	State handleEventTempKO {
 		println("--- Temp is over ---")
 		println("--- Client Discard ---")
-		replyTo ringBell with tempStatus : tempStatus (1, $CID)
+		replyTo ringBell with tempStatus : tempStatus (0, $CID)
 	}
 	Goto waitForClient
 	
@@ -48,10 +49,8 @@ QActor smartbell context ctxtearoom {
 		println("--- Temp is OK ---")
 		println("--- Client Accepted ---")
 		[# CID = (1..100).random() #]
-		replyTo ringBell with tempStatus : tempClient (0, $CID)
+		replyTo ringBell with tempStatus : tempStatus (1, $CID)
 		emit clientID : clientID ($CID)
 	}
-	Goto waitForClient
-	
-			
+	Goto waitForClient				
 }

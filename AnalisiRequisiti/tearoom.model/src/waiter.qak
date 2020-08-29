@@ -24,20 +24,22 @@ Dispatch rest			: rest(V)
 Event 	 tableToClean 	: tableToClean(TABLE)
 
 //smartbell - waiter
-Dispatch requestEntrance : requestEntrance(CLIENTID)
+Event clientID : clientID (CLIENTID) 
+
+Event freedTable : freedTable(N)
 
 
 Context ctxclient ip [host="localhost" port=8070]
 Context ctxwaiter ip [host="localhost" port=8071]
 Context ctxtearoom ip [host="localhost" port=8072]
 
-//ExternalQActor client context ctxclient
-//ExternalQActor smartbell context ctxtearoom 
+ExternalQActor client context ctxclient
+ExternalQActor smartbell context ctxtearoom 
 //ExternalQActor barman context ctxtearoom
 
 CodedQActor   barman context ctxtearoom className "it.unibo.barman.Barman"
-CodedQActor   smartbell context ctxtearoom className "it.unibo.smartbell.Smartbell"
-CodedQActor   client context ctxclient className "it.unibo.client.Client"
+//CodedQActor   smartbell context ctxtearoom className "it.unibo.smartbell.Smartbell"
+//CodedQActor   client context ctxclient className "it.unibo.client.Client"
 
 QActor waiter context ctxwaiter {
 	
@@ -45,6 +47,7 @@ QActor waiter context ctxwaiter {
 		var v = 0
 		var CCID = ""	
 		var TABLE = 0
+		var AvailableTables = 2
 	#]
 	
 	State s0 initial {	
@@ -56,11 +59,12 @@ QActor waiter context ctxwaiter {
 		[# 	v = 0
 			CCID = "" 
 			TABLE = 0
+			
 			#]
  		println("waiter | listening... ")
 	}
-	  Transition t0  	whenTime 5000 			 -> goHome
-	  					whenMsg requestEntrance  -> handleClientEntranceRequest
+	  Transition t0  	whenTime 5000	-> goHome
+	  					whenEvent clientID  	 -> handleClientEntranceRequest
 						whenRequest readyToOrder -> answerOrderRequest
 						whenRequest readyToPay 	 -> answerPaymentRequest
 						whenEvent tableToClean 	 -> cleanTable
@@ -70,18 +74,24 @@ QActor waiter context ctxwaiter {
   	State goHome {
  		println("waiter | no tasks to do, going home... ")
  		delay 1000
+// 		[# atHome = true #]
   	}
-  	Goto listening
+	  Transition t0 
+	  					whenEvent clientID  	 -> handleClientEntranceRequest
+						whenRequest readyToOrder -> answerOrderRequest
+						whenRequest readyToPay 	 -> answerPaymentRequest
+						whenEvent tableToClean 	 -> cleanTable
+						whenMsg deliver 		 -> deliverDrink
   					
   	
   	State handleClientEntranceRequest {
   		delay 100
   		println("waiter | handling client request... ")
   		
-  		[# v = (0..2).random() #]
+  		[# AvailableTables-- #]
   		//if there are free tables accompany the client to the table, otherwise tell them how long will the wait be
   	}
-  	Goto deployClientEntrance if [# v == 0 #] else notifyClientToWait
+  	Goto deployClientEntrance if [# AvailableTables >= 0 #] else notifyClientToWait
 
 	State deployClientEntrance {
 		println("waiter | deploying client from entrance door to table... ")
@@ -94,6 +104,8 @@ QActor waiter context ctxwaiter {
 		println("waiter | deploying client from table to exit door... ")
 		forward client -m exit : exit(ok)
 		delay 1000
+		[# AvailableTables++ #]
+		emit freedTable : freedTable(1)
 	} 	
 	Goto listening
 	

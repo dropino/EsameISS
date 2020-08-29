@@ -1,4 +1,4 @@
-System client
+System -trace client 
 
 //MESSAGES
 
@@ -26,6 +26,8 @@ Request readyToPay : readyToPay(TABLE)
 Reply waiterAtTheTable : waiterAtTheTable(ok)
 Dispatch payed : payed(AMOUNT) 
 Dispatch exit : exit(ok)
+
+Event freedTable : freedTable(N)
 
 Context ctxclient ip [host="localhost" port=8070]
 Context ctxwaiter ip [host="localhost" port=8071]

@@ -9,7 +9,7 @@ Context ctxwaiter ip [host="localhost" port=8071]
 
 ExternalQActor waiter context ctxwaiter
 
-CodedQActor   waiter context ctxwaiter className "it.unibo.waiter.Waiter"
+//CodedQActor   waiter context ctxwaiter className "it.unibo.waiter.Waiter"
 
 
 QActor barman context ctxtearoom {

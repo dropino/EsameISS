@@ -1,16 +1,16 @@
 System smartbell
 
-Event clientID : clientID (CLIENTID) 
-Request checkTempClient : checkTempClient (T)
-Reply tempClient : tempClient (STATUS, CLIENTID)
+Request ringBell : ringBell(TEMP)
+Reply tempStatus : tempStatus(status, ClientID) 
 
+Event clientID : clientID (CLIENTID) 
 
 Context ctxtearoom   ip [host="localhost" port=8072]
-Context ctxclient ip [host="localhost" port=8070]
+Context ctxclient 	ip [host="localhost" port=8070]
 
-//ExternalQActor client context ctxclient
+ExternalQActor client context ctxclient
 
-CodedQActor   client context ctxclient className "it.unibo.client.Client"
+//CodedQActor   client context ctxclient className "it.unibo.client.Client"
 
 
 QActor smartbell context ctxtearoom {
@@ -20,12 +20,17 @@ QActor smartbell context ctxtearoom {
  #]
  
 	State s0 initial {
+		println("--- Init ---")
+	}
+	Goto waitForClient
+	
+	State waitForClient {
 		println("--- Wait Client ---")
 	}
-	Goto checkTemp
+	Transition t0 whenRequest ringBell -> checkTemp
 	
 	State checkTemp {
-		onMsg ( checkTempClient : checkTempClient (T) ) {
+		onMsg ( ringBell : ringBell (T) ) {
 			println("--- Check Temp ---")
 			[#Temp = payloadArg(0).toString().toInt() #]
 		}
@@ -35,18 +40,18 @@ QActor smartbell context ctxtearoom {
 	State handleEventTempKO {
 		println("--- Temp is over ---")
 		println("--- Client Discard ---")
-		replyTo checkTempClient with tempClient : tempClient (1, $CID)
+		replyTo ringBell with tempStatus : tempStatus (1, $CID)
 	}
-	Goto s0
+	Goto waitForClient
 	
 	State handleEventTempOK {
 		println("--- Temp is OK ---")
 		println("--- Client Accepted ---")
 		[# CID = (1..100).random() #]
-		replyTo checkTempClient with tempClient : tempClient (0, $CID)
+		replyTo ringBell with tempStatus : tempClient (0, $CID)
 		emit clientID : clientID ($CID)
 	}
-	Goto s0
+	Goto waitForClient
 	
 			
 }

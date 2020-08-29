@@ -1,0 +1,133 @@
+System tearoom
+
+Request  readyToOrder	: readyToOrder(TABLE, CLIENTID)
+Reply	 atTable		: atTable(TABLE, CLIENTID)
+
+Request  readyToPay		: readyToOrder(TABLE, CLIENTID)
+Reply	 paymentDone	: paymentDone(TABLE, CLIENTID)
+
+Dispatch admission 		: admission(MAXWAITTIME, CLIENTID)
+Dispatch order			: order(V, TABLE)
+Dispatch deliver		: deliver (TABLE, CLIENTID)
+Dispatch rest			: rest(V)
+
+Dispatch exit			: exit(V)
+Dispatch payed 			: payed(AMOUNT)
+
+Dispatch requestEntrance : requestEntrance(CLIENTID)
+
+Event 	 tableToClean 	: tableToClean(TABLE)
+
+Context ctxtearoom ip [host="localhost" port=8050] 
+
+QActor waiter context ctxtearoom {
+	
+	[#
+		var v = 0
+		var clientID = 0	
+		var currTable = 0
+	#]
+	
+	State s0 initial {	
+		delay 1000 		 
+ 	}	
+  	Goto listening
+  	
+  	  	State listening {
+		[# 	v = 0
+			clientID = 0 
+			currTable = 0
+			#]
+ 		println("waiter | listening... ")
+	}
+	  Transition t0  	whenTime 5000 -> goHome
+	  					whenMsg requestEntrance -> handleClientEntranceRequest
+						whenRequest readyToOrder -> answerOrderRequest
+						whenRequest readyToPay -> answerPaymentRequest
+						whenEvent tableToClean -> cleanTable
+						whenMsg deliver -> deliverDrink
+						
+  	
+  	State goHome {
+ 		println("waiter | no tasks to do, going home... ")
+ 		delay 1000
+  	}
+  	Goto listening
+  					
+  	
+  	State handleClientEntranceRequest {
+  		delay 100
+  		println("waiter | handling client request... ")
+  		
+  		[# v = Random.nextInt(0, 2) #]
+  		//if there are free tables accompany the client to the table, otherwise tell them how long will the wait be
+  	}
+  	Goto deployClientEntrance if [# v == 0 #] else notifyClientToWait
+
+	State deployClientEntrance {
+		println("waiter | deploying client from entrance door to table... ")
+		forward client -m admission : admission(0, $currClientID)
+		delay 1000
+	} 	
+	Goto listening
+
+	State deployClientExit {
+		println("waiter | deploying client from table to exit door... ")
+		forward client -m exit : exit($currClientID)
+		delay 1000
+	} 	
+	Goto listening
+	
+	State notifyClientToWait {
+		println("waiter | notifying client has to wait... ")
+		forward client -m admission : admission(100, $currClientID)
+	}
+	Goto listening
+						
+	State answerOrderRequest {
+		println("waiter | reaching table to serve client... ")
+		onMsg(readyToOrder : readyToOrder(table, CID)) {
+			[#  currTable = payloadArg(0).toString().toInt()
+				currClientID = payloadArg(0).toString() #
+			]
+		}
+		delay 1000
+		replyTo client with atTable : atTable($currTable, $currClientID)
+	}
+	Transition t0 whenMsg order -> transferOrder
+	
+	State transferOrder {
+		println("waiter | sending order to barman... ")
+		forward barman -m order : order($currTable, $currClientID)
+	}
+	Goto listening
+	
+	State answerPaymentRequest {
+		println("waiter | a client has finished consuming its tea... ")
+		onMsg(readyToPay : readyToPay(table, CID)) {
+			[#  currTable = payloadArg(0).toString().toInt()
+				currClientID = payloadArg(0).toString() #
+			]
+		}
+		delay 1000
+		replyTo client with paymentDone : paymentDone($currTable, $currClientID)
+	}
+	Transition t0 whenMsg payed -> deployClientExit
+	
+	State cleanTable {
+		println("waiter | going to table... ")
+		delay 1000
+		println("waiter | cleaning table... ")
+		delay 1000
+	}
+	Goto listening
+	
+	State deliverDrink {
+		println("waiter | going to barman... ")
+		delay 1000
+		println("waiter | taking tea... ")
+		println("waiter | going to client table... ")
+		delay 1000
+	}
+	Goto listening	
+}

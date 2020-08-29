@@ -4,12 +4,15 @@ Dispatch order : order(V, CLIENTID)
 Dispatch ready : ready (V, CLIENTID)
 
 
-Context ctxbarman ip [host="localhost" port=8072]
-Context ctxwaiter ip [host="localhost" port=8072]
+Context ctxtearoom ip [host="localhost" port=8072]
+Context ctxwaiter ip [host="localhost" port=8071]
 
 ExternalQActor waiter context ctxwaiter
 
-QActor barman context ctxbarman {
+CodedQActor   waiter context ctxwaiter className "it.unibo.waiter.Waiter"
+
+
+QActor barman context ctxtearoom {
 	[#
 		var Order = 0
 		var ClientID = 0

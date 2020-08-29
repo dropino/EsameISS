@@ -5,15 +5,18 @@ Request checkTempClient : checkTempClient (T)
 Reply tempClient : tempClient (STATUS, CLIENTID)
 
 
-Context ctxsmartbell   ip [host="localhost" port=8050]
-Context ctxclient ip [host="localhost" port=8072]
+Context ctxtearoom   ip [host="localhost" port=8072]
+Context ctxclient ip [host="localhost" port=8070]
 
-ExternalQActor client context ctxclient
+//ExternalQActor client context ctxclient
 
-QActor smartbell context ctxsmartbell {
+CodedQActor   client context ctxclient className "it.unibo.client.Client"
+
+
+QActor smartbell context ctxtearoom {
  [# 
- 	val Temp = 0
- 	val CID = 0
+ 	var Temp = 0
+ 	var CID = 0
  #]
  
 	State s0 initial {
@@ -25,26 +28,22 @@ QActor smartbell context ctxsmartbell {
 		onMsg ( checkTempClient : checkTempClient (T) ) {
 			println("--- Check Temp ---")
 			[#Temp = payloadArg(0).toString().toInt() #]
-			
-			//[# 
-			//	Temp = (36..40).random() 
-			//#]
 		}
 	}
 	Goto handleEventTempOK if [# Temp <= 37.5 #] else handleEventTempKO
 	
 	State handleEventTempKO {
 		println("--- Temp is over ---")
-		println("\n--- Client Discard ---")
-		replyTo checkTempClient with tempClient : tempClient ('1', $CID)
+		println("--- Client Discard ---")
+		replyTo checkTempClient with tempClient : tempClient (1, $CID)
 	}
 	Goto s0
 	
 	State handleEventTempOK {
 		println("--- Temp is OK ---")
-		println("\n--- Client Accepted ---")
+		println("--- Client Accepted ---")
 		[# CID = (1..100).random() #]
-		replyTo checkTempClient with tempClient : tempClient ('0', $CID)
+		replyTo checkTempClient with tempClient : tempClient (0, $CID)
 		emit clientID : clientID ($CID)
 	}
 	Goto s0

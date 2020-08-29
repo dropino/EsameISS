@@ -27,13 +27,17 @@ Event 	 tableToClean 	: tableToClean(TABLE)
 Dispatch requestEntrance : requestEntrance(CLIENTID)
 
 
-Context ctxclient ip [host="127.0.0.1" port=8050]
-Context ctxwaiter ip [host="127.0.0.1" port=8050]
-Context ctxtearoom ip [host="127.0.0.1" port=8050]
+Context ctxclient ip [host="localhost" port=8070]
+Context ctxwaiter ip [host="localhost" port=8071]
+Context ctxtearoom ip [host="localhost" port=8072]
 
-ExternalQActor client context ctxclient
-ExternalQActor smartbell context ctxtearoom 
-ExternalQActor barman context ctxtearoom
+//ExternalQActor client context ctxclient
+//ExternalQActor smartbell context ctxtearoom 
+//ExternalQActor barman context ctxtearoom
+
+CodedQActor   barman context ctxtearoom className "it.unibo.barman.Barman"
+CodedQActor   smartbell context ctxtearoom className "it.unibo.smartbell.Smartbell"
+CodedQActor   client context ctxclient className "it.unibo.client.Client"
 
 QActor waiter context ctxwaiter {
 	
@@ -74,7 +78,7 @@ QActor waiter context ctxwaiter {
   		delay 100
   		println("waiter | handling client request... ")
   		
-  		[# v = Random.nextInt(0, 2) #]
+  		[# v = (0..2).random() #]
   		//if there are free tables accompany the client to the table, otherwise tell them how long will the wait be
   	}
   	Goto deployClientEntrance if [# v == 0 #] else notifyClientToWait

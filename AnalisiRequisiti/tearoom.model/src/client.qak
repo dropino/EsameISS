@@ -1,0 +1,110 @@
+System client
+
+//MESSAGES
+
+//Entering sequence
+//client - smartbell
+Request ringBell : ringBell(TEMP)
+Reply tempStatus : tempStatus(status, ClientID) 
+
+//client - Waiter
+Dispatch admission : admission(MAXWAITTIME, clientID)
+ 
+ 
+//Ordering tea
+//client-waiter
+Request readyToOrder: readyToOrder(TABLE,CLIENTID) 
+Reply   atTable: atTable(TABLE,CLIENTID) 
+
+Dispatch order : order(TEA, TABLE) 
+Dispatch deliver : deliver (TABLE, CLIENTID)
+
+
+//pay for the tea
+//client - waiter
+Request readyToPay : readyToPay(TABLE) 
+Reply waiterAtTheTable : waiterAtTheTable(ok)
+Dispatch payed : payed(AMOUNT) 
+Dispatch exit : exit(ok)
+
+Context ctxclient ip [host="127.0.0.1" port=8050]
+Context ctxwaiter ip [host="127.0.0.1" port=8050]
+Context ctxsmartbell ip [host="127.0.0.1" port=8050]
+
+ExternalQActor waiter context ctxwaiter
+ExternalQActor smartbell context ctxsmartbell 
+
+QActor client context ctxclient{
+	[#
+	var waitTime
+	var admittanceStatus
+	#]
+	
+		State s0 initial{
+			println("client  s0")
+			delay 2000
+		}
+		Goto outside
+		
+		
+		State outside{
+			println("client is outside")
+			delay 2000
+			request smartbell -m ringBell: ringBell(36) //temperature of the client
+			onMsg ( tempStatus : tempStatus(status, ClientID)){
+				[# admittanceStatus = payloadArg(0).toString().toInt()#]
+			}		
+		}
+		Goto end if [# waitTime == 0 #] else waitingInTheHall
+			
+			
+		State waitingInTheHall{
+			println("client is waiting in the hall")
+			delay 2000	
+			onMsg (admission : admission(time, clientID)){
+				[# waitTime = payloadArg(0).toString().toInt()#]
+			}		
+		}
+		Goto waitingInTheHall if [# waitTime != 0 #] else seated
+		
+		State seated{
+			println("client is seated")
+			delay 2000
+			request waiter -m readyToOrder: readyToOrder(1)
+		}
+		Transition t1
+			whenReply atTable -> ordering
+			
+			
+		State ordering{
+			println("client is ordering some tea")
+			delay 2000
+			forward waiter -m order: order(tea)
+		}
+		Transition t2 
+			whenMsg deliver -> drinkingTea
+				
+		
+		State drinkingTea{
+			println("client is drinking tea")
+			delay 10000
+			request waiter -m readyToPay: readyToPay(tableX)
+		}
+		Transition t3
+			whenReply waiterAtTheTable -> paying
+			
+				
+		State paying{
+			println("client is paying")
+			delay 2000
+			forward waiter -m payed : payed(X)
+		}
+		Transition t4 
+			whenMsg exit -> end	
+		
+		State end{
+			println("client gets escorted to the exit door and leaves")
+			terminate 0
+		}
+			
+}

@@ -12,8 +12,8 @@ ExternalQActor client context ctxclient
 
 QActor smartbell context ctxsmartbell {
  [# 
- 	val Temp = 0
- 	val CID = 0
+ 	var Temp = 0
+ 	var CID = 0
  #]
  
 	State s0 initial {
@@ -35,16 +35,16 @@ QActor smartbell context ctxsmartbell {
 	
 	State handleEventTempKO {
 		println("--- Temp is over ---")
-		println("\n--- Client Discard ---")
-		replyTo checkTempClient with tempClient : tempClient ('1', $CID)
+		println("--- Client Discard ---")
+		replyTo checkTempClient with tempClient : tempClient (1, $CID)
 	}
 	Goto s0
 	
 	State handleEventTempOK {
 		println("--- Temp is OK ---")
-		println("\n--- Client Accepted ---")
+		println("--- Client Accepted ---")
 		[# CID = (1..100).random() #]
-		replyTo checkTempClient with tempClient : tempClient ('0', $CID)
+		replyTo checkTempClient with tempClient : tempClient (0, $CID)
 		emit clientID : clientID ($CID)
 	}
 	Goto s0

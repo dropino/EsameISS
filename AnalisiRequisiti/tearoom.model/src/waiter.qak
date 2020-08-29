@@ -1,30 +1,45 @@
 System tearoom
 
-Request  readyToOrder	: readyToOrder(TABLE, CLIENTID)
-Reply	 atTable		: atTable(TABLE, CLIENTID)
+//Ordering tea
+//client-waiter
+Request readyToOrder: readyToOrder(TABLE,CLIENTID) 
+Reply   atTable: atTable(TABLE,CLIENTID) 
 
-Request  readyToPay		: readyToOrder(TABLE, CLIENTID)
-Reply	 paymentDone	: paymentDone(TABLE, CLIENTID)
+Dispatch order : order(TEA, TABLE) 
+Dispatch deliver : deliver (TABLE, CLIENTID)
 
+//pay for the tea
+//client - waiter
+Request readyToPay : readyToPay(TABLE) 
+Reply waiterAtTheTable : waiterAtTheTable(ok)
+Dispatch payed : payed(AMOUNT) 
+Dispatch exit : exit(ok)
+
+//waiter - client
 Dispatch admission 		: admission(MAXWAITTIME, CLIENTID)
-Dispatch order			: order(V, TABLE)
 Dispatch deliver		: deliver (TABLE, CLIENTID)
+
+//waiter to himself
 Dispatch rest			: rest(V)
-
-Dispatch exit			: exit(V)
-Dispatch payed 			: payed(AMOUNT)
-
-Dispatch requestEntrance : requestEntrance(CLIENTID)
-
 Event 	 tableToClean 	: tableToClean(TABLE)
 
-Context ctxtearoom ip [host="localhost" port=8050] 
+//smartbell - waiter
+Dispatch requestEntrance : requestEntrance(CLIENTID)
 
-QActor waiter context ctxtearoom {
+
+Context ctxclient ip [host="127.0.0.1" port=8050]
+Context ctxwaiter ip [host="127.0.0.1" port=8050]
+Context ctxtearoom ip [host="127.0.0.1" port=8050]
+
+ExternalQActor client context ctxclient
+ExternalQActor smartbell context ctxtearoom 
+ExternalQActor barman context ctxtearoom
+
+QActor waiter context ctxwaiter {
 	
 	[#
 		var v = 0
-		var clientID = 0	
+		var currClientID = ""	
 		var currTable = 0
 	#]
 	
@@ -35,17 +50,17 @@ QActor waiter context ctxtearoom {
   	
   	  	State listening {
 		[# 	v = 0
-			clientID = 0 
-			currTable = 0
+			CCID = 0 
+			TABLE = 0
 			#]
  		println("waiter | listening... ")
 	}
-	  Transition t0  	whenTime 5000 -> goHome
-	  					whenMsg requestEntrance -> handleClientEntranceRequest
+	  Transition t0  	whenTime 5000 			 -> goHome
+	  					whenMsg requestEntrance  -> handleClientEntranceRequest
 						whenRequest readyToOrder -> answerOrderRequest
-						whenRequest readyToPay -> answerPaymentRequest
-						whenEvent tableToClean -> cleanTable
-						whenMsg deliver -> deliverDrink
+						whenRequest readyToPay 	 -> answerPaymentRequest
+						whenEvent tableToClean 	 -> cleanTable
+						whenMsg deliver 		 -> deliverDrink
 						
   	
   	State goHome {
@@ -66,39 +81,39 @@ QActor waiter context ctxtearoom {
 
 	State deployClientEntrance {
 		println("waiter | deploying client from entrance door to table... ")
-		forward client -m admission : admission(0, $currClientID)
+		forward client -m admission : admission(0, $CCID)
 		delay 1000
 	} 	
 	Goto listening
 
 	State deployClientExit {
 		println("waiter | deploying client from table to exit door... ")
-		forward client -m exit : exit($currClientID)
+		forward client -m exit : exit(ok)
 		delay 1000
 	} 	
 	Goto listening
 	
 	State notifyClientToWait {
 		println("waiter | notifying client has to wait... ")
-		forward client -m admission : admission(100, $currClientID)
+		forward client -m admission : admission(1000, $CCID)
 	}
 	Goto listening
 						
 	State answerOrderRequest {
 		println("waiter | reaching table to serve client... ")
 		onMsg(readyToOrder : readyToOrder(table, CID)) {
-			[#  currTable = payloadArg(0).toString().toInt()
-				currClientID = payloadArg(0).toString() #
+			[#  TABLE = payloadArg(0).toString().toInt()
+				CCID = payloadArg(1).toString() #
 			]
 		}
 		delay 1000
-		replyTo client with atTable : atTable($currTable, $currClientID)
+		replyTo readyToOrder with atTable : atTable(ok)
 	}
 	Transition t0 whenMsg order -> transferOrder
 	
 	State transferOrder {
 		println("waiter | sending order to barman... ")
-		forward barman -m order : order($currTable, $currClientID)
+		forward barman -m order : order(1, $TABLE)
 	}
 	Goto listening
 	
@@ -110,7 +125,7 @@ QActor waiter context ctxtearoom {
 			]
 		}
 		delay 1000
-		replyTo client with paymentDone : paymentDone($currTable, $currClientID)
+		replyTo readyToPay with waiterAtTheTable : waiterAtTheTable( ok )
 	}
 	Transition t0 whenMsg payed -> deployClientExit
 	

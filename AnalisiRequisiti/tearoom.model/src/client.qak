@@ -36,8 +36,8 @@ ExternalQActor smartbell context ctxsmartbell
 
 QActor client context ctxclient{
 	[#
-	var waitTime
-	var admittanceStatus
+	var waitTime = 0
+	var admittanceStatus = 0
 	#]
 	
 		State s0 initial{

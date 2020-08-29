@@ -1,0 +1,53 @@
+System smartbell
+
+Event clientID : clientID (CLIENTID) 
+Request checkTempClient : checkTempClient (T)
+Reply tempClient : tempClient (STATUS, CLIENTID)
+
+
+Context ctxsmartbell   ip [host="localhost" port=8050]
+Context ctxclient ip [host="localhost" port=8072]
+
+ExternalQActor client context ctxclient
+
+QActor smartbell context ctxsmartbell {
+ [# 
+ 	val Temp = 0
+ 	val CID = 0
+ #]
+ 
+	State s0 initial {
+		println("--- Wait Client ---")
+	}
+	Goto checkTemp
+	
+	State checkTemp {
+		onMsg ( checkTempClient : checkTempClient (T) ) {
+			println("--- Check Temp ---")
+			[#Temp = payloadArg(0).toString().toInt() #]
+			
+			//[# 
+			//	Temp = (36..40).random() 
+			//#]
+		}
+	}
+	Goto handleEventTempOK if [# Temp <= 37.5 #] else handleEventTempKO
+	
+	State handleEventTempKO {
+		println("--- Temp is over ---")
+		println("\n--- Client Discard ---")
+		replyTo checkTempClient with tempClient : tempClient ('1', $CID)
+	}
+	Goto s0
+	
+	State handleEventTempOK {
+		println("--- Temp is OK ---")
+		println("\n--- Client Accepted ---")
+		[# CID = (1..100).random() #]
+		replyTo checkTempClient with tempClient : tempClient ('0', $CID)
+		emit clientID : clientID ($CID)
+	}
+	Goto s0
+	
+			
+}

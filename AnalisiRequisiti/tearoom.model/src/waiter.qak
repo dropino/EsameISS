@@ -6,7 +6,7 @@ Request readyToOrder: readyToOrder(TABLE,CLIENTID)
 Reply   atTable: atTable(TABLE,CLIENTID) 
 
 Dispatch order : order(TEA, TABLE) 
-Dispatch deliver : deliver (TABLE, CLIENTID)
+Dispatch deliver : deliver (TABLE, CLIENTID) 
 
 //pay for the tea
 //client - waiter
@@ -39,8 +39,8 @@ QActor waiter context ctxwaiter {
 	
 	[#
 		var v = 0
-		var currClientID = ""	
-		var currTable = 0
+		var CCID = ""	
+		var TABLE = 0
 	#]
 	
 	State s0 initial {	
@@ -50,7 +50,7 @@ QActor waiter context ctxwaiter {
   	
   	  	State listening {
 		[# 	v = 0
-			CCID = 0 
+			CCID = "" 
 			TABLE = 0
 			#]
  		println("waiter | listening... ")
@@ -120,8 +120,8 @@ QActor waiter context ctxwaiter {
 	State answerPaymentRequest {
 		println("waiter | a client has finished consuming its tea... ")
 		onMsg(readyToPay : readyToPay(table, CID)) {
-			[#  currTable = payloadArg(0).toString().toInt()
-				currClientID = payloadArg(0).toString() #
+			[#  TABLE = payloadArg(0).toString().toInt()
+				CCID = payloadArg(0).toString() #
 			]
 		}
 		delay 1000

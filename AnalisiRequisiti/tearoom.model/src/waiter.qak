@@ -35,8 +35,6 @@ Context ctxwaiter ip [host="localhost" port=8071]
 Context ctxtearoom ip [host="localhost" port=8072]
 
 ExternalQActor client context ctxclient
-ExternalQActor smartbell context ctxtearoom 
-ExternalQActor barman context ctxtearoom
 
 //CodedQActor   barman context ctxtearoom className "it.unibo.barman.Barman"
 //CodedQActor   smartbell context ctxtearoom className "it.unibo.smartbell.Smartbell"
@@ -131,7 +129,7 @@ QActor waiter context ctxwaiter {
 	
 	State transferOrder {
 		println("waiter | sending order to barman... ")
-		forward barman -m order : order(1, $TABLE)
+//		emit orderIncoming : orderIncoming(TEA, $TABLE)
 	}
 	Goto listening
 	

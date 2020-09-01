@@ -33,11 +33,11 @@ Context ctxclient ip [host="localhost" port=8070]
 Context ctxwaiter ip [host="localhost" port=8071]
 Context ctxtearoom ip [host="localhost" port=8072] 
 
-//ExternalQActor waiter context ctxwaiter
-//ExternalQActor smartbell context ctxtearoom 
-CodedQActor   smartbell context ctxtearoom className "it.unibo.smartbell.Smartbell"
-CodedQActor   waiter context ctxwaiter className "it.unibo.waiter.Waiter"
-CodedQActor   barman context ctxtearoom className "it.unibo.barman.Barman"
+ExternalQActor waiter context ctxwaiter
+ExternalQActor smartbell context ctxtearoom 
+//CodedQActor   smartbell context ctxtearoom className "it.unibo.smartbell.Smartbell"
+//CodedQActor   waiter context ctxwaiter className "it.unibo.waiter.Waiter"
+//CodedQActor   barman context ctxtearoom className "it.unibo.barman.Barman"
 
 QActor client context ctxclient{
 	[#

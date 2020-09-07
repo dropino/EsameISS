@@ -201,10 +201,14 @@ QActor waiter context ctxtearoomsys {
   				CCID = payloadArg(0).toString()
   			#]
   		}
+  		
+  		updateResource [# "handlingClient" #]
   	}
   	Goto deployClientEntrance if [# T1 == 1 || T2 == 1 #] else notifyClientToWait
 
 	State deployClientEntrance {
+		
+		updateResource [# "tableDeployment" #]
 		println("Waiter | deploying client from entrance door to table... ")
 		forward client -m admission : admission(0, $CCID)
 		delay 1000
@@ -226,6 +230,8 @@ QActor waiter context ctxtearoomsys {
 	Goto listening
 
 	State deployClientExit {
+		
+		updateResource [# "exitDeployment" #]
 		println("Waiter | deploying client from table to exit door... ")
 		emit tableDirty : tableDirty($CTABLE)
 		[#

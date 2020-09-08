@@ -20,15 +20,26 @@ QActor waiterwalker context ctxwalker {
 [#
 	var XT = "0"
 	var YT = "0"
-	var CurrentPlannedMove = ""
-	var StepTime    	   = 355L
-	val PauseTime          = 250L
-	val BackTime           = 2 * StepTime / 3
-	var obstacleFound      = false  
-#]
+	var CurrentPlannedMove 	= ""
+	var StepTime    	   	= 355L
+	var obstacleFound      	= false  
+	var TASK				= "" 
+	var N					= ""
+	
+	val inmapname			= "teaRoomExplored"
+	val PauseTime          	= 250L
+	val BackTime           	= 2 * StepTime / 3 
+	 
+	
+#] 
 
 	State s0 initial {	     
+ 		
+ 		run itunibo.planner.plannerUtil.initAI()
  		solve( consult("tearoomkb.pl")	 )
+ 		
+ 		run itunibo.planner.plannerUtil.loadRoomMap( inmapname ) 		
+ 		run itunibo.planner.plannerUtil.showCurrentRobotState()		
  		
  		forward basicrobot -m cmd : cmd(l)
 		delay 500
@@ -49,10 +60,16 @@ QActor waiterwalker context ctxwalker {
 	State walk{
 		printCurrentMessage
 		onMsg( moveForTask : moveForTask(TASK, N) ){
-			
+				[# 
+					TASK = payloadArg(0).toString()
+					N = payloadArg(1).toString()
+				#]
+							println("waiterwalker | task received: $TASK, jolly: $N")
+				
 			solve( pos($TASK, $N, X, Y)  )  
-			ifSolved { [# val XT = getCurSol("X").toString().toInt()
-						val YT = getCurSol("Y").toString().toInt() #] 
+			ifSolved { [# val XT = getCurSol("X").toString()
+						val YT = getCurSol("Y").toString() #] 
+						println("waiterwalker | query solved with values ($XT,$YT)")
  			}
 			println("waiterwalker | MOVING to ($XT,$YT)")
 			run itunibo.planner.plannerUtil.planForGoal("$XT","$YT")
@@ -118,7 +135,7 @@ QActor waiterwalker context ctxwalker {
  	State sendSuccessAnswer{
 	     	println("waiterwalker | POINT ($XT,$YT) REACHED")
 	     	run itunibo.planner.plannerUtil.showCurrentRobotState()
-	     	replyTo moveForTask with movementDone : movementDone($XT,$YT) 					
+	     	replyTo moveForTask with movementDone : movementDone(OK) 					
 	}
 	Goto waitCmd  
 

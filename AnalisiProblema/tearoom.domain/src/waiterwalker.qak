@@ -1,4 +1,4 @@
-System   domain 
+System -trace domain 
 
 Event    walkerstarted   : walkerstarted(X)
 	
@@ -50,6 +50,27 @@ QActor waiterwalker context ctxwalker {
 		println("waiterwalker | STARTS")
 		
 	}	
+//	 Goto someQuery  
+// 	
+// 	 
+// 	State someQuery{
+//  		println("waiter | sending some query ... ")
+// 			solve( teatable(1,ST)  )  
+//			ifSolved { [# val S = getCurSol("ST").toString()   #] 
+//				println("waiter | teatable 1 state=$S") 
+// 			}					
+//			solve( numavailabletables(N) ) 
+//			ifSolved { [# val Ntables = getCurSol("N").toString().toInt()  #] 
+//				println("waiter | numavailabletables=$Ntables")
+// 			}					
+//			solve( roomstate( V )  )   
+//			ifSolved { 
+//				[# val W = getCurSol("V").toString()   
+//				#] 
+//				println("waiter | $W  ") 				
+//			}
+//		println(" ------------- end of Queries ----------------  ")	
+//	}	
 	Goto waitCmd   
 	 
 	State waitCmd {	     
@@ -64,12 +85,15 @@ QActor waiterwalker context ctxwalker {
 					TASK = payloadArg(0).toString()
 					N = payloadArg(1).toString()
 				#]
-							println("waiterwalker | task received: $TASK, jolly: $N")
-				
-			solve( pos($TASK, $N, X, Y)  )  
-			ifSolved { [# val XT = getCurSol("X").toString()
-						val YT = getCurSol("Y").toString() #] 
-						println("waiterwalker | query solved with values ($XT,$YT)")
+				println("waiterwalker | task received: $TASK, jolly: $N")
+			
+			solve( pos($TASK,$N,X,Y)  )  
+			ifSolved { 
+			[# 
+				XT = getCurSol("X").toString()
+				YT = getCurSol("Y").toString()
+			#] 
+				println("waiterwalker | query solved with values ($XT,$YT)")
  			}
 			println("waiterwalker | MOVING to ($XT,$YT)")
 			run itunibo.planner.plannerUtil.planForGoal("$XT","$YT")

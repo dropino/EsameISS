@@ -6,12 +6,12 @@
 %% Positions
 %% ------------------------------------------ 
 pos( home, 1, 0, 0 ).
-pos( teatable, 1, 2, 3 ).
-pos( teatable, 2, 4, 3 ).
+pos( teatable, 1, 2, 2 ).
+pos( teatable, 2, 4, 2 ).
 pos( entrancedoor, 1, 1, 4 ).
 pos( exitdoor, 1, 5, 4 ).
-pos( barman, 1, 4, 0).
-pos( barman, 2, 5, 0).
+pos( barman, 1, 4, 0 ).
+pos( barman, 2, 5, 0 ).
  
 %% ------------------------------------------ 
 %% Teatables

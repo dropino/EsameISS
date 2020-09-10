@@ -1,17 +1,6 @@
 %===========================================
-% tearoomkb.pl
+% tearoom.pl
 %===========================================
-
-%% ------------------------------------------ 
-%% Positions
-%% ------------------------------------------ 
-pos( home, 1, 0, 0 ).
-pos( teatable, 1, 2, 2 ).
-pos( teatable, 2, 4, 2 ).
-pos( entrancedoor, 1, 1, 4 ).
-pos( exitdoor, 1, 5, 4 ).
-pos( barman, 1, 4, 0 ).
-pos( barman, 2, 5, 0 ).
  
 %% ------------------------------------------ 
 %% Teatables
@@ -59,6 +48,13 @@ stateOfTeatables( [teatable1(V1),teatable2(V2)] ) :-
 %% ------------------------------------------ 
 
 waiter( athome ).	
+
+changeWaiterState( STATE )	 :-
+	%%stdout <- println( tearoomkb_changeWaiterState( STATE ) ),
+	retract( waiter( athome ) ),
+	!,
+	assert( waiter( STATE ) ).
+changeWaiterState(_).
 
 %% ------------------------------------------ 
 %% Room as a whole

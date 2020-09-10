@@ -163,9 +163,6 @@ QActor waiter context ctxtearoom {
 		var CTABLE 			= 0
 		var BILL			= 5
 		
-		var T1 				= 1
-		var T2 				= 1
-		
 		var Ntables			= 0
 		
 		var CurST			= ""
@@ -197,8 +194,14 @@ QActor waiter context ctxtearoom {
   	
   	State goHome {
   		
-  		if [# ! itunibo.planner.plannerUtil.atHome() #] {  			
+  		solve( waiter(ST) ) 
+		ifSolved { [# CurST = getCurSol("ST").toString()  #] 
+			println("waiter | current waiter state: $CurST")
+		}
+  		
+  		if [# CurST != "atHome" #] {  			
  			request waiterwalker -m moveForTask : moveForTask(home, 1)
+ 			solve ( changeWaiterState(atHome) )	
   		} 
 		else{ 
 			forward waiter -m rest : rest(0)
@@ -219,7 +222,13 @@ QActor waiter context ctxtearoom {
   		solve( numavailabletables(N) ) 
 		ifSolved { [# Ntables = getCurSol("N").toString().toInt()  #] 
 			println("waiter | numavailabletables=$Ntables")
-		}	
+		}
+		
+		solve( tableavailable(N) ) 
+		ifSolved { [# CTABLE = getCurSol("N").toString().toInt()  #] 
+			println("waiter | tableavailable=$CTABLE")					 
+			solve( engageTable($CTABLE, $CCID ) ) 
+	 	}	
   		
   	}
   	Goto goToEntrance if [# Ntables > 0 #] else notifyClientToWait
@@ -229,62 +238,37 @@ QActor waiter context ctxtearoom {
 		println("Waiter | GOING to ENTRANCE door ")
 		forward client -m admission : admission(0, $CCID)
 		request waiterwalker -m moveForTask : moveForTask(entrancedoor, 1)
-		
-		solve(waiter(moving))
-		
+		solve ( changeWaiterState(moving) )	
 	}
 	 Transition t0		whenReply	movementDone -> deployClientEntrance
 	  					whenReply	walkbreak	 -> error
 	
 	State deployClientEntrance {		
 		forward client -m 	waiterAtEntrance 	: waiterAtEntrance(ok)
-		[# 
-			if(T1 == 1)
-			{
-				CTABLE = 1
-				T1 = 0 
-			}
-			else {
-				CTABLE = 2
-				T2 = 0
-			} #
-		]
 		
 		println("Waiter | DEPLOYING client $CCID to table $CTABLE")
 		
 		request waiterwalker -m moveForTask : moveForTask(teatable, $CTABLE)
-		solve(waiter(moving))
 	} 	
 	 Transition t0		whenReply	movementDone -> confirmClientArrival
 	  					whenReply	walkbreak	 -> error	
-
-	State confirmClientArrival {
-		println("Waiter | SENDING CONFIRMATION to client $CCID: arrived at table $CTABLE")
-		
-		forward client -m arrived	: arrived($CTABLE)
-	} Goto listening
 
 	State deployClientExit {
 		
 		println("Waiter | deploying client from table to exit door... ")
 		forward waiter -m tableDirty : tableDirty($CTABLE)
-		[#
-			if (CTABLE == 1)
-			{
-				T1 = 1
-			}
-			else
-			{
-				T2 = 1
-			}
-			#
-		]
+
 		request waiterwalker -m moveForTask : moveForTask(exitdoor, 1)
-		solve(waiter(moving))
 			
 	} 	
 	 Transition t0		whenReply	movementDone -> confirmClientArrival
 	  					whenReply	walkbreak	 -> error	
+	  					
+	State confirmClientArrival {
+		println("Waiter | SENDING CONFIRMATION to client $CCID: arrived at table $CTABLE")
+		
+		forward client -m arrived	: arrived($CTABLE)
+	} Goto listening
 	
 	State notifyClientToWait {
 		println("Waiter | notifying client has to wait... ")
@@ -298,7 +282,7 @@ QActor waiter context ctxtearoom {
 				CCID = payloadArg(1).toString() #]
 		}
 		request waiterwalker -m moveForTask : moveForTask(teatable, $CTABLE)
-		solve(waiter(moving))
+		solve ( changeWaiterState(moving) )	
 		
 	}
 	 Transition t0		whenReply	movementDone -> atTableForRequest
@@ -322,7 +306,7 @@ QActor waiter context ctxtearoom {
 		}
 		println("Waiter | going to table for CLEANING $CTABLE... ")
 		request waiterwalker -m moveForTask : moveForTask(teatable, $CTABLE)
-		solve(waiter(moving))	
+		solve ( changeWaiterState(moving) )		
 	}
 	Transition t0		whenReply	movementDone -> atTableToClean
 	  					whenReply	walkbreak	 -> error
@@ -331,6 +315,7 @@ QActor waiter context ctxtearoom {
 		
 		println("Waiter | cleaning table $CTABLE... ")
 		delay 5000
+		solve( cleanTable($CTABLE) )
 	}
 	Goto listening
 
@@ -343,7 +328,7 @@ QActor waiter context ctxtearoom {
 		
 		println("Waiter | going to barman... ")
 		request waiterwalker -m moveForTask : moveForTask(barman, 1)
-		solve(waiter(moving))
+		solve ( changeWaiterState(moving) )	
 	}
 	Transition t0 		whenReply	movementDone -> bringDrinkToClient
 	  					whenReply	walkbreak	 -> error	

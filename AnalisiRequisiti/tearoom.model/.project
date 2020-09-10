@@ -26,7 +26,7 @@
 		<link>
 			<name>kotlin_bin</name>
 			<type>2</type>
-			<locationURI>org.jetbrains.kotlin.core.filesystem:/tearoom.requirements/kotlin_bin</locationURI>
+			<locationURI>org.jetbrains.kotlin.core.filesystem:/tearoom.model/kotlin_bin</locationURI>
 		</link>
 	</linkedResources>
 	<filteredResources/>

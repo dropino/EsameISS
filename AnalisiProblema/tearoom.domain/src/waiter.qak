@@ -98,7 +98,7 @@ QActor client context ctxtearoom{
 			println("Client $MyCID | waiting in the hall")			
 		}
 		Transition t0 	whenTime 20000  			-> end
-						whenMsg	 waiterAtEntrance 	-> beingEscorted
+						whenMsg	 waiterAtEntrance 	-> beingEscorted 
 		
 		State beingEscorted {
 			println("Client $MyCID | being escorted to the table")
@@ -473,7 +473,7 @@ QActor waiterwalker context ctxtearoom {
 				#]
 
 			println("waiterwalker | MOVING to $TASK ($XT,$YT)")
-			run itunibo.planner.plannerUtil.planForGoal("$XT","$YT") 
+			run itunibo.planner.plannerUtil.planForGoal("$XT","$YT")  
 		}
 	}
 	Goto doMovement if [# itunibo.planner.plannerUtil.existActions() #] else noPlan

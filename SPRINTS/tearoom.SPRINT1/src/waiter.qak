@@ -61,7 +61,7 @@ QActor client context ctxtearoom {
 	
 		State s0 initial{
 			println("Client | INIT")
-			[# MyTemp = (36..37).random() #] 
+			[# MyTemp = (36..37).random() #]
 		}
 		Goto outside
 		
@@ -71,7 +71,7 @@ QActor client context ctxtearoom {
 			
 			request smartbell -m ringBell: ringBell($MyTemp) //temperature of the client		
 		}
-		Transition t0 whenReply tempStatus 			-> evalTemperature
+		Transition t0 whenReply tempStatus -> evalTemperature
 		
 		State evalTemperature {
 			onMsg ( tempStatus : tempStatus(STATUS, CID)){
@@ -177,13 +177,14 @@ QActor waiter context ctxtearoom {
 		delay 3000 		  
  	}	
   	Transition t0 whenEvent walkerstarted -> listening
-  	
+  	 
   	  	State listening {
 		[# 	
 			CCID 	= "" 
 			CTABLE 	= 0
 			#]
  		println("Waiter | listening... ")
+ 		updateResource [#"listening"#]
 	}
 	  Transition t0  	whenTime 	5000	 	 	-> goHome
 	  					whenMsg 	clientID  	 	-> handleClientEntranceRequest
@@ -238,12 +239,13 @@ QActor waiter context ctxtearoom {
 		println("Waiter | GOING to ENTRANCE door ")
 		forward client -m admission : admission(0, $CCID)
 		request waiterwalker -m moveForTask : moveForTask(entrancedoor, 1)
-		solve ( changeWaiterState(moving) )	
+		solve ( changeWaiterState(moving) )			
 	}
 	 Transition t0		whenReply	movementDone -> deployClientEntrance
 	  					whenReply	walkbreak	 -> error
 	
 	State deployClientEntrance {		
+		updateResource[# "waiter_arrived" #]
 		forward client -m 	waiterAtEntrance 	: waiterAtEntrance(ok)
 		
 		println("Waiter | DEPLOYING client $CCID to table $CTABLE")
@@ -259,12 +261,14 @@ QActor waiter context ctxtearoom {
 		forward waiter -m tableDirty : tableDirty($CTABLE)
 
 		request waiterwalker -m moveForTask : moveForTask(exitdoor, 1)
-			
+		
 	} 	
 	 Transition t0		whenReply	movementDone -> confirmClientArrival
 	  					whenReply	walkbreak	 -> error	
 	  					
 	State confirmClientArrival {
+		updateResource[# "waiter_rdy_leave" #] // stato usato per deploy client exit
+		
 		println("Waiter | SENDING CONFIRMATION to client $CCID: arrived at table $CTABLE")
 		
 		forward client -m arrived	: arrived($CTABLE)
@@ -334,6 +338,7 @@ QActor waiter context ctxtearoom {
 	  					whenReply	walkbreak	 -> error	
 	
 	State bringDrinkToClient {
+		updateResource[# "waiter_rdy_getDrink" #]
 		println("Waiter | taking tea... ")
 		println("Waiter | going to client table $CTABLE... ")
 
@@ -344,6 +349,7 @@ QActor waiter context ctxtearoom {
 			
 	State leaveDrinkAtTable {
 		println("Waiter | giving the client the tea")
+		updateResource[# "waiter_rdy_bringDrink" #]
 		
 		forward client -m deliver : deliver(tea)
 	}

@@ -8,7 +8,7 @@ Event    walkerstarted   	: walkerstarted(X)
 
 Request  moveForTask 		: moveForTask(TASK, N)
 Reply    movementDone   	: movementDone(OK)
-Reply	 walkbreak  		: walkbreak(X,Y)  
+Reply	 walkbreak  		: walkbreak(X,Y)
 
 //Waiter-itself
 Dispatch rest				: rest(V)

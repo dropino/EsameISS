@@ -89,7 +89,7 @@ sourceSets {
     test.java.srcDirs += 'test'		//test is specific
 }
 
-mainClassName = 'it.unibo.ctxwalker.MainWalkerKt'
+mainClassName = 'it.unibo.MainCtxwalkerKt'
 
 jar {
     println("executing jar")

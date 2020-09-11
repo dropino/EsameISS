@@ -9,7 +9,7 @@ Reply	 walkbreak  	: walkbreak(X,Y)
 Dispatch cmd       : cmd(MOVE)
 Request step       : step( TIME )	
 Reply   stepdone   : stepdone(V)  
-Reply   stepfail   : stepfail(DURATION, CAUSE)
+Reply   stepfail   : stepfail(DURATION, CAUSE)  
 
 Context ctxwalker		        ip [host="localhost"      port=8050]     
 Context ctxbasicrobot     		ip [host="192.168.1.121"   port=8020]    

@@ -1,21 +1,13 @@
 System tearoom
-mqttBroker "localhost" : 1883 eventTopic "unibo/mazzuca/basicrobot"   
 
 //MESSAGES
 
-//Waiter-Waiterwalker
-Event    walkerstarted   	: walkerstarted(X)
-
-Request  moveForTask 		: moveForTask(TASK, N)
-Reply    movementDone   	: movementDone(OK)
-Reply	 walkbreak  		: walkbreak(X,Y)  
-
 //Waiter-itself
-Dispatch rest				: rest(V)
+Dispatch rest				: rest(V) 
 
 //ENTERING THE TEAROOM
 //client - smartbell
-Request  ringBell 			: ringBell(TEMP)
+Request  ringBell 			: ringBell(TEMP) 
 Reply 	 tempStatus 		: tempStatus(STATUS, CID) 
 
 //smartbell - waiter
@@ -42,14 +34,17 @@ Dispatch orderReady			: orderReady(TEA, TABLE)
 //TABLE DIRTY NOTIFICATION
 Dispatch tableDirty 		: tableDirty(N)
 
-
+//WAITER-WAITERWALKER INTERACTION
+Event    walkerstarted   	: walkerstarted(X)
+	
+Request  moveForTask 		: moveForTask(TASK, N)
+Reply    movementDone   	: movementDone(OK)
+Reply	 walkbreak  		: walkbreak(X,Y) 
 
 Context ctxtearoom ip [host="localhost" port=8072] 
 
-CodedQActor waiterwalker context ctxtearoom className "it.unibo.waiterwalker.Waiterwalker"
-
-QActor client context ctxtearoom {
-	[#
+QActor client context ctxtearoom{
+[#
 		var WaitTime 			= 0
 		var AdmittanceStatus 	= 0 
 		
@@ -103,7 +98,7 @@ QActor client context ctxtearoom {
 			println("Client $MyCID | waiting in the hall")			
 		}
 		Transition t0 	whenTime 20000  			-> end
-						whenMsg	 waiterAtEntrance 	-> beingEscorted
+						whenMsg	 waiterAtEntrance 	-> beingEscorted 
 		
 		State beingEscorted {
 			println("Client $MyCID | being escorted to the table")
@@ -156,29 +151,30 @@ QActor client context ctxtearoom {
 			
 }
 
+
+
 QActor waiter context ctxtearoom {
 	
 	[#
 		var CCID 			= ""	
 		var CTABLE 			= 0
-		var BILL			= 5
+		var CST				= "atHome"
 		
-		var Ntables			= 0
+		var T1 = 1
+		var T2 = 1
 		
-		var CurST			= ""
+		val BILL			= 5
 	#]
 	
 	State s0 initial {	
+		discardMsg Off
+		delay 1000 	
 		println("Waiter | INIT ")
-		
- 		solve( consult("tearoomkb.pl")	 )
- 		
- 		discardMsg Off
-		delay 3000 		  
- 	}	
-  	Transition t0 whenEvent walkerstarted -> listening
-  	 
-  	  	State listening {
+			  
+ 	}	 
+  	Transition t0 		whenEvent walkerstarted -> listening
+  	
+  	State listening {
 		[# 	
 			CCID 	= "" 
 			CTABLE 	= 0
@@ -195,14 +191,9 @@ QActor waiter context ctxtearoom {
   	
   	State goHome {
   		
-  		solve( waiter(ST) ) 
-		ifSolved { [# CurST = getCurSol("ST").toString()  #] 
-			println("waiter | current waiter state: $CurST")
-		}
-  		
-  		if [# CurST != "atHome" #] {  			
+  		if [# CST != "atHome" #] {  			
  			request waiterwalker -m moveForTask : moveForTask(home, 1)
- 			solve ( changeWaiterState(atHome) )	
+ 			[# CST = "atHome" #]
   		} 
 		else{ 
 			forward waiter -m rest : rest(0)
@@ -211,61 +202,61 @@ QActor waiter context ctxtearoom {
 	  Transition t0 	whenReply	movementDone 	-> listening
 	  	  				whenReply	walkbreak	 	-> error
 	  					whenMsg		rest	 		-> listening
+  					
   	
   	State handleClientEntranceRequest {
-  		println("Waiter | handling client request... ")  		
+  		println("Waiter | handling client request... ")
+  		
   		onMsg(clientID : clientID(CID)){
   			[#
   				CCID = payloadArg(0).toString()
   			#]
   		}
-  		
-  		solve( numavailabletables(N) ) 
-		ifSolved { [# Ntables = getCurSol("N").toString().toInt()  #] 
-			println("waiter | numavailabletables=$Ntables")
-		}
-		
-		solve( tableavailable(N) ) 
-		ifSolved { [# CTABLE = getCurSol("N").toString().toInt()  #] 
-			println("waiter | tableavailable=$CTABLE")					 
-			solve( engageTable($CTABLE, $CCID ) ) 
-	 	}	
-  		
-  	}
-  	Goto goToEntrance if [# Ntables > 0 #] else notifyClientToWait
-
-	State goToEntrance {
+   	}
+  	Goto goToEntrance if [# T1 == 1 || T2 == 1 #] else notifyClientToWait
+  	
+  	State goToEntrance {
 		
 		println("Waiter | GOING to ENTRANCE door ")
 		forward client -m admission : admission(0, $CCID)
 		request waiterwalker -m moveForTask : moveForTask(entrancedoor, 1)
-		solve ( changeWaiterState(moving) )			
+		[# CST = "moving" #]
 	}
 	 Transition t0		whenReply	movementDone -> deployClientEntrance
 	  					whenReply	walkbreak	 -> error
-	
-	State deployClientEntrance {		
-		updateResource[# "waiter_arrived" #]
+
+	State deployClientEntrance {
+
+		[# 
+			if(T1 == 1)
+			{
+				CTABLE = 1
+				T1 = 0 
+			}
+			else {
+				CTABLE = 2
+				T2 = 0
+			} #
+		]
+		println("Waiter | DEPLOYING client from entrance door to table $CTABLE ")
 		forward client -m 	waiterAtEntrance 	: waiterAtEntrance(ok)
-		
-		println("Waiter | DEPLOYING client $CCID to table $CTABLE")
-		
-		request waiterwalker -m moveForTask : moveForTask(teatable, $CTABLE)
+		request waiterwalker -m moveForTask 	: moveForTask(teatable, $CTABLE)
 	} 	
-	 Transition t0		whenReply	movementDone -> confirmClientArrival
-	  					whenReply	walkbreak	 -> error	
+	Transition t0		whenReply	movementDone -> confirmClientArrival
+	  					whenReply	walkbreak	 -> error
 
 	State deployClientExit {
+		println("Waiter | SINGALING TO MYSELF that the table $CTABLE is dirty. ")
 		
-		println("Waiter | deploying client from table to exit door... ")
 		forward waiter -m tableDirty : tableDirty($CTABLE)
 
+		println("Waiter | DEPLOYING client from table $CTABLE TO EXIT door ")
 		request waiterwalker -m moveForTask : moveForTask(exitdoor, 1)
 		
 	} 	
-	 Transition t0		whenReply	movementDone -> confirmClientArrival
-	  					whenReply	walkbreak	 -> error	
-	  					
+	Transition t0		whenReply	movementDone -> confirmClientArrival
+	  					whenReply	walkbreak	 -> error
+	
 	State confirmClientArrival {
 		updateResource[# "waiter_rdy_leave" #] // stato usato per deploy client exit
 		
@@ -274,24 +265,25 @@ QActor waiter context ctxtearoom {
 		forward client -m arrived	: arrived($CTABLE)
 	} Goto listening
 	
+	
 	State notifyClientToWait {
 		println("Waiter | notifying client has to wait... ")
-		forward client -m admission : admission(10000, $CCID) 
+		forward client -m admission : admission(1000, $CCID)
 	}
 	Goto listening
-						
+	
 	State answerClientRequest {
 		onMsg(clientRequest : clientRequest(TABLE, CID)) {
 			[#  CTABLE = payloadArg(0).toString().toInt()
 				CCID = payloadArg(1).toString() #]
 		}
 		request waiterwalker -m moveForTask : moveForTask(teatable, $CTABLE)
-		solve ( changeWaiterState(moving) )	
+		[# CST = "moving" #]
 		
 	}
 	 Transition t0		whenReply	movementDone -> atTableForRequest
-	  					whenReply	walkbreak	 -> error	
-	
+	  					whenReply	walkbreak	 -> error
+	  					
 	State atTableForRequest {
 		request client -m getRequest : getRequest($CTABLE, $CCID, $BILL)
 	}
@@ -310,7 +302,7 @@ QActor waiter context ctxtearoom {
 		}
 		println("Waiter | going to table for CLEANING $CTABLE... ")
 		request waiterwalker -m moveForTask : moveForTask(teatable, $CTABLE)
-		solve ( changeWaiterState(moving) )		
+		[# CST = "moving" #]	
 	}
 	Transition t0		whenReply	movementDone -> atTableToClean
 	  					whenReply	walkbreak	 -> error
@@ -319,10 +311,18 @@ QActor waiter context ctxtearoom {
 		
 		println("Waiter | cleaning table $CTABLE... ")
 		delay 5000
-		solve( cleanTable($CTABLE) )
+		[# 
+			if (CTABLE == 1)
+			{
+				T1 = 1
+			}
+			else
+			{
+				T2 = 1
+			} 
+		#]
 	}
 	Goto listening
-
 	
 	State getDrink {
 		
@@ -332,7 +332,7 @@ QActor waiter context ctxtearoom {
 		
 		println("Waiter | going to barman... ")
 		request waiterwalker -m moveForTask : moveForTask(barman, 1)
-		solve ( changeWaiterState(moving) )	
+		[# CST = "moving" #]
 	}
 	Transition t0 		whenReply	movementDone -> bringDrinkToClient
 	  					whenReply	walkbreak	 -> error	
@@ -368,7 +368,7 @@ QActor smartbell context ctxtearoom {
  
 	State s0 initial {
 		discardMsg Off
-		println("SmartBell | INIT")
+		println("SmartBell | Init")
 	}
 	Goto waitForClient
 	
@@ -385,16 +385,16 @@ QActor smartbell context ctxtearoom {
 			
 		}
 	}
-	Goto handleEventTempOK if [# Temp < 37.5 && Temp >= 35.5 #] else handleEventTempKO
+	Goto handleDispatchTempOK if [# Temp < 37.5 && Temp >= 35.5 #] else handleDispatchTempKO
 	
-	State handleEventTempKO {
+	State handleDispatchTempKO {
 		println("  SmartBell | Temp is over  ")
 		println("  SmartBell | Client Discard  ")
 		replyTo ringBell with tempStatus : tempStatus (0, $CID)
 	}
 	Goto waitForClient
 	
-	State handleEventTempOK {
+	State handleDispatchTempOK {
 		println("  SmartBell | Temp is OK  ")
 		println("  SmartBell | Client Accepted  ")
 		[# CID = (1..100).random() #]
@@ -412,7 +412,7 @@ QActor barman context ctxtearoom {
 	
 	State s0 initial {
 		discardMsg Off  
-		println("  Barman | INIT  ")
+		println("  Barman | Init  ")
 	}
 	Goto waitForNewOrder
 
@@ -433,4 +433,69 @@ QActor barman context ctxtearoom {
 		forward waiter -m orderReady : orderReady(tea, $CTABLE)
 	}
 	Goto waitForNewOrder
+}
+
+QActor waiterwalker context ctxtearoom {
+	[#
+		var XT = "0"
+		var YT = "0"
+		var CurrentPlannedMove 	= ""
+		var TASK				= "" 
+		var N					= ""
+	 
+	 	val tasksMap			= mapOf("home" to Pair(0,0), "barman" to Pair(4, 0), "entrancedoor" to Pair(1, 4), "exitdoor" to Pair(5,4), "teatable" to Pair(2,2))
+	
+	#]
+
+	State s0 initial {
+		discardMsg Off  
+		println("  Waiterwalker | INIT  ")
+		emit  walkerstarted : walkerstarted(ok)
+		
+		run itunibo.planner.plannerUtil.initAI()
+ 		
+ 		run itunibo.planner.plannerUtil.loadRoomMap( "teaRoomExplored" ) 		
+ 		run itunibo.planner.plannerUtil.showCurrentRobotState()	
+	}
+	Goto waitForComand
+
+	State waitForComand {
+		println("  Waiterwalker | Waiting for movement request ")
+	}
+	Transition t0 whenRequest moveForTask -> planMovement
+	
+	State planMovement {
+		onMsg( moveForTask : moveForTask(TASK, N) ){
+				[# 
+					TASK = payloadArg(0).toString()
+					XT = tasksMap.getValue("$TASK").first.toString()
+					YT = tasksMap.getValue("$TASK").second.toString()
+				#]
+
+			println("waiterwalker | MOVING to $TASK ($XT,$YT)")
+			run itunibo.planner.plannerUtil.planForGoal("$XT","$YT")  
+		}
+	}
+	Goto doMovement if [# itunibo.planner.plannerUtil.existActions() #] else noPlan
+	
+	State doMovement {
+		[#  CurrentPlannedMove = itunibo.planner.plannerUtil.getNextPlannedMove() #]
+		println("waiterwalker | executing movement $CurrentPlannedMove")
+		delay 1000
+		run itunibo.planner.plannerUtil.updateMap(  "$CurrentPlannedMove" )
+	}
+	Goto doMovement if [# CurrentPlannedMove.length > 0 #] else sendSuccessAnswer
+	
+	State sendSuccessAnswer{
+	     	println("waiterwalker | POINT ($XT,$YT) REACHED")
+	     	run itunibo.planner.plannerUtil.showCurrentRobotState()
+	     	replyTo moveForTask with movementDone : movementDone(OK) 					
+	}
+	Goto waitForComand
+	
+	State noPlan{
+		println("waiterwalker | NO PLAN FOUND for MOVING to ($XT,$YT)")
+		replyTo moveForTask with walkbreak : walkbreak( $XT,$YT )
+	}
+	Goto waitForComand  
 }

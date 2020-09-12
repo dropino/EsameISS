@@ -125,29 +125,33 @@ var mapGetDrink:String?    =
 				delay(1000L)
 				
 //				MsgUtil.sendMsg("client","clientRequest","ready(0)",waiter!!)
-		
+				
+				println("%%%--------------------TRY:")
+				MsgUtil.sendMsg(MsgUtil.buildDispatch("clientID", "smartbell", "waiter", "client"), waiter!!)
+				
+				
 				println("%%%  DESIRED MAP:")
 				println(entrance)
-		
-				println("%%%  ACTUAL MAP:")
-				println(plannerUtil.getMap().trim())
-		
-				Assert.assertEquals( entrance, plannerUtil.getMap().trim() )
-				
-				
-				
-				//WAITER GO TO ENTRANCEDOOR
-				delay(1000L)
-				
-//				MsgUtil.sendMsg("client","clientRequest","ready(0)",waiter!!)
-				
-				println("%%%  DESIRED MAP:")
-				println(mapConvoyEntrance)
-		
-				println("%%%  ACTUAL MAP:")
-				println(plannerUtil.getMap().trim())
-		
-				Assert.assertEquals( mapConvoyEntrance, plannerUtil.getMap().trim() )
+//		
+//				println("%%%  ACTUAL MAP:")
+//				println(plannerUtil.getMap().trim())
+//		
+//				Assert.assertEquals( entrance, plannerUtil.getMap().trim() )
+//				
+//				
+//				
+//				//WAITER GO TO ENTRANCEDOOR
+//				delay(1000L)
+//				
+////			MsgUtil.sendMsg("client","clientRequest","ready(0)",waiter!!)
+//				
+//				println("%%%  DESIRED MAP:")
+//				println(mapConvoyEntrance)
+//		
+//				println("%%%  ACTUAL MAP:")
+//				println(plannerUtil.getMap().trim())
+//		
+//				Assert.assertEquals( mapConvoyEntrance, plannerUtil.getMap().trim() )
 			}
 			
 		println("testWaiter BYE  ")			  

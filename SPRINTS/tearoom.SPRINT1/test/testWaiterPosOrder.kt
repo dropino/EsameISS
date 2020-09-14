@@ -30,7 +30,7 @@ class testWaiterPosOrder {
 
 	
 	
-var entrance:String?    =
+	var home:String?    =
 		"|r, 1, 1, 1, 1, 1, 1, X, " + "\n"+
 		 "|1, 1, 1, 1, 1, 1, 1, X, " + "\n"+
 		 "|1, 1, 1, 1, 1, 1, 1, X, " + "\n"+
@@ -38,10 +38,10 @@ var entrance:String?    =
 		 "|1, 1, 1, 1, 1, 1, 1, X, " + "\n"+
 		 "|X, X, X, X, X, X, X, X,".trim();
 	
-var mapGetDrink:String?    =
-		"|1, 1, 1, 1, 1, r, 1, X, " + "\n"+
+	var mapGetDrink:String?    =
+		"|1, 1, 1, 1, r, 1, 1, X, " + "\n"+
 		 "|1, 1, 1, 1, 1, 1, 1, X, " + "\n"+
-		 "|1, 1, 1, 1, 1, 1, 1, X, " + "\n"+
+		 "|1, 1, 0, 1, 1, 1, 1, X, " + "\n"+
 		 "|1, 1, X, 1, X, 1, 1, X, " + "\n"+
 		 "|1, 1, 1, 1, 1, 1, 1, X, " + "\n"+
 		 "|X, X, X, X, X, X, X, X,".trim();
@@ -59,13 +59,13 @@ var mapGetDrink:String?    =
 		 "|1, 1, 1, 1, 1, 1, 1, X, " + "\n"+
 		 "|1, 1, r, 1, 1, 1, 1, X, " + "\n"+
 		 "|1, 1, X, 1, X, 1, 1, X, " + "\n"+
-		 "|1, 1, 1, 1, 1, 1, 1, X, " + "\n"+
+		 "|1, 1, 1, 1, 1, 0, 1, X, " + "\n"+
 		 "|X, X, X, X, X, X, X, X,".trim();
 	
 	var mapOrder:String?    =
 		"|1, 1, 1, 1, 1, 1, 1, X, " + "\n"+
 		 "|1, 1, 1, 1, 1, 1, 1, X, " + "\n"+
-		 "|1, 1, r, 1, 1, 1, 1, X, " + "\n"+
+		 "|1, 1, 0, 1, 1, 1, 1, X, " + "\n"+
 		 "|1, 1, X, 1, X, 1, 1, X, " + "\n"+
 		 "|1, 1, 1, 1, 1, 1, 1, X, " + "\n"+
 		 "|X, X, X, X, X, X, X, X,".trim();
@@ -121,37 +121,110 @@ var mapGetDrink:String?    =
 				}
 				
 				
-				//RESETTING FOR THE NEXT INTERACTION (WAITER - BARMAN - CLIENT)
-				delay(1000L)
+//RESETTING FOR THE NEXT INTERACTION (WAITER - BARMAN - CLIENT)
 				
-//				MsgUtil.sendMsg("client","clientRequest","ready(0)",waiter!!)
+//				WAITER GO TO ENTRANCEDOOR	
+				delay(9100L)
+
+				println("%%%  DESIRED MAP:")
+				println(mapConvoyEntrance)
+		
+				println("%%%  ACTUAL MAP:")
+				println(plannerUtil.getMap().trim())
+		
+				Assert.assertEquals( mapConvoyEntrance, plannerUtil.getMap().trim() )
 				
-				println("%%%--------------------TRY:")
-				MsgUtil.sendMsg(MsgUtil.buildDispatch("clientID", "smartbell", "waiter", "client"), waiter!!)
 				
+						
+//				WAITER GO TO TABLE					
+				delay(5000L)
 				
 				println("%%%  DESIRED MAP:")
-				println(entrance)
-//		
-//				println("%%%  ACTUAL MAP:")
-//				println(plannerUtil.getMap().trim())
-//		
-//				Assert.assertEquals( entrance, plannerUtil.getMap().trim() )
-//				
-//				
-//				
-//				//WAITER GO TO ENTRANCEDOOR
-//				delay(1000L)
-//				
-////			MsgUtil.sendMsg("client","clientRequest","ready(0)",waiter!!)
-//				
-//				println("%%%  DESIRED MAP:")
-//				println(mapConvoyEntrance)
-//		
-//				println("%%%  ACTUAL MAP:")
-//				println(plannerUtil.getMap().trim())
-//		
-//				Assert.assertEquals( mapConvoyEntrance, plannerUtil.getMap().trim() )
+				println(mapOrder)
+		
+				println("%%%  ACTUAL MAP:")
+				println(plannerUtil.getMap().trim())
+		
+				Assert.assertEquals( mapOrder, plannerUtil.getMap().trim() )
+				
+				
+				
+//				WAITER GO TO BARMAN TO GET DRINK	
+				delay(7575L)
+
+				println("%%%  DESIRED MAP:")
+				println(mapGetDrink)
+		
+				println("%%%  ACTUAL MAP:")
+				println(plannerUtil.getMap().trim())
+		
+				Assert.assertEquals( mapGetDrink, plannerUtil.getMap().trim() )
+				
+				
+				
+//				WAITER GO TO TABLE TO BRING DRINK	
+				delay(7100L)
+
+				println("%%%  DESIRED MAP:")
+				println(mapBringDrink)
+		
+				println("%%%  ACTUAL MAP:")
+				println(plannerUtil.getMap().trim())
+		
+				Assert.assertEquals( mapBringDrink, plannerUtil.getMap().trim() )
+				
+				
+				
+//				WAITER GO HOME AND WAIT A TASK		
+				delay(7300L)
+
+				println("%%%  DESIRED MAP:")
+				println(home)
+		
+				println("%%%  ACTUAL MAP:")
+				println(plannerUtil.getMap().trim())
+		
+				Assert.assertEquals( home, plannerUtil.getMap().trim() )
+				
+				
+				
+//				WAITER GO TO TABLE TO TAKE PAYMENT	
+				delay(6800L)
+
+				println("%%%  DESIRED MAP:")
+				println(mapPay)
+		
+				println("%%%  ACTUAL MAP:")
+				println(plannerUtil.getMap().trim())
+		
+				Assert.assertEquals( mapPay, plannerUtil.getMap().trim() )
+				
+				
+				
+//				WAITER GO TO EXITDOOR	
+				delay(6700L)
+
+				println("%%%  DESIRED MAP:")
+				println(mapConvoyExit)
+		
+				println("%%%  ACTUAL MAP:")
+				println(plannerUtil.getMap().trim())
+		
+				Assert.assertEquals( mapConvoyExit, plannerUtil.getMap().trim() )
+				
+				
+				
+//				WAITER GO HOME AND WAIT A TASK		
+				delay(7300L)
+
+				println("%%%  DESIRED MAP:")
+				println(home)
+		
+				println("%%%  ACTUAL MAP:")
+				println(plannerUtil.getMap().trim())
+		
+				Assert.assertEquals( home, plannerUtil.getMap().trim() )
+				
 			}
 			
 		println("testWaiter BYE  ")			  

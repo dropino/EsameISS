@@ -4,12 +4,13 @@ import org.junit.Test
 import org.junit.Before
 import org.junit.After
 import org.junit.Assert.assertTrue
-
+import kotlinx.coroutines.runBlocking
 import it.unibo.kactor.ActorBasic
 import it.unibo.kactor.MsgUtil
 import org.junit.Assert
 import itunibo.planner.plannerUtil
 import kotlinx.coroutines.delay
+
 
 class TestWaiterPosition {
 	var waiter             : ActorBasic? = null
@@ -97,8 +98,9 @@ class TestWaiterPosition {
 	@kotlinx.coroutines.ObsoleteCoroutinesApi
 	@kotlinx.coroutines.ExperimentalCoroutinesApi
 	@Test
-	suspend fun testPosConvoyEntrance(){
-		println("%%%  testPosConvoyEntrance waiter ")
+	fun testPosConvoyEntrance(){
+		runBlocking {
+			println("%%%  testPosConvoyEntrance waiter ")
 		waiter = it.unibo.kactor.sysUtil.getActor("waiter")
 		
 		MsgUtil.sendMsg("client","clientRequest","ready(0)",waiter!!)
@@ -114,13 +116,16 @@ class TestWaiterPosition {
 		println(plannerUtil.getMap().trim())
 		
 		Assert.assertEquals( mapConvoyEntrance, plannerUtil.getMap().trim() )
+		}
+		
 	}
 	
 	
 	@kotlinx.coroutines.ObsoleteCoroutinesApi
 	@kotlinx.coroutines.ExperimentalCoroutinesApi
 	@Test
-	suspend fun testPosOrder(){
+	fun testPosOrder(){
+		runBlocking{
 		MsgUtil.sendMsg("client","clientRequest","ready(0)",waiter!!)
 		
 		while(checkResource( "waiter_rdy_request") == false){
@@ -134,14 +139,17 @@ class TestWaiterPosition {
 		println(plannerUtil.getMap().trim())
 		
 		Assert.assertEquals( mapOrder, plannerUtil.getMap().trim() )
+		}
+		
 	}
 	
 	
 	@kotlinx.coroutines.ObsoleteCoroutinesApi
 	@kotlinx.coroutines.ExperimentalCoroutinesApi
 	@Test
-	suspend fun testPosGetDrink(){		 			
-		MsgUtil.sendMsg("client","order","ready(0)",waiter!!)
+	fun testPosGetDrink(){
+		runBlocking {
+			MsgUtil.sendMsg("client","order","ready(0)",waiter!!)
 		
 		delay(3000)
 		
@@ -158,14 +166,17 @@ class TestWaiterPosition {
 		println(plannerUtil.getMap().trim())
 		
 		Assert.assertEquals( mapGetDrink, plannerUtil.getMap().trim() )
+		}		 			
+		
 	}
 	
 	
 	@kotlinx.coroutines.ObsoleteCoroutinesApi
 	@kotlinx.coroutines.ExperimentalCoroutinesApi
 	@Test
-	suspend fun testPosBringDrink(){		 					
-		while(checkResource( "waiter_rdy_bringDrink") == false){
+	fun testPosBringDrink(){
+		runBlocking {
+			while(checkResource( "waiter_rdy_bringDrink") == false){
 			delay(10)
 		}
 		
@@ -176,13 +187,16 @@ class TestWaiterPosition {
 		println(plannerUtil.getMap().trim())
 		
 		Assert.assertEquals( mapBringDrink, plannerUtil.getMap().trim() )
+		}		 					
+		
 	}
 
 	@kotlinx.coroutines.ObsoleteCoroutinesApi
 	@kotlinx.coroutines.ExperimentalCoroutinesApi
 	@Test
-	suspend fun testPosPay(){
-		MsgUtil.sendMsg("client","clientRequest","ready(0)",waiter!!)
+	fun testPosPay(){
+		runBlocking {
+			MsgUtil.sendMsg("client","clientRequest","ready(0)",waiter!!)
 		
 		while(checkResource( "waiter_rdy_bringDrink") == false){
 			delay(10)
@@ -195,13 +209,16 @@ class TestWaiterPosition {
 		println(plannerUtil.getMap().trim())
 		
 		Assert.assertEquals( mapPay, plannerUtil.getMap().trim() )
+		}
+		
 	}
 	
 	@kotlinx.coroutines.ObsoleteCoroutinesApi
 	@kotlinx.coroutines.ExperimentalCoroutinesApi
 	@Test
-	suspend fun testPosConvoyExit(){
-		MsgUtil.sendMsg("client","paid","ready(0)",waiter!!)
+	fun testPosConvoyExit(){
+		runBlocking {
+			MsgUtil.sendMsg("client","paid","ready(0)",waiter!!)
 		
 		while(checkResource( "waiter_rdy_leave") == false){
 			delay(10)
@@ -214,6 +231,8 @@ class TestWaiterPosition {
 		println(plannerUtil.getMap().trim())
 		
 		Assert.assertEquals( mapConvoyExit, plannerUtil.getMap().trim() )		
+		}
+		
 	}
 
 }

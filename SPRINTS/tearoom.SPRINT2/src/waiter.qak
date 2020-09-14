@@ -1,5 +1,5 @@
 System tearoom
-mqttBroker "localhost" : 1883 eventTopic "unibo/mazzuca/basicrobot"   
+mqttBroker "localhost" : 1883 eventTopic "unibo/polar"   
 
 //MESSAGES
 
@@ -171,8 +171,9 @@ QActor waiter context ctxtearoom {
 	State s0 initial {	
 		println("Waiter | INIT ")
 		
- 		solve( consult("tearoomkb.pl")	 )
- 		
+ 		solve( consult("tearoomkb.pl")	 )			
+ 		println("Waiter | solved tearoomkb.pl ")
+
  		discardMsg Off
 		delay 3000 		  
  	}	

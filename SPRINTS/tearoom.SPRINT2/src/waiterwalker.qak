@@ -12,7 +12,7 @@ Reply   stepdone   : stepdone(V)
 Reply   stepfail   : stepfail(DURATION, CAUSE)   
 
 Context ctxwalker		        ip [host="localhost"      port=8050]     
-Context ctxbasicrobot     		ip [host="192.168.1.121"   port=8020]    
+Context ctxbasicrobot     		ip [host="localhost"	  port=8020]    
 
 ExternalQActor basicrobot    context ctxbasicrobot
  
@@ -50,27 +50,6 @@ QActor waiterwalker context ctxwalker {
 		println("waiterwalker | STARTS")
 		
 	}	
-//	 Goto someQuery  
-// 	
-// 	 
-// 	State someQuery{
-//  		println("waiter | sending some query ... ")
-// 			solve( teatable(1,ST)  )  
-//			ifSolved { [# val S = getCurSol("ST").toString()   #] 
-//				println("waiter | teatable 1 state=$S") 
-// 			}					
-//			solve( numavailabletables(N) ) 
-//			ifSolved { [# val Ntables = getCurSol("N").toString().toInt()  #] 
-//				println("waiter | numavailabletables=$Ntables")
-// 			}					
-//			solve( roomstate( V )  )   
-//			ifSolved { 
-//				[# val W = getCurSol("V").toString()   
-//				#] 
-//				println("waiter | $W  ") 				
-//			}
-//		println(" ------------- end of Queries ----------------  ")	
-//	}	
 	Goto waitCmd   
 	 
 	State waitCmd {	     

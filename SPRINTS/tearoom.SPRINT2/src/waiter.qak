@@ -1,5 +1,5 @@
 System tearoom
-mqttBroker "localhost" : 1883 eventTopic "unibo/mazzuca/basicrobot"   
+mqttBroker "localhost" : 1883 eventTopic "unibo/waiter"   
 
 //MESSAGES
 
@@ -14,147 +14,42 @@ Reply	 walkbreak  		: walkbreak(X,Y)
 Dispatch rest				: rest(V)
 
 //ENTERING THE TEAROOM
-//client - smartbell
+//simclient - smartbell
 Request  ringBell 			: ringBell(TEMP)
 Reply 	 tempStatus 		: tempStatus(STATUS, CID) 
 
 //smartbell - waiter
 Dispatch 	 clientID 		: clientID (CLIENTID)
 
-//client - Waiter
+//simclient - Waiter
 Dispatch admission 			: admission(MAXWAITTIME, CID)
 Dispatch waiterAtEntrance 	: waiterAtEntrance(OK)
 Dispatch arrived			: arrived(TABLE)
  
 //ORDERING
-//client-waiter
+//simclient-waiter
 Dispatch clientRequest		: clientRequest(TABLE,CID)
 
 Request  getRequest 		: getRequest(TABLE, CID, V)
 Reply    order 				: order(TEA) 
 Reply	 paid				: paid(MONEY)
 
+Dispatch deliver 			: deliver (TEA) 
+
 //waiter-barman
 Dispatch sendOrder 			: sendOrder(TEA, TABLE) 
-Dispatch deliver 			: deliver (TEA) 
 Dispatch orderReady			: orderReady(TEA, TABLE)
 
 //TABLE DIRTY NOTIFICATION
 Dispatch tableDirty 		: tableDirty(N)
 
 
-
-Context ctxtearoom ip [host="localhost" port=8072] 
+Context ctxclient	ip [host="localhost"	port=8071]
+Context ctxtearoom 	ip [host="localhost" 	port=8072] 
 
 CodedQActor waiterwalker context ctxtearoom className "it.unibo.waiterwalker.Waiterwalker"
 
-QActor client context ctxtearoom {
-	[#
-		var WaitTime 			= 0
-		var AdmittanceStatus 	= 0 
-		
-		var MyTemp 				= 0
-		var MyTable				= 0
-		var MyCID 				= ""
-		var ToPay 				= 0
-	#]
-	
-		State s0 initial{
-			println("Client | INIT")
-			[# MyTemp = (36..37).random() #]
-		}
-		Goto outside
-		
-		
-		State outside{
-			println("Client | ringing the bell")
-			
-			request smartbell -m ringBell: ringBell($MyTemp) //temperature of the client		
-		}
-		Transition t0 whenReply tempStatus -> evalTemperature
-		
-		State evalTemperature {
-			onMsg ( tempStatus : tempStatus(STATUS, CID)){
-				[# 
-					AdmittanceStatus = payloadArg(0).toString().toInt()
-					MyCID = payloadArg(1).toString()
-				#]
-				
-			}	
-			println("Client $MyCID | admittance status $AdmittanceStatus")
-				
-		}
-		Goto end if [# AdmittanceStatus == 0 #] else waitForWaiter
-		
-		State waitForWaiter {
-			println("Client $MyCID | waiting for the waiter to tell me if I can get in")
-		}
-		Transition t0 whenMsg admission 			-> evalAdmission
-		
-		State evalAdmission {			
-			onMsg ( admission : admission(WAITTIME, CID)){
-				[# WaitTime = payloadArg(0).toString().toInt()#]
-			}
-			println("Client $MyCID | the waiter told me to wait $WaitTime time")
-		}
-		Goto waitingInTheHall
-		
-		State waitingInTheHall{
-			println("Client $MyCID | waiting in the hall")			
-		}
-		Transition t0 	whenTime 20000  			-> end
-						whenMsg	 waiterAtEntrance 	-> beingEscorted
-		
-		State beingEscorted {
-			println("Client $MyCID | being escorted to the table")
-		}
-		Transition t0 	whenMsg arrived  			-> seated
-		
-		State seated {
-			onMsg ( arrived : arrived(TABLE)) {
-				[# MyTable = payloadArg(0).toString().toInt()#]
-			}
-			
-			println("Client $MyCID | my table is $MyTable")
-
-			forward waiter -m clientRequest : clientRequest($MyTable, $MyCID)
-		}
-		Transition t0	whenRequest getRequest 		-> ordering
-			
-			
-		State ordering{
-			println("Client $MyCID | ordering some tea")
-			delay 2000
-			replyTo getRequest with order: order(tea)
-		}
-		Transition t0 	whenMsg 	deliver 		-> drinkingTea
-				
-		
-		State drinkingTea{
-			println("Client $MyCID | drinking tea")
-			delay 10000
-			forward waiter -m clientRequest : clientRequest($MyTable, $MyCID)
-		}
-		Transition t0	whenRequest getRequest 		-> paying
-			
-				
-		State paying{
-			onMsg ( getRequest : getRequest(TABLE, CID, V)) {
-				[# ToPay = payloadArg(2).toString().toInt()#]
-			}
-			println("Client $MyCID | paying $ToPay euro") 
-			
-			delay 2000
-			replyTo getRequest with paid : paid($ToPay)
-		}
-		Transition t0 	whenMsg arrived				-> end	
-		
-		State end {
-			println("Client | escorted to the exit door and leaves")
-			terminate 0
-		}
-			
-}
+ExternalQActor simclient context ctxclient
 
 QActor waiter context ctxtearoom {
 	
@@ -213,7 +108,7 @@ QActor waiter context ctxtearoom {
 	  					whenMsg		rest	 		-> listening
   	
   	State handleClientEntranceRequest {
-  		println("Waiter | handling client request... ")  		
+  		println("Waiter | handling simclient request... ")  		
   		onMsg(clientID : clientID(CID)){
   			[#
   				CCID = payloadArg(0).toString()
@@ -237,7 +132,7 @@ QActor waiter context ctxtearoom {
 	State goToEntrance {
 		
 		println("Waiter | GOING to ENTRANCE door ")
-		forward client -m admission : admission(0, $CCID)
+		forward simclient -m admission : admission(0, $CCID)
 		request waiterwalker -m moveForTask : moveForTask(entrancedoor, 1)
 		solve ( changeWaiterState(moving) )			
 	}
@@ -246,9 +141,9 @@ QActor waiter context ctxtearoom {
 	
 	State deployClientEntrance {		
 		updateResource[# "waiter_arrived" #]
-		forward client -m 	waiterAtEntrance 	: waiterAtEntrance(ok)
+		forward simclient -m 	waiterAtEntrance 	: waiterAtEntrance(ok)
 		
-		println("Waiter | DEPLOYING client $CCID to table $CTABLE")
+		println("Waiter | DEPLOYING simclient $CCID to table $CTABLE")
 		
 		request waiterwalker -m moveForTask : moveForTask(teatable, $CTABLE)
 	} 	
@@ -257,7 +152,7 @@ QActor waiter context ctxtearoom {
 
 	State deployClientExit {
 		
-		println("Waiter | deploying client from table to exit door... ")
+		println("Waiter | deploying simclient from table to exit door... ")
 		forward waiter -m tableDirty : tableDirty($CTABLE)
 
 		request waiterwalker -m moveForTask : moveForTask(exitdoor, 1)
@@ -267,16 +162,16 @@ QActor waiter context ctxtearoom {
 	  					whenReply	walkbreak	 -> error	
 	  					
 	State confirmClientArrival {
-		updateResource[# "waiter_rdy_leave" #] // stato usato per deploy client exit
+		updateResource[# "waiter_rdy_leave" #] // stato usato per deploy simclient exit
 		
-		println("Waiter | SENDING CONFIRMATION to client $CCID: arrived at table $CTABLE")
+		println("Waiter | SENDING CONFIRMATION to simclient $CCID: arrived at table $CTABLE")
 		
-		forward client -m arrived	: arrived($CTABLE)
+		forward simclient -m arrived	: arrived($CTABLE)
 	} Goto listening
 	
 	State notifyClientToWait {
-		println("Waiter | notifying client has to wait... ")
-		forward client -m admission : admission(10000, $CCID) 
+		println("Waiter | notifying simclient has to wait... ")
+		forward simclient -m admission : admission(10000, $CCID) 
 	}
 	Goto listening
 						
@@ -293,7 +188,7 @@ QActor waiter context ctxtearoom {
 	  					whenReply	walkbreak	 -> error	
 	
 	State atTableForRequest {
-		request client -m getRequest : getRequest($CTABLE, $CCID, $BILL)
+		request simclient -m getRequest : getRequest($CTABLE, $CCID, $BILL)
 	}
 	Transition t0 		whenReply 	order 		-> transferOrder
 						whenReply 	paid 		-> deployClientExit
@@ -340,7 +235,7 @@ QActor waiter context ctxtearoom {
 	State bringDrinkToClient {
 		updateResource[# "waiter_rdy_getDrink" #]
 		println("Waiter | taking tea... ")
-		println("Waiter | going to client table $CTABLE... ")
+		println("Waiter | going to simclient table $CTABLE... ")
 
 		request waiterwalker -m moveForTask : moveForTask(teatable, $CTABLE)
 	}
@@ -348,10 +243,10 @@ QActor waiter context ctxtearoom {
 	  					whenReply	walkbreak	 -> error	
 			
 	State leaveDrinkAtTable {
-		println("Waiter | giving the client the tea")
+		println("Waiter | giving the simclient the tea")
 		updateResource[# "waiter_rdy_bringDrink" #]
 		
-		forward client -m deliver : deliver(tea)
+		forward simclient -m deliver : deliver(tea)
 	}
 	Goto listening
 	

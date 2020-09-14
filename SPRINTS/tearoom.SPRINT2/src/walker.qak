@@ -1,4 +1,4 @@
-System -trace domain 
+System -trace walker  
 
 Event    walkerstarted   : walkerstarted(X)
 	
@@ -6,8 +6,8 @@ Request  moveForTask 	: moveForTask(TASK, N)
 Reply    movementDone   : movementDone(OK)
 Reply	 walkbreak  	: walkbreak(X,Y)  
 
-Dispatch cmd       : cmd(MOVE)
-Request step       : step( TIME )	
+Dispatch cmd       : cmd(MOVE) 
+Request step       : step( TIME )	 
 Reply   stepdone   : stepdone(V)  
 Reply   stepfail   : stepfail(DURATION, CAUSE)   
 
@@ -15,8 +15,8 @@ Request	doPlan : doPlan(X,Y)
 
 Reply walkerError : walkerError( $XT,$YT )
 
-Context ctxwalker		        ip [host="localhost"      port=8050]     
-Context ctxbasicrobot     		ip [host="192.168.1.121"   port=8020]    
+Context ctxwalker		        ip [host="localhost"   port=8050]     
+Context ctxbasicrobot     		ip [host="localhost"   port=8020]    //"192.168.1.121"
 
 ExternalQActor basicrobot    context ctxbasicrobot
 
@@ -39,7 +39,6 @@ ExternalQActor basicrobot    context ctxbasicrobot
 		
 	State s0 initial {	     	
 		run itunibo.planner.plannerUtil.initAI()
-		solve( consult("waiterwalkerkb.pl")	 )
 		
 		run itunibo.planner.plannerUtil.loadRoomMap( inmapname ) 		
 		run itunibo.planner.plannerUtil.showCurrentRobotState()		

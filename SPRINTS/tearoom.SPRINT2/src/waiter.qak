@@ -4,7 +4,7 @@ mqttBroker "localhost" : 1883 eventTopic "unibo/waiter"
 //MESSAGES
 
 //Waiter-Waiterwalker
-Event    walkerstarted   	: walkerstarted(X)
+Event    waiterwalkerstarted   	: waiterwalkerstarted(X)
 
 Request  moveForTask 		: moveForTask(TASK, N)
 Reply    movementDone   	: movementDone(OK)
@@ -72,7 +72,7 @@ QActor waiter context ctxtearoom {
  		discardMsg Off
 		delay 3000 		  
  	}	
-  	Transition t0 whenEvent walkerstarted -> listening
+  	Transition t0 whenEvent waiterwalkerstarted -> listening
   	 
   	  	State listening {
 		[# 	

@@ -1,4 +1,4 @@
-System client
+System client 
 //ENTERING THE TEAROOM
 //client - smartbell
 Request  ringBell 			: ringBell(TEMP)

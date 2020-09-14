@@ -1,37 +1,42 @@
 System -trace domain 
 
-Event    walkerstarted   : walkerstarted(X)
+//Event    walkerstarted   : walkerstarted(X)
 	
 Request  moveForTask 	: moveForTask(TASK, N)
 Reply    movementDone   : movementDone(OK)
 Reply	 walkbreak  	: walkbreak(X,Y)  
 
-Dispatch cmd       : cmd(MOVE)
-Request step       : step( TIME )	
-Reply   stepdone   : stepdone(V)  
-Reply   stepfail   : stepfail(DURATION, CAUSE)   
+//Dispatch cmd       : cmd(MOVE)
+//Request step       : step( TIME )	
+//Reply   stepdone   : stepdone(V)  
+//Reply   stepfail   : stepfail(DURATION, CAUSE)   
 
-Context ctxwalker		        ip [host="localhost"      port=8050]     
-Context ctxbasicrobot     		ip [host="localhost"	  port=8020]    
 
-ExternalQActor basicrobot    context ctxbasicrobot
+Reply walkerDone : walkerDone(X,Y)
+
+Request	doPlan : doPlan(X,Y)
+
+Reply walkerError : walkerError( $XT,$YT )
+
+Context ctxwalker ip [host="localhost" port=8050]     
+ 
+ExternalQActor walker context ctxwalker
  
 QActor waiterwalker context ctxwalker {  
-[#
-	var XT = "0"
-	var YT = "0"
-	var CurrentPlannedMove 	= ""
-	var StepTime    	   	= 355L
-	var obstacleFound      	= false  
-	var TASK				= "" 
-	var N					= ""
-	
-	val inmapname			= "teaRoomExplored"
-	val PauseTime          	= 250L
-	val BackTime           	= 2 * StepTime / 3 
-	 
-	
-#] 
+	[#
+		var XT = "0"
+		var YT = "0"
+		var CurrentPlannedMove 	= ""
+		var StepTime    	   	= 355L
+		var obstacleFound      	= false  
+		var TASK				= "" 
+		var N					= ""
+		
+		val inmapname			= "teaRoomExplored"
+		val PauseTime          	= 250L
+		val BackTime           	= 2 * StepTime / 3 
+	#] 
+
 
 	State s0 initial {	     
  		
@@ -40,117 +45,69 @@ QActor waiterwalker context ctxwalker {
  		
  		run itunibo.planner.plannerUtil.loadRoomMap( inmapname ) 		
  		run itunibo.planner.plannerUtil.showCurrentRobotState()		
- 		
- 		forward basicrobot -m cmd : cmd(l)
-		delay 500
-		forward basicrobot -m cmd : cmd(r)    
-		delay 500
-		emit walkerstarted : walkerstarted(0)
-		
+
 		println("waiterwalker | STARTS")
 		
 	}	
 	Goto waitCmd   
+
+
 	 
 	State waitCmd {	     
  		println("waiterwalker | waits for a command 'movetoCell'")
 	}	
-	Transition t0 whenRequest moveForTask -> walk
+	Transition t0 whenRequest moveForTask -> locateObjective
  	
-	State walk{
+	State locateObjective{
 		printCurrentMessage
 		onMsg( moveForTask : moveForTask(TASK, N) ){
-				[# 
-					TASK = payloadArg(0).toString()
-					N = payloadArg(1).toString()
-				#]
-				println("waiterwalker | task received: $TASK, jolly: $N")
+			[# 
+				TASK = payloadArg(0).toString()
+				N = payloadArg(1).toString()
+			#]
+			println("waiterwalker | task received: $TASK, jolly: $N")
 			
 			solve( pos($TASK,$N,X,Y)  )  
 			ifSolved { 
-			[# 
-				XT = getCurSol("X").toString()
-				YT = getCurSol("Y").toString()
-			#] 
+				[# 
+					XT = getCurSol("X").toString()
+					YT = getCurSol("Y").toString()
+				#] 
 				println("waiterwalker | query solved with values ($XT,$YT)")
  			}
-			println("waiterwalker | MOVING to ($XT,$YT)")
-			run itunibo.planner.plannerUtil.planForGoal("$XT","$YT")
+			println("waiterwalker | sending objective location ($XT,$YT) to walker")
+			
+			request walker -m doPlan : doPlan($XT,$YT)		
 		}
 	}
-	Goto execPlannedMoves if[# itunibo.planner.plannerUtil.existActions() #] else noPlan
+	Transition t1 whenReply walkerDone -> movementDoneS
+				  whenReply walkerError -> moveErrorS
 
-	State noPlan{
-		println("waiterwalker | NO PLAN FOUND for MOVING to ($XT,$YT)")
-		replyTo moveForTask with walkbreak : walkbreak( $XT,$YT )
+
+
+	State movementDoneS{
+		println("waiterwalker | POINT ($XT,$YT) REACHED")
+	    run itunibo.planner.plannerUtil.showCurrentRobotState()
+	    replyTo moveForTask with movementDone : movementDone(OK) 					
 	}
 	Goto waitCmd
 	
-/*
- * Execute the plan
- */					  
- 	State execPlannedMoves{ 
- 		[#  CurrentPlannedMove = itunibo.planner.plannerUtil.getNextPlannedMove() #]
- 		//println("waiterwalker | doing move $CurrentPlannedMove")
- 		delayVar PauseTime
- 	}
- 	Goto wMove if [# CurrentPlannedMove == "w" #] else otherPlannedMove
- 
- 	State wMove {  
-		request basicrobot -m step : step( $StepTime  )
- 	} 	
- 	Transition t0   whenReply stepdone   -> stepDone   
-					whenReply stepfail   -> stepFailed 
-	 
- 	State stepDone{  
- 		//updateResource [# itunibo.planner.plannerUtil.getMapOneLine() #]
- 		run itunibo.planner.plannerUtil.updateMap(  "w" )
-  	}
-	Goto execPlannedMoves if [# CurrentPlannedMove.length > 0 #] else sendSuccessAnswer
-		
-	State stepFailed{  //has found an obstacle 
-	    [# obstacleFound = true #]
- 		println("waiterwalker | stepFailed")
-		onMsg(stepfail : stepfail(DURATION, CAUSE) ){
-			[# val D = payloadArg(0).toLong()  ; val Dt = Math.abs(StepTime-D); val BackT = D/2 #] 
-			println("waiterwalker stepFail D= $D, BackTime = ${BackTime}")
-			if [# D > BackTime #] {    
-				forward basicrobot -m cmd : cmd( s )
-				delayVar BackT
-				forward basicrobot -m cmd : cmd( h )
-			}	 
- 		}
-	    run itunibo.planner.plannerUtil.updateMapObstacleOnCurrentDirection() 			    
- 	}   
-	Goto sendFailureAnswer
 	
- 	State otherPlannedMove{
-  		if [# CurrentPlannedMove == "l" || CurrentPlannedMove == "r"  #]{
-  			forward basicrobot -m cmd : cmd($CurrentPlannedMove)
- 			run itunibo.planner.plannerUtil.updateMap( "$CurrentPlannedMove" )
-  		} 
- 	}   
- 	Goto execPlannedMoves if [# CurrentPlannedMove.length > 0 #] else sendSuccessAnswer 
- 
-/*
- * Answers  
- */ 
- 	State sendSuccessAnswer{
-	     	println("waiterwalker | POINT ($XT,$YT) REACHED")
-	     	run itunibo.planner.plannerUtil.showCurrentRobotState()
-	     	replyTo moveForTask with movementDone : movementDone(OK) 					
+	
+	State moveErrorS{
+		println("waiterwalker | FAILS")
+		printCurrentMessage
+		onMsg( moveForTask : moveForTask(X, Y) ){
+			[# 
+				XT = payloadArg(0).toString()
+				YT = payloadArg(1).toString()
+			#]
+  			run itunibo.planner.plannerUtil.showCurrentRobotState()
+	  		replyTo moveForTask with walkbreak : walkbreak( $XT, $YT ) 	
+		}
 	}
 	Goto waitCmd  
-
-	State sendFailureAnswer{
-	    println("waiterwalker | FAILS")
-	    [# val Curx = itunibo.planner.plannerUtil.getPosX()
-	       val Cury = itunibo.planner.plannerUtil.getPosY()	
-	    #]
-  		run itunibo.planner.plannerUtil.showCurrentRobotState()
-	    replyTo moveForTask with walkbreak : walkbreak( $Curx, $Cury ) 					
-	}
-	Goto waitCmd
-       
+		
+	
  }
  

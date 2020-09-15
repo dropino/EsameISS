@@ -1,22 +1,18 @@
-System -trace walker  
+System -trace walkersys  
 
 Event    walkerstarted   : walkerstarted(X)
-	
-Request  moveForTask 	: moveForTask(TASK, N)
-Reply    movementDone   : movementDone(OK)
-Reply	 walkbreak  	: walkbreak(X,Y)  
 
-Dispatch cmd       : cmd(MOVE) 
-Request step       : step( TIME )	 
-Reply   stepdone   : stepdone(V)  
-Reply   stepfail   : stepfail(DURATION, CAUSE)   
+Dispatch cmd       	: cmd(MOVE) 
+Request step       	: step( TIME )	 
+Reply   stepdone   	: stepdone(V)  
+Reply   stepfail   	: stepfail(DURATION, CAUSE) 
 
-Request	doPlan : doPlan(X,Y)
+Request	doPlan 		: doPlan(X,Y)
+Reply walkerDone 	: walkerDone(OK)
+Reply walkerError 	: walkerError( $XT,$YT )
 
-Reply walkerError : walkerError( $XT,$YT )
-
-Context ctxwalker		        ip [host="localhost"   port=8050]     
-Context ctxbasicrobot     		ip [host="localhost"   port=8020]    //"192.168.1.121"
+Context ctxwalker		        ip [host="localhost"		port=8050]     
+Context ctxbasicrobot     		ip [host="192.168.1.55"		port=8020]    //"192.168.1.121"
 
 ExternalQActor basicrobot    context ctxbasicrobot
 
@@ -27,8 +23,6 @@ ExternalQActor basicrobot    context ctxbasicrobot
 		var CurrentPlannedMove 	= ""
 		var StepTime    	   	= 355L
 		var obstacleFound      	= false  
-		var TASK				= "" 
-		var N					= ""
 		
 		val inmapname			= "teaRoomExplored"
 		val PauseTime          	= 250L
@@ -37,7 +31,9 @@ ExternalQActor basicrobot    context ctxbasicrobot
 		
 	#] 
 		
-	State s0 initial {	     	
+	State s0 initial {	     
+		println("walker | INIT")
+			
 		run itunibo.planner.plannerUtil.initAI()
 		
 		run itunibo.planner.plannerUtil.loadRoomMap( inmapname ) 		
@@ -59,7 +55,7 @@ ExternalQActor basicrobot    context ctxbasicrobot
 	 * wait for a request from waiterwalker
 	 */
 	State waitReq{
-		println("walker | waiting for a moveForTask command")	
+		println("walker | waiting for a doPlan message")	
 	}
 	Transition t0 whenRequest doPlan -> solveReq
 	
@@ -151,7 +147,7 @@ ExternalQActor basicrobot    context ctxbasicrobot
  	State sendSuccessAnswer{
 	     	println("waiterwalker | POINT ($XT,$YT) REACHED")
 	     	run itunibo.planner.plannerUtil.showCurrentRobotState()
-	     	replyTo doPlan with movementDone : movementDone(OK) 					
+	     	replyTo doPlan with walkerDone : walkerDone(ok) 					
 	}
 	Goto waitReq  
 
@@ -161,7 +157,7 @@ ExternalQActor basicrobot    context ctxbasicrobot
 	       val Cury = itunibo.planner.plannerUtil.getPosY()	
 	    #]
   		run itunibo.planner.plannerUtil.showCurrentRobotState()
-	    replyTo doPlan with walkbreak : walkbreak( $Curx, $Cury ) 					
+	    replyTo doPlan with walkerError : walkerError( $Curx, $Cury ) 					
 	}
 	Goto waitReq
  }

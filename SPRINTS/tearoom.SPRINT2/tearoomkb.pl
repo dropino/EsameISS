@@ -2,6 +2,9 @@
 % tearoom.pl
 %===========================================
  
+clientRequestPayload(order, ok).
+clientRequestPayload(pay, 5).
+
 %% ------------------------------------------ 
 %% Teatables
 	%% busy

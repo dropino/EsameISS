@@ -1,26 +1,34 @@
-System client 
+System clientsys 
+
+mqttBroker "localhost" : 1883 eventTopic "unibo/basicrobot"   
+
 //ENTERING THE TEAROOM
 //client - smartbell
 Request  ringBell 			: ringBell(TEMP)
 Reply 	 tempStatus 		: tempStatus(STATUS, CID) 
 
-//client - Waiter
-Dispatch admission 			: admission(MAXWAITTIME, CID)
-Dispatch waiterAtEntrance 	: waiterAtEntrance(OK)
-Dispatch arrived			: arrived(TABLE)
+//waiter -> client
+//Event	 admission 			: admission(MAXWAITTIME, CID)
+//Event	 waiterAtEntrance 	: waiterAtEntrance(OK)
+//Event	 arrived			: arrived(V, CID) //V is either the table number or the exitdoor
+Event 	 deliver 			: deliver (TEA, TABLE) 
+
+Request	deploy				: deploy(FROM, TO, CID)
+Reply	arrived				: arrived(V) //V is either the table number or the exitdoor
+
+Request waitTime			: waitTime(CID)
+Reply	wait				: wait(TIME)
  
 //ORDERING
-//client-waiter
-Dispatch clientRequest		: clientRequest(TABLE,CID)
+//client -> waiter
+Request  clientRequest		: clientRequest(KIND, TABLE, CID)
+Reply	 atTable			: atTable(V) //depending on KIND, V contains "ok" for ordering and the amount owed if "pay"
 
-Request  getRequest 		: getRequest(TABLE, CID, V)
-Reply    order 				: order(TEA) 
-Reply	 paid				: paid(MONEY)
-
-Dispatch deliver 			: deliver (TEA) 
+Dispatch order				: order(TEA)
+Dispatch pay				: pay(MONEY)
 
 Context ctxclient	ip [host="localhost"	port=8071]
-Context ctxtearoom	ip [host="localhost"	port=8072]
+Context ctxtearoom	ip [host="192.168.1.55"	port=8072]
 
 ExternalQActor smartbell context ctxtearoom
 ExternalQActor waiter	 context ctxtearoom
@@ -65,11 +73,12 @@ QActor simclient context ctxclient {
 		
 		State waitForWaiter {
 			println("Client $MyCID | waiting for the waiter to tell me if I can get in")
+			request waiter -m waitTime : waitTime($MyCID)
 		}
-		Transition t0 whenMsg admission 			-> evalAdmission
+		Transition t0 whenReply wait 			-> evalAdmission
 		
 		State evalAdmission {			
-			onMsg ( admission : admission(WAITTIME, CID)){
+			onMsg ( wait : wait(WAITTIME)) {
 				[# WaitTime = payloadArg(0).toString().toInt()#]
 			}
 			println("Client $MyCID | the waiter told me to wait $WaitTime time")
@@ -77,15 +86,12 @@ QActor simclient context ctxclient {
 		Goto waitingInTheHall
 		
 		State waitingInTheHall{
-			println("Client $MyCID | waiting in the hall")			
+			println("Client $MyCID | waiting in the hall")
+			
+			request waiter -m 	deploy : deploy(entrancedoor, table, $MyCID)		
 		}
-		Transition t0 	whenTime 20000  			-> end
-						whenMsg	 waiterAtEntrance 	-> beingEscorted
-		
-		State beingEscorted {
-			println("Client $MyCID | being escorted to the table")
-		}
-		Transition t0 	whenMsg arrived  			-> seated
+		Transition t0 	whenTime 	20000  				-> end
+						whenReply	arrived			 	-> seated
 		
 		State seated {
 			onMsg ( arrived : arrived(TABLE)) {
@@ -94,37 +100,39 @@ QActor simclient context ctxclient {
 			
 			println("Client $MyCID | my table is $MyTable")
 
-			forward waiter -m clientRequest : clientRequest($MyTable, $MyCID)
+			request waiter -m clientRequest : clientRequest(order, $MyTable, $MyCID)
 		}
-		Transition t0	whenRequest getRequest 		-> ordering
+		Transition t0	whenReply atTable 		-> ordering
 			
 			
 		State ordering{
 			println("Client $MyCID | ordering some tea")
 			delay 2000
-			replyTo getRequest with order: order(tea)
+			forward waiter -m order : order(tea)
 		}
-		Transition t0 	whenMsg 	deliver 		-> drinkingTea
+		Transition t0 	whenEvent 	deliver 		-> drinkingTea
 				
 		
 		State drinkingTea{
 			println("Client $MyCID | drinking tea")
 			delay 10000
-			forward waiter -m clientRequest : clientRequest($MyTable, $MyCID)
+			request waiter -m clientRequest : clientRequest(pay, $MyTable, $MyCID)
 		}
-		Transition t0	whenRequest getRequest 		-> paying
+		Transition t0	whenReply atTable 		-> paying
 			
 				
 		State paying{
-			onMsg ( getRequest : getRequest(TABLE, CID, V)) {
-				[# ToPay = payloadArg(2).toString().toInt()#]
+			onMsg ( atTable : atTable(V)) {
+				[# ToPay = payloadArg(0).toString().toInt()#]
 			}
 			println("Client $MyCID | paying $ToPay euro") 
 			
 			delay 2000
-			replyTo getRequest with paid : paid($ToPay)
+			forward waiter -m pay : pay($ToPay)
+			
+			request waiter -m 	deploy : deploy($MyTable, exitdoor, $MyCID)		
 		}
-		Transition t0 	whenMsg arrived				-> end	
+		Transition t0 	whenReply arrived				-> end	
 		
 		State end {
 			println("Client | escorted to the exit door and leaves")

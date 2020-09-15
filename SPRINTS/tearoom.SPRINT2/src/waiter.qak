@@ -1,10 +1,19 @@
-System tearoom
-mqttBroker "localhost" : 1883 eventTopic "unibo/waiter"   
+System tearoomsys
+//mqttBroker "localhost" : 1883 eventTopic "unibo/waiter"   
 
 //MESSAGES
+mqttBroker "localhost" : 1883 eventTopic "unibo/basicrobot"   
+
+//waiterwalker-walker
+Event    waiterwalkerstarted   : waiterwalkerstarted(X)
+Event    walkerstarted   	: walkerstarted(X)
+
+Request	 doPlan 			: doPlan(X,Y)
+Reply 	 walkerError 		: walkerError( $XT,$YT )
+Reply	 walkerDone 		: walkerDone(X,Y)
 
 //Waiter-Waiterwalker
-Event    waiterwalkerstarted   	: waiterwalkerstarted(X)
+Event    waiterwalkerstarted : waiterwalkerstarted(X)
 
 Request  moveForTask 		: moveForTask(TASK, N)
 Reply    movementDone   	: movementDone(OK)
@@ -14,27 +23,30 @@ Reply	 walkbreak  		: walkbreak(X,Y)
 Dispatch rest				: rest(V)
 
 //ENTERING THE TEAROOM
-//simclient - smartbell
+//client - smartbell
 Request  ringBell 			: ringBell(TEMP)
 Reply 	 tempStatus 		: tempStatus(STATUS, CID) 
 
 //smartbell - waiter
-Dispatch 	 clientID 		: clientID (CLIENTID)
+Dispatch clientID	 		: clientID (CLIENTID)
 
-//simclient - Waiter
-Dispatch admission 			: admission(MAXWAITTIME, CID)
-Dispatch waiterAtEntrance 	: waiterAtEntrance(OK)
-Dispatch arrived			: arrived(TABLE)
+//waiter -> client
+Request	deploy				: deploy(FROM, TO, CID)
+Reply	arrived				: arrived(V) //V is either the table number or the exitdoor
+
+Request waitTime			: waitTime(CID)
+Reply	wait				: wait(TIME)
+
+//Event	 arrived			: arrived(V, CID) //V is either the table number or the exitdoor
+Event 	 deliver 			: deliver (TEA, TABLE) 
  
 //ORDERING
-//simclient-waiter
-Dispatch clientRequest		: clientRequest(TABLE,CID)
+//client -> waiter
+Request  clientRequest		: clientRequest(KIND, TABLE, CID)
+Reply	 atTable			: atTable(V) //depending on KIND, V contains "ok" for ordering and the amount owed if "pay"
 
-Request  getRequest 		: getRequest(TABLE, CID, V)
-Reply    order 				: order(TEA) 
-Reply	 paid				: paid(MONEY)
-
-Dispatch deliver 			: deliver (TEA) 
+Dispatch order				: order(TEA)
+Dispatch pay				: pay(MONEY)
 
 //waiter-barman
 Dispatch sendOrder 			: sendOrder(TEA, TABLE) 
@@ -43,62 +55,64 @@ Dispatch orderReady			: orderReady(TEA, TABLE)
 //TABLE DIRTY NOTIFICATION
 Dispatch tableDirty 		: tableDirty(N)
 
-
-Context ctxclient	ip [host="localhost"	port=8071]
 Context ctxtearoom 	ip [host="localhost" 	port=8072] 
 
-CodedQActor waiterwalker context ctxtearoom className "it.unibo.waiterwalker.Waiterwalker"
-
-ExternalQActor simclient context ctxclient
+CodedQActor walker context ctxtearoom className "it.unibo.walker.Walker" 
 
 QActor waiter context ctxtearoom {
 	
 	[#
 		var CCID 			= ""	
-		var CTABLE 			= 0
+		var CTABLE : Int?	= 0
 		var BILL			= 5
+		var KIND			= ""
+		var CDRINK			= ""
 		
 		var Ntables			= 0
 		
 		var CurST			= ""
+		var PL				= ""
+		var Dest			= ""
 	#]
 	
 	State s0 initial {	
-		println("Waiter | INIT ")
+		println("WAITER | INIT ")
+ 		discardMsg Off
 		
  		solve( consult("tearoomkb.pl")	 )			
- 		println("Waiter | solved tearoomkb.pl ")
+ 		println("WAITER | solved tearoomkb.pl ")
 
- 		discardMsg Off
-		delay 3000 		  
  	}	
   	Transition t0 whenEvent waiterwalkerstarted -> listening
   	 
-  	  	State listening {
-		[# 	
-			CCID 	= "" 
-			CTABLE 	= 0
-			#]
- 		println("Waiter | listening... ")
+  	State listening {
+  		[
+  			#
+  				CCID = ""
+  				CTABLE = 0
+  			#
+  		]
+ 		println("WAITER | listening... ")
  		updateResource [#"listening"#]
 	}
-	  Transition t0  	whenTime 	5000	 	 	-> goHome
-	  					whenMsg 	clientID  	 	-> handleClientEntranceRequest
-						whenMsg 	clientRequest 	-> answerClientRequest
-						whenMsg 	orderReady 	 	-> getDrink
-						whenMsg 	tableDirty	 	-> cleanTable
+	  Transition t0  	whenTime 	5000	 	 		-> goHome
+	  					whenRequest waitTime			-> answerTime
+	  					whenRequest	deploy			 	-> handleDeploy
+						whenRequest	clientRequest 		-> answerClientRequest
+						whenMsg 	orderReady 	 		-> getDrink
+						whenMsg 	tableDirty	 		-> cleanTable
 						
   	
   	State goHome {
   		
   		solve( waiter(ST) ) 
 		ifSolved { [# CurST = getCurSol("ST").toString()  #] 
-			println("waiter | current waiter state: $CurST")
+			println("WAITER | current waiter state: $CurST")
 		}
   		
-  		if [# CurST != "atHome" #] {  			
+  		if [# CurST != "athome" #] {  			
  			request waiterwalker -m moveForTask : moveForTask(home, 1)
- 			solve ( changeWaiterState(atHome) )	
+ 			solve ( changeWaiterState(athome) )	
   		} 
 		else{ 
 			forward waiter -m rest : rest(0)
@@ -108,32 +122,35 @@ QActor waiter context ctxtearoom {
 	  	  				whenReply	walkbreak	 	-> error
 	  					whenMsg		rest	 		-> listening
   	
-  	State handleClientEntranceRequest {
-  		println("Waiter | handling simclient request... ")  		
-  		onMsg(clientID : clientID(CID)){
-  			[#
-  				CCID = payloadArg(0).toString()
-  			#]
-  		}
-  		
+  	State answerTime {
   		solve( numavailabletables(N) ) 
 		ifSolved { [# Ntables = getCurSol("N").toString().toInt()  #] 
-			println("waiter | numavailabletables=$Ntables")
+			println("WAITER | numavailabletables=$Ntables")
 		}
 		
-		solve( tableavailable(N) ) 
-		ifSolved { [# CTABLE = getCurSol("N").toString().toInt()  #] 
-			println("waiter | tableavailable=$CTABLE")					 
-			solve( engageTable($CTABLE, $CCID ) ) 
-	 	}	
-  		
+		if [# Ntables != 0 #] {
+			replyTo waitTime with wait : wait(0)
+		} else {
+			replyTo waitTime with wait : wait(20000)
+		}
   	}
-  	Goto goToEntrance if [# Ntables > 0 #] else notifyClientToWait
+  	Goto listening
+  	
+  	State handleDeploy {
+  		println("WAITER | handling simclient request... ")  		
+  		onMsg(deploy : deploy(FROM, TO, CID)) {
+  			[#
+  				CTABLE = payloadArg(0).toString().toIntOrNull()
+  				Dest = payloadArg(1).toString()
+  				CCID = payloadArg(2).toString()
+  			#]
+  		}
+  	}
+  	Goto goToEntrance if [# Dest == "table" #] else deployClientExit
 
 	State goToEntrance {
 		
-		println("Waiter | GOING to ENTRANCE door ")
-		forward simclient -m admission : admission(0, $CCID)
+		println("WAITER | GOING to ENTRANCE door ")
 		request waiterwalker -m moveForTask : moveForTask(entrancedoor, 1)
 		solve ( changeWaiterState(moving) )			
 	}
@@ -142,9 +159,14 @@ QActor waiter context ctxtearoom {
 	
 	State deployClientEntrance {		
 		updateResource[# "waiter_arrived" #]
-		forward simclient -m 	waiterAtEntrance 	: waiterAtEntrance(ok)
 		
-		println("Waiter | DEPLOYING simclient $CCID to table $CTABLE")
+		println("WAITER | DEPLOYING simclient $CCID to table $CTABLE")
+		
+		solve( tableavailable(N) ) 
+		ifSolved { [# CTABLE = getCurSol("N").toString().toInt()  #] 
+			println("WAITER | tableavailable=$CTABLE")					 
+			solve( engageTable($CTABLE, $CCID ) ) 
+	 	}	
 		
 		request waiterwalker -m moveForTask : moveForTask(teatable, $CTABLE)
 	} 	
@@ -153,7 +175,7 @@ QActor waiter context ctxtearoom {
 
 	State deployClientExit {
 		
-		println("Waiter | deploying simclient from table to exit door... ")
+		println("WAITER | deploying simclient from table to exit door... ")
 		forward waiter -m tableDirty : tableDirty($CTABLE)
 
 		request waiterwalker -m moveForTask : moveForTask(exitdoor, 1)
@@ -165,22 +187,20 @@ QActor waiter context ctxtearoom {
 	State confirmClientArrival {
 		updateResource[# "waiter_rdy_leave" #] // stato usato per deploy simclient exit
 		
-		println("Waiter | SENDING CONFIRMATION to simclient $CCID: arrived at table $CTABLE")
+		println("WAITER | SENDING CONFIRMATION to simclient $CCID: arrived $Dest")
 		
-		forward simclient -m arrived	: arrived($CTABLE)
+		replyTo deploy with  arrived	: arrived($CTABLE)
 	} Goto listening
-	
-	State notifyClientToWait {
-		println("Waiter | notifying simclient has to wait... ")
-		forward simclient -m admission : admission(10000, $CCID) 
-	}
-	Goto listening
 						
 	State answerClientRequest {
-		onMsg(clientRequest : clientRequest(TABLE, CID)) {
-			[#  CTABLE = payloadArg(0).toString().toInt()
-				CCID = payloadArg(1).toString() #]
+		onMsg(clientRequest : clientRequest(KIND, TABLE, CID)) {
+			[#  KIND	= payloadArg(0).toString()
+				CTABLE 	= payloadArg(1).toString().toInt()
+				CCID 	= payloadArg(2).toString() #]
 		}
+		
+		println("WAITER | received CLIENTREQUEST $KIND $CTABLE ")
+		
 		request waiterwalker -m moveForTask : moveForTask(teatable, $CTABLE)
 		solve ( changeWaiterState(moving) )	
 		
@@ -189,14 +209,24 @@ QActor waiter context ctxtearoom {
 	  					whenReply	walkbreak	 -> error	
 	
 	State atTableForRequest {
-		request simclient -m getRequest : getRequest($CTABLE, $CCID, $BILL)
+		
+		solve( clientRequestPayload($KIND, P) )
+		ifSolved {
+			[# PL = getCurSol("P").toString() #]
+		}
+			println("WAITER | CLIENT $CCID requested $KIND")
+		
+		replyTo clientRequest with atTable : atTable($PL)
 	}
-	Transition t0 		whenReply 	order 		-> transferOrder
-						whenReply 	paid 		-> deployClientExit
+	Transition t0 		whenMsg 	order 		-> transferOrder
+						whenMsg 	pay 		-> listening
 	
 	State transferOrder {
-		println("Waiter | sending order to barman... ")
-		forward barman -m sendOrder : sendOrder(TEA, $CTABLE)
+		println("WAITER | sending order to barman... ")
+		onMsg(order : order(DRINK)) {
+			[#  CDRINK	= payloadArg(0).toString() #]
+		}
+		forward barman -m sendOrder : sendOrder($CDRINK, $CTABLE)
 	}
 	Goto listening
 	
@@ -204,7 +234,7 @@ QActor waiter context ctxtearoom {
 		onMsg(tableDirty : tableDirty(N)) {
 			[#  CTABLE = payloadArg(0).toString().toInt() #]
 		}
-		println("Waiter | going to table for CLEANING $CTABLE... ")
+		println("WAITER | going to table for CLEANING $CTABLE... ")
 		request waiterwalker -m moveForTask : moveForTask(teatable, $CTABLE)
 		solve ( changeWaiterState(moving) )		
 	}
@@ -213,7 +243,7 @@ QActor waiter context ctxtearoom {
 	
 	State atTableToClean {
 		
-		println("Waiter | cleaning table $CTABLE... ")
+		println("WAITER | cleaning table $CTABLE... ")
 		delay 5000
 		solve( cleanTable($CTABLE) )
 	}
@@ -226,7 +256,7 @@ QActor waiter context ctxtearoom {
 			[# CTABLE = payloadArg(1).toString().toInt() #]
 		}
 		
-		println("Waiter | going to barman... ")
+		println("WAITER | going to barman... ")
 		request waiterwalker -m moveForTask : moveForTask(barman, 1)
 		solve ( changeWaiterState(moving) )	
 	}
@@ -235,8 +265,8 @@ QActor waiter context ctxtearoom {
 	
 	State bringDrinkToClient {
 		updateResource[# "waiter_rdy_getDrink" #]
-		println("Waiter | taking tea... ")
-		println("Waiter | going to simclient table $CTABLE... ")
+		println("WAITER | taking tea... ")
+		println("WAITER | GOING TO CLIENT table $CTABLE... ")
 
 		request waiterwalker -m moveForTask : moveForTask(teatable, $CTABLE)
 	}
@@ -244,17 +274,98 @@ QActor waiter context ctxtearoom {
 	  					whenReply	walkbreak	 -> error	
 			
 	State leaveDrinkAtTable {
-		println("Waiter | giving the simclient the tea")
+		println("WAITER | giving the simclient the tea")
 		updateResource[# "waiter_rdy_bringDrink" #]
 		
-		forward simclient -m deliver : deliver(tea)
+		emit deliver : deliver(tea, $CTABLE)
 	}
 	Goto listening
 	
 	State error {
-		println("&&& Waiter | an error occurred while walking. ")
+		println("&&& WAITER | an error occurred while walking. ")
 	} Goto listening
 }
+
+QActor waiterwalker context ctxtearoom {  
+	[#
+		var XT = "0"
+		var YT = "0"
+		
+		var TASK				= "" 
+		var N					= ""
+	#] 
+
+
+	State s0 initial {	     
+ 		
+ 		println("waiterwalker | INIT")
+ 		
+ 		solve( consult("waiterwalkerkb.pl")	 )
+ 		
+		println("waiterwalker | STARTS")
+		emit waiterwalkerstarted : waiterwalkerstarted(ok)
+		
+	}	
+	Transition t0 whenEvent walkerstarted -> waitCmd   
+
+
+	 
+	State waitCmd {	     
+ 		println("waiterwalker | waiting for a moveForTask message")
+	}	
+	Transition t0 whenRequest moveForTask -> locateObjective
+ 	
+	State locateObjective{
+		printCurrentMessage
+		onMsg( moveForTask : moveForTask(TASK, N) ){
+			[# 
+				TASK = payloadArg(0).toString()
+				N = payloadArg(1).toString()
+			#]
+			println("waiterwalker | task received: $TASK, jolly: $N")
+			
+			solve( pos($TASK,$N,X,Y)  )  
+			ifSolved { 
+				[# 
+					XT = getCurSol("X").toString()
+					YT = getCurSol("Y").toString()
+				#] 
+ 			}
+			println("waiterwalker | sending objective location ($XT,$YT) to walker")
+			
+			request walker -m doPlan : doPlan($XT,$YT)		
+		}
+	}
+	Transition t1 whenReply walkerDone -> movementCompleted
+				  whenReply walkerError -> movementError
+
+
+
+	State movementCompleted{
+		println("waiterwalker | POINT ($XT,$YT) REACHED")
+	    replyTo moveForTask with movementDone : movementDone(OK) 					
+	}
+	Goto waitCmd
+	
+	
+	
+	State movementError{
+		println("waiterwalker | FAILS")
+		printCurrentMessage
+		onMsg( moveForTask : moveForTask(X, Y) ){
+			[# 
+				XT = payloadArg(0).toString()
+				YT = payloadArg(1).toString()
+			#]
+	  		replyTo moveForTask with walkbreak : walkbreak( $XT, $YT ) 	
+		}
+	}
+	Goto waitCmd  
+		
+	
+ }
+ 
+
 
 QActor smartbell context ctxtearoom {
  [# 
@@ -319,7 +430,7 @@ QActor barman context ctxtearoom {
 	
 	State prepare {
 		onMsg( sendOrder : sendOrder(TEA, TABLE) ){
-			println("  Barman | Ready to serve  ")
+			println("  Barman | Making tea ")
 			[#
 				CTABLE = payloadArg(1).toString().toInt()
 			#]
@@ -327,6 +438,7 @@ QActor barman context ctxtearoom {
 		
 		delay 2000
 		forward waiter -m orderReady : orderReady(tea, $CTABLE)
+			println("  Barman | Tea ready to be served ")
 	}
 	Goto waitForNewOrder
 }

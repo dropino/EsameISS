@@ -93,18 +93,22 @@ val initDelayTime     = 1500L   //
 			
 			
 			//-----------------TEST RIFIUTO CLIENTE---------------
-//			delay(2000)
-//			println("---------------------------	MESSAGGIO INVIATO		---------------------------")
+			delay(1000)
+			println("---------------------------	MESSAGGIO INVIATO		---------------------------")
 //			MsgUtil.sendMsg( "test", "ringBell", "38", smartbell!!   )
-//			delay(1000)
-//			checkResource("listening")
+			MsgUtil.sendMsg("ringBell", "38", smartbell!!)
+			delay(1000)
+			checkResource("listening")
+			
+			
+			
 			
 			//-----------------TEST MOVIMENTO WAITER---------------
-			delay(2000)
-			println("---------------------------	MESSAGGIO INVIATO		---------------------------")
-//			MsgUtil.sendMsg (MsgUtil.buildRequest( "test", "waiterwalker", "moveForTask", "moveForTask(barman, 1)") , waiter!!   )
-			MsgUtil.sendMsg("request", "moveForTask", "moveForTask(barman, 1)", waiter!!)
-			delay(1000)
+//			delay(2000)
+//			println("---------------------------	MESSAGGIO INVIATO		---------------------------")
+////			MsgUtil.sendMsg (MsgUtil.buildRequest( "test", "waiterwalker", "moveForTask", "moveForTask(barman, 1)") , waiter!!   )
+//			MsgUtil.sendMsg("request", "moveForTask", "moveForTask(barman, 1)", waiter!!)
+//			delay(1000)
 //			checkResource("listening")
 
 			

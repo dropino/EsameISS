@@ -63,16 +63,6 @@ val initDelayTime     = 1500L   //
     fun testWaiter(){
 		runBlocking{
 			
-			while( waiter == null ){
-				delay(1000)
-				waiter = it.unibo.kactor.sysUtil.getActor("waiter") 
-			}
-			
-			while( smartbell == null ){
-				delay(1000)
-				smartbell = it.unibo.kactor.sysUtil.getActor("smartbell") 
-			}
-			
 			while( waiterwalker == null ){
 				delay(1000)
 				waiterwalker = it.unibo.kactor.sysUtil.getActor("waiterwalker") 

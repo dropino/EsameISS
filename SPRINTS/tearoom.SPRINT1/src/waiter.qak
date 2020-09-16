@@ -1,5 +1,5 @@
 System tearoom
-mqttBroker "localhost" : 1883 eventTopic "unibo/mazzuca/basicrobot"   
+mqttBroker "localhost" : 1883 eventTopic "unibo/basicrobot"   
 
 //MESSAGES
 

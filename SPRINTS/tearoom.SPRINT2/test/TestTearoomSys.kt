@@ -8,11 +8,9 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-//import mapRoomKotlin.mapUtil
 import it.unibo.kactor.ActorBasic
 import it.unibo.kactor.MsgUtil
 import it.unibo.kactor.MqttUtils
-
 import org.junit.Assert.assertTrue
 import org.junit.Assert.fail
 import kotlinx.coroutines.runBlocking
@@ -22,11 +20,11 @@ import org.eclipse.californium.core.CoapResponse
 import kotlinx.coroutines.channels.actor
  
 
-class testRobotMove {
+class testTearoomSys {
 	
 var waiter             : ActorBasic? = null
 var smartbell          : ActorBasic? = null
-var waiterwalker       : ActorBasic? = null
+var barman       	   : ActorBasic? = null
 val mqttTest   	      = MqttUtils("test") 
 val initDelayTime     = 1500L   //
 
@@ -49,19 +47,20 @@ val initDelayTime     = 1500L   //
 		println("%%%  Test terminate ")
 	}
 	
-	//functions
+
 	fun checkResource(value: String){		
 		if( waiter != null ){
-//			println(" --- checkResource --- ${waiter!!.geResourceRep()}")
 			assertTrue( waiter!!.geResourceRep() == value)
 		}  
 	}
 
+	
 	@kotlinx.coroutines.ObsoleteCoroutinesApi
 	@kotlinx.coroutines.ExperimentalCoroutinesApi
 	@Test
     fun testWaiter(){
 		runBlocking{
+
 			
 			while( waiter == null ){
 				delay(1000)
@@ -73,32 +72,39 @@ val initDelayTime     = 1500L   //
 				smartbell = it.unibo.kactor.sysUtil.getActor("smartbell") 
 			}
 			
-			while( waiterwalker == null ){
+			while( barman == null ){
 				delay(1000)
-				waiterwalker = it.unibo.kactor.sysUtil.getActor("waiterwalker") 
+				barman = it.unibo.kactor.sysUtil.getActor("barman") 
 			}
-						
 			
-			//-----------------TEST WAITER GO TO BARMAN---------------
-			delay(2000)
+			
+			//-----------------TEST RIFIUTO CLIENTE---------------
+			delay(1000)
 			println("---------------------------	MESSAGGIO INVIATO		---------------------------")
-			MsgUtil.sendMsg (MsgUtil.buildRequest( "test", "moveForTask", "moveForTask(barman, 1)", "waiterwalker") , waiterwalker!!   )
-			delay(6000)
+			MsgUtil.sendMsg (MsgUtil.buildRequest( "test", "ringBell", "ringBell(38)", "smartbell") , smartbell!!   )
+			delay(1000)
 			checkResource("listening")
 			
-			//-----------------TEST WAITER GO TO TABLE2---------------
-			delay(2000)
+			
+			
+			//-----------------TEST ACCETTO CLIENTE---------------
+			delay(1000)
 			println("---------------------------	MESSAGGIO INVIATO		---------------------------")
-			MsgUtil.sendMsg (MsgUtil.buildRequest( "test", "moveForTask", "moveForTask(teatable, 2)", "waiterwalker") , waiterwalker!!   )
-			delay(4000)
+			MsgUtil.sendMsg (MsgUtil.buildRequest( "test", "ringBell", "ringBell(36)", "smartbell") , smartbell!!   )
+			delay(1000)
 			checkResource("listening")
+	
 
-			//-----------------TEST WAITER GO TO EXITDOOR---------------
-			delay(2000)
+			
+			//-----------------TEST ORDINAZIONE TEA---------------
+			delay(1000)
 			println("---------------------------	MESSAGGIO INVIATO		---------------------------")
-			MsgUtil.sendMsg (MsgUtil.buildRequest( "test", "moveForTask", "moveForTask(exitdoor, 1)", "waiterwalker") , waiterwalker!!   )
-			delay(6000)
+			MsgUtil.sendMsg ("test", "sendOrder", "sendOrder(tea, 2)",barman!! )
+			delay(1000)
 			checkResource("listening")
+		
+
+			
 
 		}
 	}

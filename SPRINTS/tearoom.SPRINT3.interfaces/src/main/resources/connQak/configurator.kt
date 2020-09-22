@@ -49,9 +49,9 @@ object configurator{
 			System.out.println( " &&& SORRY pageConfig.json NOT FOUND ")
 			pageTemplate 	=  "robotGuiSocket"   
 			hostAddr    	=  "localhost"        
-			port    		= "8020"              
-			qakdest         = "basicrobot"        
-			ctxqadest		= "ctxbasicrobot"     
+			port    		= "8072"              
+			qakdest         = "tearoom"        
+			ctxqadest		= "ctxtearoom"     
 			stepsize		= "350"               
 			System.out.println( "		--- configurator | pageTemplate=$pageTemplate hostAddr=$hostAddr port=$port stepsize=$stepsize" )
 	}

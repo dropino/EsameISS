@@ -37,7 +37,6 @@ Reply	arrived				: arrived(V) //V is either the table number or the exitdoor
 Request waitTime			: waitTime(CID)
 Reply	wait				: wait(TIME)
 
-//Event	 arrived			: arrived(V, CID) //V is either the table number or the exitdoor
 Event 	 deliver 			: deliver (TEA, TABLE) 
  
 //ORDERING

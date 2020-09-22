@@ -44,7 +44,7 @@ public class RobotController {
     String robotPort = ""; //ConnConfig.port;
      
     //String htmlPage  = "robotGuiPost"; 
-    String htmlPage  = "client-view-tearoom";
+    String htmlPage  = "client-view-main";
     //String htmlPage  = "robotGuiPostBoundary"; 
     
     Set<String> robotMoves = new HashSet<String>(); 

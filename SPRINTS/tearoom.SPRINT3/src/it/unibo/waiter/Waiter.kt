@@ -89,6 +89,8 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 						}
 						else
 						 {answer("waitTime", "wait", "wait(20000)"   )  
+						 updateResourceRep("Client_must_wait" 
+						 )
 						 }
 					}
 					 transition( edgeName="goto",targetState="listening", cond=doswitch() )

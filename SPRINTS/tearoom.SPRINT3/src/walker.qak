@@ -1,4 +1,4 @@
-System -trace walkersys  
+System walkersys  
 
 Event    walkerstarted   : walkerstarted(X)
 
@@ -8,7 +8,7 @@ Reply   stepdone   	: stepdone(V)
 Reply   stepfail   	: stepfail(DURATION, CAUSE) 
 
 Request	doPlan 		: doPlan(X,Y)
-Reply walkerDone 	: walkerDone(OK) 
+Reply walkerDone 	: walkerDone(OK)
 Reply walkerError 	: walkerError( $XT,$YT )
 
 Context ctxwalker		        ip [host="localhost"		port=8050]     
@@ -17,7 +17,7 @@ Context ctxbasicrobot     		ip [host="192.168.1.55"		port=8020]    //"192.168.1.
 ExternalQActor basicrobot    context ctxbasicrobot
 
  QActor walker context ctxwalker{	
-	 [#
+	 [# 
 		var XT = "0"
 		var YT = "0"
 		var CurrentPlannedMove 	= ""
@@ -25,7 +25,7 @@ ExternalQActor basicrobot    context ctxbasicrobot
 		var obstacleFound      	= false  
 		
 		val inmapname			= "teaRoomExplored"
-		val PauseTime          	= 250L
+		val PauseTime          	= 250L 
 		val BackTime           	= 2 * StepTime / 3 
 		 
 		

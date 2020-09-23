@@ -16,7 +16,7 @@ class Walker ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 	@kotlinx.coroutines.ObsoleteCoroutinesApi
 	@kotlinx.coroutines.ExperimentalCoroutinesApi			
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
-		
+		 
 				var XT = "0"
 				var YT = "0"
 				var CurrentPlannedMove 	= ""
@@ -24,7 +24,7 @@ class Walker ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 				var obstacleFound      	= false  
 				
 				val inmapname			= "teaRoomExplored"
-				val PauseTime          	= 250L
+				val PauseTime          	= 250L 
 				val BackTime           	= 2 * StepTime / 3 
 				 
 				

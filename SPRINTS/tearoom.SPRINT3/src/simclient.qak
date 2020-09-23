@@ -3,7 +3,7 @@ System clientsys
 mqttBroker "localhost" : 1883 eventTopic "unibo/basicrobot"   
 
 //ENTERING THE TEAROOM
-//client - smartbell
+//client - smartbell 
 Request  ringBell 			: ringBell(TEMP)
 Reply 	 tempStatus 		: tempStatus(STATUS, CID) 
 
@@ -13,7 +13,7 @@ Reply 	 tempStatus 		: tempStatus(STATUS, CID)
 //Event	 arrived			: arrived(V, CID) //V is either the table number or the exitdoor
 Event 	 deliver 			: deliver (TEA, TABLE) 
 
-Request	deploy				: deploy(FROM, TO, CID) 
+Request	deploy				: deploy(FROM, TO, CID)
 Reply	arrived				: arrived(V) //V is either the table number or the exitdoor
 
 Request waitTime			: waitTime(CID)
@@ -28,7 +28,7 @@ Dispatch order				: order(TEA)
 Dispatch pay				: pay(MONEY)
 
 Context ctxclient	ip [host="localhost"	port=8071]
-Context ctxtearoom	ip [host="localhost"	port=8072]
+Context ctxtearoom	ip [host="192.168.1.55"	port=8072]
 
 ExternalQActor smartbell context ctxtearoom
 ExternalQActor waiter	 context ctxtearoom
@@ -42,6 +42,7 @@ QActor simclient context ctxclient {
 		var MyTable				= 0
 		var MyCID 				= ""
 		var ToPay 				= 0
+		var X					= 0
 	#]
 	
 		State s0 initial{
@@ -83,15 +84,19 @@ QActor simclient context ctxclient {
 			}
 			println("Client $MyCID | the waiter told me to wait $WaitTime time")
 		}
-		Goto waitingInTheHall
+//		Goto waitingInTheHall
+		Goto end if [# WaitTime == 20000 #] else waitingInTheHall 
 		
 		State waitingInTheHall{
 			println("Client $MyCID | waiting in the hall")
 			
-			request waiter -m 	deploy : deploy(entrancedoor, table, $MyCID)		
+			request waiter -m 	deploy : deploy(entrancedoor, table, $MyCID)	
 		}
 		Transition t0 	whenTime 	20000  				-> end
 						whenReply	arrived			 	-> seated
+//		Goto end if [# WaitTime == 2000 #] else seated 
+		
+		
 		
 		State seated {
 			onMsg ( arrived : arrived(TABLE)) {

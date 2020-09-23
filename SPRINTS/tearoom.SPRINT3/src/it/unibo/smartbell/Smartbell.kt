@@ -51,6 +51,8 @@ class Smartbell ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, 
 						println("  SmartBell | Temp is over  ")
 						println("  SmartBell | Client Discard  ")
 						answer("ringBell", "tempStatus", "tempStatus(0,$CID)"   )  
+						updateResourceRep("Discard" 
+						)
 					}
 					 transition( edgeName="goto",targetState="waitForClient", cond=doswitch() )
 				}	 
@@ -61,6 +63,8 @@ class Smartbell ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, 
 						 CID = (1..100).random()  
 						answer("ringBell", "tempStatus", "tempStatus(1,$CID)"   )  
 						forward("clientID", "clientID($CID)" ,"waiter" ) 
+						updateResourceRep("Accept" 
+						)
 					}
 					 transition( edgeName="goto",targetState="waitForClient", cond=doswitch() )
 				}	 

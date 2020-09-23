@@ -1,3 +1,35 @@
+
+// CONNECTION
+var stompClient = null;
+
+function showMsg(message) {
+    console.log(message );
+    $("#applmsgs").html( "<pre>"+message.replace(/\n/g,"<br/>")+"</pre>" );
+        //$("#applmsgintable").append("<tr><td>" + message + "</td></tr>");
+}
+
+function connect() {
+    var socket = new SockJS('/it-unibo-iss');
+    stompClient = Stomp.over(socket);
+    stompClient.connect({}, function (frame) {
+        // setConnected(true);
+        stompClient.subscribe('/topic/display', function (msg) {
+             showMsg(JSON.parse(msg.body).content);
+        });
+    });
+}
+
+$("form").on('submit', function (e) {
+    e.preventDefault();
+});
+
+$( "#btn-smartbell" ).click(function() { 
+    console.log("sending Smartbell request");
+    stompClient.send("/app/smartbell", {}, JSON.stringify(""));
+
+ });
+
+
 var btnState = "calling1";
 
 

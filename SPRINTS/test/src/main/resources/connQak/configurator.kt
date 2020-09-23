@@ -9,7 +9,7 @@ import java.net.InetAddress
 
 object configurator{
 //Page
-	@JvmStatic public var pageTemplate		= "robotGuiSocket"
+	@JvmStatic public var pageTemplate		= "client-view-main"
 
 //MQTT broker	
 //	@JvmStatic var mqtthostAddr    	= "broker.hivemq.com"
@@ -20,9 +20,9 @@ object configurator{
 	
 //Basicrobot application
 	@JvmStatic var hostAddr   	    = "localhost";  //"192.168.1.5";		
-	@JvmStatic var port    			= "8020";
-	@JvmStatic var qakdest	     	= "basicrobot";
-	@JvmStatic var ctxqadest 		= "ctxbasicrobot";
+	@JvmStatic var port    			= "8072";
+	@JvmStatic var qakdest	     	= "smartbell";
+	@JvmStatic var ctxqadest 		= "ctxtearoom";
 	
 //Domains application
 //	@JvmStatic var hostAddr   	    = "192.168.1.22";  //"192.168.1.5";		
@@ -50,7 +50,7 @@ object configurator{
 			pageTemplate 	=  "client-view-main"   
 			hostAddr    	=  "localhost"        
 			port    		= "8072"              
-			qakdest         = "tearoom"        
+			qakdest         = "smartbell"        
 			ctxqadest		= "ctxtearoom"     
 			stepsize		= "350"               
 			System.out.println( "		--- configurator | pageTemplate=$pageTemplate hostAddr=$hostAddr port=$port stepsize=$stepsize" )

@@ -47,7 +47,7 @@ public class RobotController {
     String htmlPage  = "client-view-main";
     //String htmlPage  = "robotGuiPostBoundary"; 
     
-    Set<String> robotMoves = new HashSet<String>(); 
+//    Set<String> robotMoves = new HashSet<String>(); 
     
     connQakCoap connQakSupport ;   
     
@@ -57,7 +57,7 @@ public class RobotController {
 	    robotHost =	connQak.configurator.getHostAddr();	
 	    robotPort = connQak.configurator.getPort();
 	
-	    robotMoves.addAll( Arrays.asList(new String[] {"w","s","h","r","l","z","x","p"}) );       
+//	    robotMoves.addAll( Arrays.asList(new String[] {"w","s","h","r","l","z","x","p"}) );       
 	    connQakSupport = new connQakCoap(  );  
 	    connQakSupport.createConnection();
 	      
@@ -85,20 +85,21 @@ public class RobotController {
 	 }     
 	  
 	
-	@PostMapping( path = "/move" ) 
-	public String doMove( 
-		@RequestParam(name="move", required=false, defaultValue="h") 
-		//binds the value of the query string parameter name into the moveName parameter of the  method
-		String moveName, Model viewmodel) {
-		System.out.println("------------------- RobotController doMove move=" + moveName  );
-		if( robotMoves.contains(moveName) ) {
-			doBusinessJob(moveName, viewmodel);
-		}else {
-			viewmodel.addAttribute("arg", "Sorry: move unknown - Current Robot State:"+viewModelRep );
-		}		
-		return htmlPage;
-		//return "robotGuiSocket";  //ESPERIMENTO
-		}	
+//	@PostMapping( path = "/smartbell" ) 
+//	public String doMove( 
+//		@RequestParam(name="move", required=false, defaultValue="h") 
+//		//binds the value of the query string parameter name into the moveName parameter of the  method
+//		String moveName, Model viewmodel
+//		) {
+//		System.out.println("------------------- RobotController doMove move=" + moveName  );
+//		if( robotMoves.contains(moveName) ) {
+//			doBusinessJob(moveName, viewmodel);
+//		}else {
+//			viewmodel.addAttribute("arg", "Sorry: move unknown - Current Robot State:"+viewModelRep );
+//		}		
+//		return "client-view-tearoom";
+//		//return "robotGuiSocket";  //ESPERIMENTO
+//		}	
 		
 	 
 	private void peparePageUpdating() {
@@ -122,7 +123,6 @@ public class RobotController {
 	 */
 	protected void doBusinessJob( String moveName, Model viewmodel) {
 		try {
-			//come mandare a doorbell?????????????????????????????
 			if( moveName.equals("ringBell")) {
 				ApplMessage msg = MsgUtil.buildRequest("web", "ringBell", "37", configurator.getQakdest() );
 				connQakSupport.request( msg );					
@@ -172,13 +172,13 @@ public class RobotController {
 	//		return new ResourceRep("Hello by AN, " + HtmlUtils.htmlEscape(message.getName()) + "!");
 	//	}
 	
-	@MessageMapping("/move")
+	@MessageMapping("/smartbell")
 	@SendTo("/topic/display")
 	public ResourceRep backtoclient(RequestMessageOnSock message) throws Exception {
 	// 		ApplMessage msg = MsgUtil.buildDispatch("web", "cmd", "cmd("+message.getName()+")", "basicrobot" );
 	//		connQakSupport.forward( msg );
 	//		System.out.println("------------------- RobotController forward=" + msg  );
-		doBusinessJob(message.getName(), null);
+//		doBusinessJob(message.getName(), null);
 	//		//WAIT for command completion ...
 	//		Thread.sleep(400);
 		return getWebPageRep();

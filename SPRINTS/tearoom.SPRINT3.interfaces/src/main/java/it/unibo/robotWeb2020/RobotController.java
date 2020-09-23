@@ -58,19 +58,18 @@ public class RobotController {
 	    robotPort = connQak.configurator.getPort();
 	
 	    robotMoves.addAll( Arrays.asList(new String[] {"w","s","h","r","l","z","x","p"}) );       
-	    connQakSupport = new connQakCoap(  );  
+	    connQakSupport = new connQakCoap();  
 	    connQakSupport.createConnection();
 	      
 	 }
 
 	/*
 	 * Update the page vie socket.io when the application-resource changes.
-	 * Thanks to Eugenio Cerulo
 	 */
 	@Autowired
 	SimpMessagingTemplate simpMessagingTemplate;
 		
-	 @GetMapping("/") 		 
+	@GetMapping("/") 		 
 	 public String entry(Model viewmodel) {
 		 viewmodel.addAttribute("arg", "Entry page loaded. Please use the buttons ");
 	 	 peparePageUpdating();

@@ -73,7 +73,7 @@ public class RobotController {
 	 @GetMapping("/") 		 
 	 public String entry(Model viewmodel) {
 		 viewmodel.addAttribute("arg", "Entry page loaded. Please use the buttons ");
-	 	 peparePageUpdating();
+//	 	 peparePageUpdating();
 	 	 return htmlPage;
 	 } 
 	   
@@ -174,7 +174,7 @@ public class RobotController {
 	
 	@MessageMapping("/smartbell")
 	@SendTo("/topic/display")
-	public String backtoclient(RequestMessageOnSock message) throws Exception {
+	public ResourceRep backtoclient() throws Exception {
 	 		ApplMessage msg = MsgUtil.buildDispatch("web", "ringBell", "ringBell(ok)", "smartbell" );
 			connQakSupport.request( msg );
 			//readRep returns the String sent back from the QAK resource
@@ -182,10 +182,10 @@ public class RobotController {
 			System.out.println("------------------- RobotController resourceRe p=" + reply  );
 			if (reply == "0")
 			{
-				return "client-view-tearoom";
+				return new  ResourceRep("client-view-tearoom");
 			}
 			else {
-				return "client-view-main";
+				return new  ResourceRep("client-view-main");
 			}
 
 		

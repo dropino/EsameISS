@@ -37,7 +37,7 @@ class Smartbell ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, 
 					action { //it:State
 						if( checkMsgContent( Term.createTerm("ringBell(TEMP)"), Term.createTerm("ringBell(T)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
-								Temp = payloadArg(0).toString().toInt()  
+								Temp = (36..42).random()  
 								println("  SmartBell | Check Temp $Temp ")
 						}
 					}

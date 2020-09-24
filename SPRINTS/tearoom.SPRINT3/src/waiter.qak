@@ -386,7 +386,7 @@ QActor smartbell context ctxtearoom {
 	
 	State checkTemp {
 		onMsg ( ringBell : ringBell (T) ) {
-			[#Temp = payloadArg(0).toString().toInt() #]
+			[#Temp = (36..42).random() #]
 			
 			println("  SmartBell | Check Temp $Temp ")
 			

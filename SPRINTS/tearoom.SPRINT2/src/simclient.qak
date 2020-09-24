@@ -46,7 +46,7 @@ QActor simclient context ctxclient {
 	
 		State s0 initial{
 			println("Client | INIT")
-			[# MyTemp = (36..37).random() #]
+			//[# MyTemp = (36..37).random() #]
 		}
 		Goto outside
 		

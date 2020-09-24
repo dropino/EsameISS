@@ -19,10 +19,11 @@ function connect() {
     });
 }
 
-$( "#btn-smartbell" ).click(function() { 
+$(document).on("click", "#btn-smartbell", function(event) {
+
     console.log("sending Smartbell request");
-    stompClient.send("/app/smartbell", {}, JSON.stringify(""));
- });
+    stompClient.send("/app/smartbell");
+});
 
 
 var btnState = "calling1";

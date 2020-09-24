@@ -19,16 +19,10 @@ object configurator{
 	@JvmStatic var stepsize			= "350" 
 	
 //Basicrobot application
-	@JvmStatic var hostAddr   	    = "localhost";  //"192.168.1.5";		
+	@JvmStatic var hostAddr   	    = "localhost"; 	
 	@JvmStatic var port    			= "8072";
 	@JvmStatic var qakdest	     	= "smartbell";
 	@JvmStatic var ctxqadest 		= "ctxtearoom";
-	
-//Domains application
-//	@JvmStatic var hostAddr   	    = "192.168.1.22";  //"192.168.1.5";		
-//	@JvmStatic var port    			= "8060";
-//	@JvmStatic var qakdest	     	= "waiter";
-//	@JvmStatic var ctxqadest 		= "ctxdomains";
 	
 	@JvmStatic	//to be used by Java
 	fun configure(){

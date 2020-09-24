@@ -174,14 +174,21 @@ public class RobotController {
 	
 	@MessageMapping("/smartbell")
 	@SendTo("/topic/display")
-	public ResourceRep backtoclient(RequestMessageOnSock message) throws Exception {
-	// 		ApplMessage msg = MsgUtil.buildDispatch("web", "cmd", "cmd("+message.getName()+")", "basicrobot" );
-	//		connQakSupport.forward( msg );
-	//		System.out.println("------------------- RobotController forward=" + msg  );
-//		doBusinessJob(message.getName(), null);
-	//		//WAIT for command completion ...
-	//		Thread.sleep(400);
-		return getWebPageRep();
+	public String backtoclient(RequestMessageOnSock message) throws Exception {
+	 		ApplMessage msg = MsgUtil.buildDispatch("web", "ringBell", "ringBell(ok)", "smartbell" );
+			connQakSupport.request( msg );
+			//readRep returns the String sent back from the QAK resource
+			String reply = connQakSupport.readRep();
+			System.out.println("------------------- RobotController resourceRe p=" + reply  );
+			if (reply == "0")
+			{
+				return "client-view-tearoom";
+			}
+			else {
+				return "client-view-main";
+			}
+
+		
 	}
 	
 	@MessageMapping("/update")

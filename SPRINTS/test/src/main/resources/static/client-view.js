@@ -19,14 +19,9 @@ function connect() {
     });
 }
 
-$("form").on('submit', function (e) {
-    e.preventDefault();
-});
-
 $( "#btn-smartbell" ).click(function() { 
     console.log("sending Smartbell request");
     stompClient.send("/app/smartbell", {}, JSON.stringify(""));
-
  });
 
 

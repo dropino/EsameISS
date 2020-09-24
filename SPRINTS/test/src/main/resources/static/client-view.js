@@ -4,8 +4,19 @@ var stompClient = null;
 
 function showMsg(message) {
     console.log(message );
-    $("#applmsgs").html( "<pre>"+message.replace(/\n/g,"<br/>")+"</pre>" );
+//    $("#applmsgs").html( "<pre>"+message.replace(/\n/g,"<br/>")+"</pre>" );
         //$("#applmsgintable").append("<tr><td>" + message + "</td></tr>");
+}
+
+function httpGetAsync(theUrl, callback)
+{
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.onreadystatechange = function() { 
+        if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+            callback(xmlHttp.responseText);
+    }
+    xmlHttp.open("GET", theUrl, true); // true for asynchronous 
+    xmlHttp.send(null);
 }
 
 function connect() {
@@ -14,7 +25,9 @@ function connect() {
     stompClient.connect({}, function (frame) {
         // setConnected(true);
         stompClient.subscribe('/topic/display', function (msg) {
-             showMsg(JSON.parse(msg.body).content);
+            var message = JSON.parse(msg.body).content;
+            showMsg(message);
+             window.location.replace(message);
         });
     });
 }

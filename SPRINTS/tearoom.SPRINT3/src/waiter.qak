@@ -5,15 +5,14 @@ System tearoomsys
 mqttBroker "localhost" : 1883 eventTopic "unibo/basicrobot"   
 
 //waiterwalker-walker
-Event    waiterwalkerstarted   : waiterwalkerstarted(X)
-Event    walkerstarted   	: walkerstarted(X)
+Event    walkerstarted   		: walkerstarted(X)
 
-Request	 doPlan 			: doPlan(X,Y)
-Reply 	 walkerError 		: walkerError( $XT,$YT )
-Reply	 walkerDone 		: walkerDone(X,Y)
+Request	 doPlan 				: doPlan(X,Y)
+Reply 	 walkerError 			: walkerError( $XT,$YT )
+Reply	 walkerDone 			: walkerDone(X,Y)
 
 //Waiter-Waiterwalker
-Event    waiterwalkerstarted : waiterwalkerstarted(X)
+Event    waiterwalkerstarted 	: waiterwalkerstarted(X)
 
 Request  moveForTask 		: moveForTask(TASK, N)
 Reply    movementDone   	: movementDone(OK)
@@ -380,6 +379,11 @@ QActor smartbell context ctxtearoom {
 	Goto waitForClient
 	
 	State waitForClient {
+		[#
+			Temp = 0
+			CID = 0	
+		#
+		]
 		println("  SmartBell | Wait Client  ")
 	}
 	Transition t0 whenRequest ringBell -> checkTemp

@@ -45,11 +45,14 @@ public class RobotController {
      
     //String htmlPage  = "robotGuiPost"; 
     String htmlPage  = "client-view-main";
+    String htmlPageTearoom = "client-view-tearoom";
+    String htmlPageBadTemp = "client-view-bad-temp";
     //String htmlPage  = "robotGuiPostBoundary"; 
     
 //    Set<String> robotMoves = new HashSet<String>(); 
     
-    connQakCoap connQakSupport ;   
+    connQakCoap smartbellConn ;   
+    connQakCoap waiterConn;
     
 	public RobotController() {
 	    connQak.configurator.configure();
@@ -58,8 +61,8 @@ public class RobotController {
 	    robotPort = connQak.configurator.getPort();
 	
 //	    robotMoves.addAll( Arrays.asList(new String[] {"w","s","h","r","l","z","x","p"}) );       
-	    connQakSupport = new connQakCoap(  );  
-	    connQakSupport.createConnection();
+	    smartbellConn = new connQakCoap(robotHost, robotPort, configurator.getQakdest(), configurator.getCtxqadest()  );  
+	    smartbellConn.createConnection();
 	      
 	 }
 
@@ -70,53 +73,25 @@ public class RobotController {
 	@Autowired
 	SimpMessagingTemplate simpMessagingTemplate;
 		
-	 @GetMapping("/") 		 
+	 @GetMapping("/") 	 	 
 	 public String entry(Model viewmodel) {
 		 viewmodel.addAttribute("arg", "Entry page loaded. Please use the buttons ");
 //	 	 peparePageUpdating();
 	 	 return htmlPage;
 	 } 
 	   
-	 @GetMapping("/applmodel")
-	 @ResponseBody
-	 public String getApplicationModel(Model viewmodel) {
-	  	 ResourceRep rep = getWebPageRep();
-		 return rep.getContent();
-	 }     
-	  
-	
-//	@PostMapping( path = "/smartbell" ) 
-//	public String doMove( 
-//		@RequestParam(name="move", required=false, defaultValue="h") 
-//		//binds the value of the query string parameter name into the moveName parameter of the  method
-//		String moveName, Model viewmodel
-//		) {
-//		System.out.println("------------------- RobotController doMove move=" + moveName  );
-//		if( robotMoves.contains(moveName) ) {
-//			doBusinessJob(moveName, viewmodel);
-//		}else {
-//			viewmodel.addAttribute("arg", "Sorry: move unknown - Current Robot State:"+viewModelRep );
-//		}		
-//		return "client-view-tearoom";
-//		//return "robotGuiSocket";  //ESPERIMENTO
-//		}	
-		
+	 @GetMapping("/tearoom")
+	 public String getApplicationModelTearoom(Model viewmodel) {
+//	  	 ResourceRep rep = getWebPageRep();
+		 
+		 return htmlPageTearoom; 
+	 } 
 	 
-	private void peparePageUpdating() {
-		connQakSupport.getClient().observe(new CoapHandler() {
-			@Override
-			public void onLoad(CoapResponse response) {
-				System.out.println("RobotController --> CoapClient changed ->" + response.getResponseText());
-				simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForClient, 
-						new ResourceRep("" + HtmlUtils.htmlEscape(response.getResponseText())  ));
-			}
-	
-			@Override
-			public void onError() {
-				System.out.println("RobotController --> CoapClient error!");
-			}
-		});
-	}
+	 @GetMapping("/badtemp")
+	 public String getApplicationModelBadTemperature(Model viewmodel) {
+//	  	 ResourceRep rep = getWebPageRep();
+		 return htmlPageBadTemp;
+	 } 
 	
 	/*
 	 * INTERACTION WITH THE BUSINESS LOGIC			
@@ -125,22 +100,22 @@ public class RobotController {
 		try {
 			if( moveName.equals("ringBell")) {
 				ApplMessage msg = MsgUtil.buildRequest("web", "ringBell", "37", configurator.getQakdest() );
-				connQakSupport.request( msg );					
+				smartbellConn.request( msg );					
 			}
 			else {
 				ApplMessage msg = MsgUtil.buildRequest("web", "request", moveName, configurator.getQakdest() );
-				connQakSupport.request( msg );									
+				smartbellConn.request( msg );									
 			}
 			
 			
 	//			
 	//			if( moveName.equals("p")) {
 	//				ApplMessage msg = MsgUtil.buildRequest("web", "step", "step("+configurator.getStepsize()+")", configurator.getQakdest() );
-	//				connQakSupport.request( msg );				
+	//				smartbellConn.request( msg );				
 	//			}
 	//			else {
 	//				ApplMessage msg = MsgUtil.buildDispatch("web", "cmd", "cmd("+moveName+")", configurator.getQakdest() );
-	//				connQakSupport.forward( msg );
+	//				smartbellConn.forward( msg );
 	//			}		
 			//WAIT for command completion ...
 			Thread.sleep(400);  //QUITE A LONG TIME ...
@@ -175,17 +150,44 @@ public class RobotController {
 	@MessageMapping("/smartbell")
 	@SendTo("/topic/display")
 	public ResourceRep backtoclient() throws Exception {
-	 		ApplMessage msg = MsgUtil.buildDispatch("web", "ringBell", "ringBell(ok)", "smartbell" );
-			connQakSupport.request( msg );
+	 		ApplMessage msg = MsgUtil.buildRequest("web", "ringBell", "ringBell(ok)", "smartbell" );
+	 		ApplMessage reply = smartbellConn.request( msg );  
 			//readRep returns the String sent back from the QAK resource
-			String reply = connQakSupport.readRep();
-			System.out.println("------------------- RobotController resourceRe p=" + reply  );
-			if (reply == "0")
+			
+			//String reply = smartbellConn.readRep();
+			System.out.println("------------------- RobotController appl message reply content p =" + reply.msgContent()  );
+			
+			
+			
+			if (reply.msgContent() == "tempStatus(0,0)")
 			{
-				return new  ResourceRep("client-view-tearoom");
+				return new  ResourceRep("/badtemp");
 			}
 			else {
-				return new  ResourceRep("client-view-main");
+			    waiterConn = new connQakCoap(robotHost, robotPort, "waiter", configurator.getCtxqadest()  );  
+			    waiterConn.createConnection();
+				return new  ResourceRep("/tearoom");
+				
+			}
+
+		
+	}
+	
+	@MessageMapping("/waiter")
+	@SendTo("/topic/display")
+	public ResourceRep backtoclient(RequestMessageOnSock req) throws Exception {
+	 		ApplMessage msg = MsgUtil.buildRequest("web", "waitTime", "waitTime(" + req.getPayload() + ")", "waiter" );
+	 		ApplMessage reply = smartbellConn.request( msg );  
+			System.out.println("------------------- RobotController appl message reply content p =" + reply.msgContent()  );
+			
+			
+			
+			if (reply.msgContent() == "tempStatus(0,0)")
+			{
+				return new  ResourceRep("/badtemp");
+			}
+			else {
+				return new  ResourceRep("/tearoom");
 			}
 
 		
@@ -199,12 +201,14 @@ public class RobotController {
 	}
 	
 	public ResourceRep getWebPageRep()   {
-		String resourceRep = connQakSupport.readRep();
+		String resourceRep = smartbellConn.readRep();
 		System.out.println("------------------- RobotController resourceRep=" + resourceRep  );
 		return new ResourceRep("" + HtmlUtils.htmlEscape(resourceRep)  );
 		}
 		
-	  
+	  protected String extractApplMessagePayload(ApplMessage msg, int idx) {
+		  
+	  }
 	 
 		
 	 

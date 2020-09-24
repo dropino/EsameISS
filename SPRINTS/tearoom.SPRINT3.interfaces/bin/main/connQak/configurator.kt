@@ -47,7 +47,7 @@ object configurator{
 			System.out.println( "		--- configurator | configfile path=${configfile.getPath()} pageTemplate=$pageTemplate hostAddr=$hostAddr port=$port stepsize=$stepsize" )
 		}catch(e:Exception){
 			System.out.println( " &&& SORRY pageConfig.json NOT FOUND ")
-			pageTemplate 	=  "robotGuiSocket"   
+			pageTemplate 	=  "client-view-main"   
 			hostAddr    	=  "localhost"        
 			port    		= "8072"              
 			qakdest         = "tearoom"        

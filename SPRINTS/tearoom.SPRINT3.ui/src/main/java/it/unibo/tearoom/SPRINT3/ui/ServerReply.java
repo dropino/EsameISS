@@ -28,9 +28,9 @@ public class ServerReply {
 	public ServerReply(String redir, String payload0, String payload1, String payload2) {
 		super();
 		this.redir = redir;
+		this.payload0 = payload0;
 		this.payload1 = payload1;
 		this.payload2 = payload2;
-		this.payload0 = payload0;
 	}
 	public ServerReply(String redir, String payload0, String payload1, String payload2, String payload3) {
 		super();

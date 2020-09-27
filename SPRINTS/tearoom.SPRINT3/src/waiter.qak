@@ -2,7 +2,7 @@ System tearoomsys
 //mqttBroker "localhost" : 1883 eventTopic "unibo/waiter"   
 
 //MESSAGES
-mqttBroker "localhost" : 1883 eventTopic "unibo/basicrobot"   
+//mqttBroker "localhost" : 1883 eventTopic "unibo/basicrobot"   
 
 //waiterwalker-walker
 Event    walkerstarted   		: walkerstarted(X)
@@ -274,7 +274,7 @@ QActor waiter context ctxtearoom {
 			
 	State leaveDrinkAtTable {
 		println("WAITER | giving the simclient the tea")
-		updateResource[# "waiter_rdy_bringDrink" #]
+		updateResource[# "deliver-tea-$CTABLE" #]
 		
 		emit deliver : deliver(tea, $CTABLE)
 	}

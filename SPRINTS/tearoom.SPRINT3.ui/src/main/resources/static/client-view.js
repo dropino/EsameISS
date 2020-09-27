@@ -35,6 +35,10 @@ function handleSmartbellReply(msg) {
     	
     	if (CID != 0) url.searchParams.append('cid', CID);
     	
+    	stompClient.disconnect(function(){
+    	    console.log("disconnected from stompClient");
+    	});
+    	
     	window.location.replace(url);
     }
     else {

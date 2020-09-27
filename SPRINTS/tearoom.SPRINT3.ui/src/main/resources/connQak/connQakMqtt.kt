@@ -12,11 +12,14 @@ class connQakMqtt(hostIP : String,  port : String,  destName : String, context :
 										         connQakBase(hostIP, port, destName, context), MqttCallback{
  	lateinit var client  : MqttClient
  	val clientid         = "clientmqtt"
-	val answerTopic      = "unibo/qak/$clientid"
+	var answerTopic      = "unibo/qak/$clientid"
+		
+	lateinit var messageArrivedCallback: (String, MqttMessage) -> ApplMessage 
+	
 
 	override fun messageArrived(topic: String, msg: MqttMessage) {
         //sysUtil.traceprintln("$tt ActorBasic $name |  MQTT messageArrived on "+ topic + ": "+msg.toString());
-        val m = ApplMessage( msg.toString() )
+        val m = messageArrivedCallback
         println("       %%% connQakMqtt |  ARRIVED on $topic  m=$m  " )
     }
 	override fun connectionLost(cause: Throwable?) {
@@ -42,7 +45,7 @@ class connQakMqtt(hostIP : String,  port : String,  destName : String, context :
  		}
 	}
 	
-	override fun createConnection(  ){
+	override fun createConnection(  ) {
 		val brokerAddr = "tcp://$hostIP:$port"
 		try {
   			//println("     %%% connQakMqtt | doing connect for $clientid to $brokerAddr "  );

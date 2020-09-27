@@ -1,10 +1,14 @@
 package it.unibo.tearoom.SPRINT3.ui;
 
+import org.eclipse.californium.core.CoapHandler;
+import org.eclipse.californium.core.CoapResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -39,17 +43,21 @@ public class ClientController {
 	
 	    smartbellConn = new connQakCoap(robotHost, robotPort, configurator.getQakdest(), configurator.getCtxqadest()  );  
 	    smartbellConn.createConnection();
+ 		
+	    waiterConn = new connQakCoap(robotHost, robotPort, "waiter", configurator.getCtxqadest()  );  
+	    waiterConn.createConnection();
 	      
 	 }
     
 	 @GetMapping("/") 	 	 
 	 public String entry(Model viewmodel) {
-		 viewmodel.addAttribute("arg", "Entry page loaded. Please use the buttons ");
+		  //viewmodel.addAttribute("arg", "Entry page loaded. Please use the buttons ");
 	 	 return htmlPageMain;
 	 } 
 	   
 	 @GetMapping("/tearoom")
-	 public String getApplicationModelTearoom(Model viewmodel) {		 
+	 public String getApplicationModelTearoom(Model viewmodel) {
+		 preparePageUpdating();
 		 return htmlPageTearoom; 
 	 } 
 	 
@@ -64,6 +72,36 @@ public class ClientController {
 	    return new ResponseEntity<String>(
 	    		"RobotController ERROR " + ex.getMessage(), responseHeaders, HttpStatus.CREATED);
 	}
+	
+	
+	/* ----------------------------------------------------------
+	   Client update on resource change to handle events from CoAP resource
+	  ----------------------------------------------------------
+     * Update the page vie socket.io when the application-resource changes. 
+     * Thanks to Eugenio Cerulo
+     */
+	@Autowired
+	SimpMessagingTemplate simpMessagingTemplate;
+	
+	private void preparePageUpdating() {
+    	waiterConn.getClient().observe(new CoapHandler() {
+			@Override
+			public void onLoad(CoapResponse response) {
+				
+				if(response.getResponseText().contains("deliver-tea")) {
+					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
+					simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForClient, 
+							new ServerReply("", "delivery"));
+				}
+			}
+
+			@Override
+			public void onError() {    
+				System.out.println("ClientController --> CoapClient error!");
+			}
+		});
+	}
+	
 	
 	/* ----------------------------------------------------------
 	   Message-handling Controller
@@ -91,13 +129,11 @@ public class ClientController {
 	@SendTo("/topic/display")
 	public ServerReply ringSmartbell() throws Exception {
 	 		ApplMessage ringMsg = MsgUtil.buildRequest("web", "ringBell", "ringBell(ok)", "smartbell" );
+	 		
 	 		ApplMessage reply = smartbellConn.request( ringMsg );  
 			System.out.println("------------------- Controller appl message reply content p =" + reply.msgContent()  );
 			
 			String[] ringRepArgs = ApplMessageUtils.extractApplMessagePayloadArgs(reply);
-			
-//			for (int i =0; i< ringRepArgs.length; i++)
-//				System.out.println(ringRepArgs[i]);
 			
 			if (ringRepArgs[0].compareTo("0") == 0)
 			{
@@ -105,9 +141,6 @@ public class ClientController {
 				return new  ServerReply("badtemp","0","0");
 			}
 			else {
-				System.out.println("------------------- Controller creating connection with waiter"   );
-			    waiterConn = new connQakCoap(robotHost, robotPort, "waiter", configurator.getCtxqadest()  );  
-			    waiterConn.createConnection();
 			  //on tempStatus msg the clientId is the second argument, so idx = 1
 				System.out.println("------------------- Controller appl message content =" + ringRepArgs[1]  );
 		 		ApplMessage askWaitTime = MsgUtil.buildRequest("web", "waitTime", "waitTime(" + ringRepArgs[1] + ")", "smartbell" );
@@ -129,28 +162,28 @@ public class ClientController {
 		/*
 		 *  Req ID:
 		 *  	0) waitTime -> waitTime is automatically asked by the smartBell interaction function
-		 *  	1) deployEntrance, deployExit
-		 *  	2) requestOrder, requestPayment
-		 *  	3) forwardOrder
-		 *		4) forwardPayment
+		 *  	deploy*) 	deployEntrance, deployExit
+		 *  	service*) 	requestOrder, requestPayment
+		 *  	order) 		forwardOrder
+		 *		pay) 		forwardPayment
 		 * */
 
-		if (req.getName().compareTo("1") == 0)
+		if (req.getName().contains("deploy"))
 			return askForDeployment(req);
 		
-		if (req.getName().compareTo("2") == 0)
+		if (req.getName().contains("service"))
 			return askForService(req);
 		
-		if (req.getName().compareTo("3") == 0)
+		if (req.getName().compareTo("order") == 0)
 		{
-	 		ApplMessage msg = MsgUtil.buildDispatch("web", "order", "order(" + req.getPayload() + ")", "waiter" );
+	 		ApplMessage msg = MsgUtil.buildDispatch("web", "order", "order(" + req.getPayload0() + ")", "waiter" );
 	 		waiterConn.forward( msg ); 
 	 		return new ServerReply("", "success");
 		}
 		
-		if (req.getName().compareTo("4") == 0)
+		if (req.getName().compareTo("pay") == 0)
 		{
-	 		ApplMessage msg = MsgUtil.buildDispatch("web", "pay", "pay(" + req.getPayload() + ")", "waiter" );
+	 		ApplMessage msg = MsgUtil.buildDispatch("web", "pay", "pay(" + req.getPayload0() + ")", "waiter" );
 	 		waiterConn.forward( msg );
 	 		return new ServerReply("", "success");
 		}
@@ -159,7 +192,7 @@ public class ClientController {
 	}
 	
 	private ServerReply askForDeployment(ClientRequest req) {
- 		ApplMessage msg = MsgUtil.buildRequest("web", "deploy", "deploy(" + req.getPayload() + ")", "waiter" );
+ 		ApplMessage msg = MsgUtil.buildRequest("web", "deploy", "deploy(" + req.getPayload0() + ","+ req.getPayload1() + ","+ req.getPayload2() + ")", "waiter" );
  		ApplMessage reply = waiterConn.request( msg );  
 		System.out.println("------------------- Controller appl message reply content p =" + reply.msgContent()  );
 		
@@ -169,7 +202,7 @@ public class ClientController {
 	}
 	
 	private ServerReply askForService(ClientRequest req) {
- 		ApplMessage msg = MsgUtil.buildRequest("web", "clientRequest", "clientRequest(" + req.getPayload() + ")", "waiter" );
+ 		ApplMessage msg = MsgUtil.buildRequest("web", "clientRequest", "clientRequest(" + req.getPayload0() + ","+ req.getPayload1() + ","+ req.getPayload2() + ")", "waiter" );
  		ApplMessage reply = waiterConn.request( msg );  
 		System.out.println("------------------- Controller appl message reply content p =" + reply.msgContent()  );
 				

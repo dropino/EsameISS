@@ -20,7 +20,7 @@ public class Application  implements ApplicationListener<ApplicationReadyEvent> 
 	}
 	
 	@Autowired
-    private ApplicationContext applicationContext;
+    private ApplicationContext applicationContext; 
 	 @Override
 	  public void onApplicationEvent(ApplicationReadyEvent event) {
 	      try {

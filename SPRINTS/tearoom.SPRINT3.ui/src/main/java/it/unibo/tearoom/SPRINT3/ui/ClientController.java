@@ -143,7 +143,7 @@ public class ClientController {
 			else {
 			  //on tempStatus msg the clientId is the second argument, so idx = 1
 				System.out.println("------------------- Controller appl message content =" + ringRepArgs[1]  );
-		 		ApplMessage askWaitTime = MsgUtil.buildRequest("web", "waitTime", "waitTime(" + ringRepArgs[1] + ")", "smartbell" );
+		 		ApplMessage askWaitTime = MsgUtil.buildRequest("web", "waitTime", "waitTime(" + ringRepArgs[1] + ")", "waiter" );
 		 		ApplMessage timeToWait = waiterConn.request( askWaitTime );   
 		 		
 		 		String ttw = ApplMessageUtils.extractApplMessagePayload(timeToWait, 0); 
@@ -193,6 +193,8 @@ public class ClientController {
 	
 	private ServerReply askForDeployment(ClientRequest req) {
  		ApplMessage msg = MsgUtil.buildRequest("web", "deploy", "deploy(" + req.getPayload0() + ","+ req.getPayload1() + ","+ req.getPayload2() + ")", "waiter" );
+		System.out.println("------------------- Controller sending deployment message msg =" + msg.toString()  );
+
  		ApplMessage reply = waiterConn.request( msg );  
 		System.out.println("------------------- Controller appl message reply content p =" + reply.msgContent()  );
 		
@@ -203,6 +205,7 @@ public class ClientController {
 	
 	private ServerReply askForService(ClientRequest req) {
  		ApplMessage msg = MsgUtil.buildRequest("web", "clientRequest", "clientRequest(" + req.getPayload0() + ","+ req.getPayload1() + ","+ req.getPayload2() + ")", "waiter" );
+		System.out.println("------------------- Controller sending service message msg =" + msg.toString()  );
  		ApplMessage reply = waiterConn.request( msg );  
 		System.out.println("------------------- Controller appl message reply content p =" + reply.msgContent()  );
 				

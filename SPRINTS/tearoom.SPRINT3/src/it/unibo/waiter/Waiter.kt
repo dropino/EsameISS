@@ -242,7 +242,7 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 				state("leaveDrinkAtTable") { //this:State
 					action { //it:State
 						println("WAITER | giving the simclient the tea")
-						updateResourceRep( "waiter_rdy_bringDrink"  
+						updateResourceRep( "deliver-tea-$CTABLE"  
 						)
 						emit("deliver", "deliver(tea,$CTABLE)" ) 
 					}

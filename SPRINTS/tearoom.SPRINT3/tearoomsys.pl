@@ -1,7 +1,7 @@
 %====================================================================================
 % tearoomsys description   
 %====================================================================================
-%====mqttBroker("localhost", "1883", "unibo/basicrobot").
+mqttBroker("localhost", "1883", "unibo/basicrobot").
 context(ctxtearoom, "localhost",  "TCP", "8072").
  qactor( walker, ctxtearoom, "it.unibo.walker.Walker").
   qactor( waiter, ctxtearoom, "it.unibo.waiter.Waiter").

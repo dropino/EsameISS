@@ -92,7 +92,7 @@ QActor waiter context ctxtearoom {
  		println("WAITER | listening... ")
  		updateResource [#"listening"#]
 	}
-	  Transition t0  	whenTime 	5000	 	 		-> goHome
+	  Transition t0  	whenTime 	10000	 	 		-> goHome
 	  					whenRequest waitTime			-> answerTime
 	  					whenRequest	deploy			 	-> handleDeploy
 						whenRequest	clientRequest 		-> answerClientRequest

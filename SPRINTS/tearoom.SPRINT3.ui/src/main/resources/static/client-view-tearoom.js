@@ -26,12 +26,6 @@ function handleWaiterReply(msg) {
       $( "#txt-input" ).hide();
       $( "#btn-waiter" ).hide();
 	}
-	if(reqID == 'pay') {
-		$( "#title" ).text('Ready to leave?');
-	    $( "#caption" ).show();
-	    $( "#caption" ).text('Call the Waiter by clicking the button below to leave the tearoom.');
-	    $( "#btn-waiter" ).show();
-	}
 	if(reqID == 'servicePay') {
 		Bill = JSON.parse(msg.body).payload0;
       $( "#title" ).text("Your bill is " + Bill + "$");
@@ -112,6 +106,13 @@ function showDeploymentMessage() {
     $( "#btn-waiter" ).hide();
 }
 
+function showReadyToLeaveMessage() {
+	$( "#title" ).text('Ready to leave?');
+    $( "#caption" ).show();
+    $( "#caption" ).text('Call the Waiter by clicking the button below to leave the tearoom.');
+    $( "#btn-waiter" ).show();
+}
+
 $(document).on("click", "#btn-waiter", function(event) {
 
 	if(reqID == 'deployExit') {
@@ -121,8 +122,8 @@ $(document).on("click", "#btn-waiter", function(event) {
 	
 	if(reqID == 'pay') {
 		stompClient.send("/app/waiter", {}, JSON.stringify({'name': reqID, 'payload0': $( "#txt-input" ).val()}));
-        showDeploymentMessage();
-        reqID='deployExit';
+		showReadyToLeaveMessage();
+		reqID='deployExit';
 	}
 	if(reqID == 'servicePay') {
 		stompClient.send("/app/waiter", {}, JSON.stringify({'name': reqID, 'payload0': 'pay', 'payload1': Table, 'payload2': ClientID}));

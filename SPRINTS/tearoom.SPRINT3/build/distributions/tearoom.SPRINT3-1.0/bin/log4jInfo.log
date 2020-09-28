@@ -1,69 +1,92 @@
-2020-09-27 20:28:47 INFO  NetworkConfig:372 - loading properties from file /Users/lallu/Desktop/Laura/Uni/Magistrale/1A_2C/Ingegneria dei Sistemi Software/EsameIss2020/SPRINTS/tearoom.SPRINT3/build/distributions/tearoom.SPRINT3-1.0/bin/Californium.properties
-2020-09-27 20:28:47 INFO  RandomTokenGenerator:55 - using tokens of 8 bytes in length
-2020-09-27 20:28:47 INFO  CoapEndpoint:423 - CoapEndpoint uses udp plain
-2020-09-27 20:28:47 INFO  BlockwiseLayer:207 - BlockwiseLayer uses MAX_MESSAGE_SIZE=1024, PREFERRED_BLOCK_SIZE=512, BLOCKWISE_STATUS_LIFETIME=300000 and MAX_RESOURCE_BODY_SIZE=8192
-2020-09-27 20:28:47 INFO  ReliabilityLayer:83 - ReliabilityLayer uses ACK_TIMEOUT=2000, ACK_RANDOM_FACTOR=1.5, and ACK_TIMEOUT_SCALE=2.0
-2020-09-27 20:28:47 INFO  CoapServer:207 - Starting server
-2020-09-27 20:28:47 INFO  UDPConnector:161 - UDPConnector starts up 1 sender threads and 1 receiver threads
-2020-09-27 20:28:47 INFO  UDPConnector:187 - UDPConnector listening on 0.0.0.0/0.0.0.0:8072, recv buf = 65507, send buf = 65507, recv packet size = 2048
-2020-09-27 20:28:47 INFO  CoapEndpoint:485 - Started endpoint at coap://0.0.0.0:8072
-2020-09-27 20:31:04 INFO  CoapResource:722 - successfully established observe relation between /127.0.0.1:61703#[7bb0020aad2fe714] and resource /ctxtearoom/waiter (Exchange[R9], size 1)
-2020-09-27 20:32:38 INFO  NetworkConfig:372 - loading properties from file /Users/lallu/Desktop/Laura/Uni/Magistrale/1A_2C/Ingegneria dei Sistemi Software/EsameIss2020/SPRINTS/tearoom.SPRINT3/build/distributions/tearoom.SPRINT3-1.0/bin/Californium.properties
-2020-09-27 20:32:39 INFO  RandomTokenGenerator:55 - using tokens of 8 bytes in length
-2020-09-27 20:32:39 INFO  CoapEndpoint:423 - CoapEndpoint uses udp plain
-2020-09-27 20:32:39 INFO  BlockwiseLayer:207 - BlockwiseLayer uses MAX_MESSAGE_SIZE=1024, PREFERRED_BLOCK_SIZE=512, BLOCKWISE_STATUS_LIFETIME=300000 and MAX_RESOURCE_BODY_SIZE=8192
-2020-09-27 20:32:39 INFO  ReliabilityLayer:83 - ReliabilityLayer uses ACK_TIMEOUT=2000, ACK_RANDOM_FACTOR=1.5, and ACK_TIMEOUT_SCALE=2.0
-2020-09-27 20:32:39 INFO  CoapServer:207 - Starting server
-2020-09-27 20:32:39 INFO  UDPConnector:161 - UDPConnector starts up 1 sender threads and 1 receiver threads
-2020-09-27 20:32:39 INFO  UDPConnector:187 - UDPConnector listening on 0.0.0.0/0.0.0.0:8072, recv buf = 65507, send buf = 65507, recv packet size = 2048
-2020-09-27 20:32:39 INFO  CoapEndpoint:485 - Started endpoint at coap://0.0.0.0:8072
-2020-09-27 20:41:16 INFO  NetworkConfig:372 - loading properties from file /Users/lallu/Desktop/Laura/Uni/Magistrale/1A_2C/Ingegneria dei Sistemi Software/EsameIss2020/SPRINTS/tearoom.SPRINT3/build/distributions/tearoom.SPRINT3-1.0/bin/Californium.properties
-2020-09-27 20:41:16 INFO  RandomTokenGenerator:55 - using tokens of 8 bytes in length
-2020-09-27 20:41:16 INFO  CoapEndpoint:423 - CoapEndpoint uses udp plain
-2020-09-27 20:41:16 INFO  BlockwiseLayer:207 - BlockwiseLayer uses MAX_MESSAGE_SIZE=1024, PREFERRED_BLOCK_SIZE=512, BLOCKWISE_STATUS_LIFETIME=300000 and MAX_RESOURCE_BODY_SIZE=8192
-2020-09-27 20:41:16 INFO  ReliabilityLayer:83 - ReliabilityLayer uses ACK_TIMEOUT=2000, ACK_RANDOM_FACTOR=1.5, and ACK_TIMEOUT_SCALE=2.0
-2020-09-27 20:41:16 INFO  CoapServer:207 - Starting server
-2020-09-27 20:41:16 INFO  UDPConnector:161 - UDPConnector starts up 1 sender threads and 1 receiver threads
-2020-09-27 20:41:16 INFO  UDPConnector:187 - UDPConnector listening on 0.0.0.0/0.0.0.0:8072, recv buf = 65507, send buf = 65507, recv packet size = 2048
-2020-09-27 20:41:16 INFO  CoapEndpoint:485 - Started endpoint at coap://0.0.0.0:8072
-2020-09-27 20:42:47 INFO  CoapResource:722 - successfully established observe relation between /127.0.0.1:50910#[b5c6b5f19c3f9092] and resource /ctxtearoom/waiter (Exchange[R6], size 1)
-2020-09-27 20:43:59 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:50910#[b5c6b5f19c3f9092] and resource /ctxtearoom/waiter (new Exchange[R8], size 1)
-2020-09-27 20:45:02 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:50910#[b5c6b5f19c3f9092] and resource /ctxtearoom/waiter (new Exchange[R9], size 1)
-2020-09-27 20:46:04 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:50910#[b5c6b5f19c3f9092] and resource /ctxtearoom/waiter (new Exchange[R10], size 1)
-2020-09-27 20:47:06 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:50910#[b5c6b5f19c3f9092] and resource /ctxtearoom/waiter (new Exchange[R11], size 1)
-2020-09-27 20:48:08 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:50910#[b5c6b5f19c3f9092] and resource /ctxtearoom/waiter (new Exchange[R16], size 1)
-2020-09-27 20:48:20 INFO  CoapResource:722 - successfully established observe relation between /127.0.0.1:50910#[93a165829a4c4512] and resource /ctxtearoom/waiter (Exchange[R17], size 2)
-2020-09-27 20:52:33 INFO  NetworkConfig:372 - loading properties from file /Users/lallu/Desktop/Laura/Uni/Magistrale/1A_2C/Ingegneria dei Sistemi Software/EsameIss2020/SPRINTS/tearoom.SPRINT3/build/distributions/tearoom.SPRINT3-1.0/bin/Californium.properties
-2020-09-27 20:52:33 INFO  RandomTokenGenerator:55 - using tokens of 8 bytes in length
-2020-09-27 20:52:33 INFO  CoapEndpoint:423 - CoapEndpoint uses udp plain
-2020-09-27 20:52:33 INFO  BlockwiseLayer:207 - BlockwiseLayer uses MAX_MESSAGE_SIZE=1024, PREFERRED_BLOCK_SIZE=512, BLOCKWISE_STATUS_LIFETIME=300000 and MAX_RESOURCE_BODY_SIZE=8192
-2020-09-27 20:52:33 INFO  ReliabilityLayer:83 - ReliabilityLayer uses ACK_TIMEOUT=2000, ACK_RANDOM_FACTOR=1.5, and ACK_TIMEOUT_SCALE=2.0
-2020-09-27 20:52:33 INFO  CoapServer:207 - Starting server
-2020-09-27 20:52:33 INFO  UDPConnector:161 - UDPConnector starts up 1 sender threads and 1 receiver threads
-2020-09-27 20:52:33 INFO  UDPConnector:187 - UDPConnector listening on 0.0.0.0/0.0.0.0:8072, recv buf = 65507, send buf = 65507, recv packet size = 2048
-2020-09-27 20:52:33 INFO  CoapEndpoint:485 - Started endpoint at coap://0.0.0.0:8072
-2020-09-27 20:53:39 INFO  CoapResource:722 - successfully established observe relation between /127.0.0.1:62753#[a1189921709b267a] and resource /ctxtearoom/waiter (Exchange[R8], size 1)
-2020-09-27 20:54:40 INFO  NetworkConfig:372 - loading properties from file /Users/lallu/Desktop/Laura/Uni/Magistrale/1A_2C/Ingegneria dei Sistemi Software/EsameIss2020/SPRINTS/tearoom.SPRINT3/build/distributions/tearoom.SPRINT3-1.0/bin/Californium.properties
-2020-09-27 20:54:40 INFO  RandomTokenGenerator:55 - using tokens of 8 bytes in length
-2020-09-27 20:54:40 INFO  CoapEndpoint:423 - CoapEndpoint uses udp plain
-2020-09-27 20:54:40 INFO  BlockwiseLayer:207 - BlockwiseLayer uses MAX_MESSAGE_SIZE=1024, PREFERRED_BLOCK_SIZE=512, BLOCKWISE_STATUS_LIFETIME=300000 and MAX_RESOURCE_BODY_SIZE=8192
-2020-09-27 20:54:40 INFO  ReliabilityLayer:83 - ReliabilityLayer uses ACK_TIMEOUT=2000, ACK_RANDOM_FACTOR=1.5, and ACK_TIMEOUT_SCALE=2.0
-2020-09-27 20:54:40 INFO  CoapServer:207 - Starting server
-2020-09-27 20:54:40 INFO  UDPConnector:161 - UDPConnector starts up 1 sender threads and 1 receiver threads
-2020-09-27 20:54:40 INFO  UDPConnector:187 - UDPConnector listening on 0.0.0.0/0.0.0.0:8072, recv buf = 65507, send buf = 65507, recv packet size = 2048
-2020-09-27 20:54:40 INFO  CoapEndpoint:485 - Started endpoint at coap://0.0.0.0:8072
-2020-09-27 20:54:41 INFO  CoapResource:722 - successfully established observe relation between /127.0.0.1:62753#[a1189921709b267a] and resource /ctxtearoom/waiter (Exchange[R1], size 1)
-2020-09-27 20:54:48 INFO  CoapResource:722 - successfully established observe relation between /127.0.0.1:62753#[c79876454741abb0] and resource /ctxtearoom/waiter (Exchange[R2], size 2)
-2020-09-27 20:57:57 INFO  NetworkConfig:372 - loading properties from file /Users/lallu/Desktop/Laura/Uni/Magistrale/1A_2C/Ingegneria dei Sistemi Software/EsameIss2020/SPRINTS/tearoom.SPRINT3/build/distributions/tearoom.SPRINT3-1.0/bin/Californium.properties
-2020-09-27 20:57:57 INFO  RandomTokenGenerator:55 - using tokens of 8 bytes in length
-2020-09-27 20:57:57 INFO  CoapEndpoint:423 - CoapEndpoint uses udp plain
-2020-09-27 20:57:57 INFO  BlockwiseLayer:207 - BlockwiseLayer uses MAX_MESSAGE_SIZE=1024, PREFERRED_BLOCK_SIZE=512, BLOCKWISE_STATUS_LIFETIME=300000 and MAX_RESOURCE_BODY_SIZE=8192
-2020-09-27 20:57:57 INFO  ReliabilityLayer:83 - ReliabilityLayer uses ACK_TIMEOUT=2000, ACK_RANDOM_FACTOR=1.5, and ACK_TIMEOUT_SCALE=2.0
-2020-09-27 20:57:57 INFO  CoapServer:207 - Starting server
-2020-09-27 20:57:57 INFO  UDPConnector:161 - UDPConnector starts up 1 sender threads and 1 receiver threads
-2020-09-27 20:57:57 INFO  UDPConnector:187 - UDPConnector listening on 0.0.0.0/0.0.0.0:8072, recv buf = 65507, send buf = 65507, recv packet size = 2048
-2020-09-27 20:57:57 INFO  CoapEndpoint:485 - Started endpoint at coap://0.0.0.0:8072
-2020-09-27 20:58:14 INFO  CoapResource:722 - successfully established observe relation between /127.0.0.1:52040#[bd3b13c2fc9655fb] and resource /ctxtearoom/waiter (Exchange[R3], size 1)
-2020-09-27 20:59:55 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:52040#[bd3b13c2fc9655fb] and resource /ctxtearoom/waiter (new Exchange[R10], size 1)
-2020-09-27 21:00:57 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:52040#[bd3b13c2fc9655fb] and resource /ctxtearoom/waiter (new Exchange[R11], size 1)
-2020-09-27 21:01:59 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:52040#[bd3b13c2fc9655fb] and resource /ctxtearoom/waiter (new Exchange[R12], size 1)
+2020-09-27 22:15:51 INFO  NetworkConfig:372 - loading properties from file /Users/lallu/Desktop/Laura/Uni/Magistrale/1A_2C/Ingegneria dei Sistemi Software/EsameIss2020/SPRINTS/tearoom.SPRINT3/build/distributions/tearoom.SPRINT3-1.0/bin/Californium.properties
+2020-09-27 22:15:51 INFO  RandomTokenGenerator:55 - using tokens of 8 bytes in length
+2020-09-27 22:15:51 INFO  CoapEndpoint:423 - CoapEndpoint uses udp plain
+2020-09-27 22:15:51 INFO  BlockwiseLayer:207 - BlockwiseLayer uses MAX_MESSAGE_SIZE=1024, PREFERRED_BLOCK_SIZE=512, BLOCKWISE_STATUS_LIFETIME=300000 and MAX_RESOURCE_BODY_SIZE=8192
+2020-09-27 22:15:51 INFO  ReliabilityLayer:83 - ReliabilityLayer uses ACK_TIMEOUT=2000, ACK_RANDOM_FACTOR=1.5, and ACK_TIMEOUT_SCALE=2.0
+2020-09-27 22:15:51 INFO  CoapServer:207 - Starting server
+2020-09-27 22:15:51 INFO  UDPConnector:161 - UDPConnector starts up 1 sender threads and 1 receiver threads
+2020-09-27 22:15:51 INFO  UDPConnector:187 - UDPConnector listening on 0.0.0.0/0.0.0.0:8072, recv buf = 65507, send buf = 65507, recv packet size = 2048
+2020-09-27 22:15:51 INFO  CoapEndpoint:485 - Started endpoint at coap://0.0.0.0:8072
+2020-09-27 22:16:45 INFO  CoapResource:722 - successfully established observe relation between /127.0.0.1:50364#[5525006f8d93cd27] and resource /ctxtearoom/waiter (Exchange[R3], size 1)
+2020-09-27 22:21:38 INFO  NetworkConfig:372 - loading properties from file /Users/lallu/Desktop/Laura/Uni/Magistrale/1A_2C/Ingegneria dei Sistemi Software/EsameIss2020/SPRINTS/tearoom.SPRINT3/build/distributions/tearoom.SPRINT3-1.0/bin/Californium.properties
+2020-09-27 22:21:38 INFO  RandomTokenGenerator:55 - using tokens of 8 bytes in length
+2020-09-27 22:21:38 INFO  CoapEndpoint:423 - CoapEndpoint uses udp plain
+2020-09-27 22:21:38 INFO  BlockwiseLayer:207 - BlockwiseLayer uses MAX_MESSAGE_SIZE=1024, PREFERRED_BLOCK_SIZE=512, BLOCKWISE_STATUS_LIFETIME=300000 and MAX_RESOURCE_BODY_SIZE=8192
+2020-09-27 22:21:38 INFO  ReliabilityLayer:83 - ReliabilityLayer uses ACK_TIMEOUT=2000, ACK_RANDOM_FACTOR=1.5, and ACK_TIMEOUT_SCALE=2.0
+2020-09-27 22:21:38 INFO  CoapServer:207 - Starting server
+2020-09-27 22:21:38 INFO  UDPConnector:161 - UDPConnector starts up 1 sender threads and 1 receiver threads
+2020-09-27 22:21:38 INFO  UDPConnector:187 - UDPConnector listening on 0.0.0.0/0.0.0.0:8072, recv buf = 65507, send buf = 65507, recv packet size = 2048
+2020-09-27 22:21:38 INFO  CoapEndpoint:485 - Started endpoint at coap://0.0.0.0:8072
+2020-09-27 22:21:47 INFO  CoapResource:722 - successfully established observe relation between /127.0.0.1:50364#[5944edfd97d88242] and resource /ctxtearoom/waiter (Exchange[R1], size 1)
+2020-09-27 22:22:06 INFO  NetworkConfig:372 - loading properties from file /Users/lallu/Desktop/Laura/Uni/Magistrale/1A_2C/Ingegneria dei Sistemi Software/EsameIss2020/SPRINTS/tearoom.SPRINT3/build/distributions/tearoom.SPRINT3-1.0/bin/Californium.properties
+2020-09-27 22:22:06 INFO  RandomTokenGenerator:55 - using tokens of 8 bytes in length
+2020-09-27 22:22:06 INFO  CoapEndpoint:423 - CoapEndpoint uses udp plain
+2020-09-27 22:22:06 INFO  BlockwiseLayer:207 - BlockwiseLayer uses MAX_MESSAGE_SIZE=1024, PREFERRED_BLOCK_SIZE=512, BLOCKWISE_STATUS_LIFETIME=300000 and MAX_RESOURCE_BODY_SIZE=8192
+2020-09-27 22:22:06 INFO  ReliabilityLayer:83 - ReliabilityLayer uses ACK_TIMEOUT=2000, ACK_RANDOM_FACTOR=1.5, and ACK_TIMEOUT_SCALE=2.0
+2020-09-27 22:22:06 INFO  CoapServer:207 - Starting server
+2020-09-27 22:22:06 INFO  UDPConnector:161 - UDPConnector starts up 1 sender threads and 1 receiver threads
+2020-09-27 22:22:06 INFO  UDPConnector:187 - UDPConnector listening on 0.0.0.0/0.0.0.0:8072, recv buf = 65507, send buf = 65507, recv packet size = 2048
+2020-09-27 22:22:06 INFO  CoapEndpoint:485 - Started endpoint at coap://0.0.0.0:8072
+2020-09-27 22:22:31 INFO  CoapResource:722 - successfully established observe relation between /127.0.0.1:50364#[5525006f8d93cd27] and resource /ctxtearoom/waiter (Exchange[R1], size 1)
+2020-09-27 22:22:31 INFO  CoapResource:722 - successfully established observe relation between /127.0.0.1:50364#[834a5e0e3b70e651] and resource /ctxtearoom/waiter (Exchange[R2], size 2)
+2020-09-27 22:22:53 INFO  NetworkConfig:372 - loading properties from file /Users/lallu/Desktop/Laura/Uni/Magistrale/1A_2C/Ingegneria dei Sistemi Software/EsameIss2020/SPRINTS/tearoom.SPRINT3/build/distributions/tearoom.SPRINT3-1.0/bin/Californium.properties
+2020-09-27 22:22:53 INFO  RandomTokenGenerator:55 - using tokens of 8 bytes in length
+2020-09-27 22:22:53 INFO  CoapEndpoint:423 - CoapEndpoint uses udp plain
+2020-09-27 22:22:53 INFO  BlockwiseLayer:207 - BlockwiseLayer uses MAX_MESSAGE_SIZE=1024, PREFERRED_BLOCK_SIZE=512, BLOCKWISE_STATUS_LIFETIME=300000 and MAX_RESOURCE_BODY_SIZE=8192
+2020-09-27 22:22:53 INFO  ReliabilityLayer:83 - ReliabilityLayer uses ACK_TIMEOUT=2000, ACK_RANDOM_FACTOR=1.5, and ACK_TIMEOUT_SCALE=2.0
+2020-09-27 22:22:53 INFO  CoapServer:207 - Starting server
+2020-09-27 22:22:53 INFO  UDPConnector:161 - UDPConnector starts up 1 sender threads and 1 receiver threads
+2020-09-27 22:22:53 INFO  UDPConnector:187 - UDPConnector listening on 0.0.0.0/0.0.0.0:8072, recv buf = 65507, send buf = 65507, recv packet size = 2048
+2020-09-27 22:22:53 INFO  CoapEndpoint:485 - Started endpoint at coap://0.0.0.0:8072
+2020-09-27 22:23:00 INFO  CoapResource:722 - successfully established observe relation between /127.0.0.1:50364#[5944edfd97d88242] and resource /ctxtearoom/waiter (Exchange[R1], size 1)
+2020-09-27 22:23:18 INFO  CoapResource:722 - successfully established observe relation between /127.0.0.1:50364#[1bc128d3cba7a614] and resource /ctxtearoom/waiter (Exchange[R2], size 2)
+2020-09-27 22:23:44 INFO  CoapResource:722 - successfully established observe relation between /127.0.0.1:50364#[834a5e0e3b70e651] and resource /ctxtearoom/waiter (Exchange[R8], size 3)
+2020-09-27 22:23:44 INFO  CoapResource:722 - successfully established observe relation between /127.0.0.1:50364#[5525006f8d93cd27] and resource /ctxtearoom/waiter (Exchange[R9], size 4)
+2020-09-27 22:23:57 INFO  NetworkConfig:372 - loading properties from file /Users/lallu/Desktop/Laura/Uni/Magistrale/1A_2C/Ingegneria dei Sistemi Software/EsameIss2020/SPRINTS/tearoom.SPRINT3/build/distributions/tearoom.SPRINT3-1.0/bin/Californium.properties
+2020-09-27 22:23:57 INFO  RandomTokenGenerator:55 - using tokens of 8 bytes in length
+2020-09-27 22:23:57 INFO  CoapEndpoint:423 - CoapEndpoint uses udp plain
+2020-09-27 22:23:57 INFO  BlockwiseLayer:207 - BlockwiseLayer uses MAX_MESSAGE_SIZE=1024, PREFERRED_BLOCK_SIZE=512, BLOCKWISE_STATUS_LIFETIME=300000 and MAX_RESOURCE_BODY_SIZE=8192
+2020-09-27 22:23:57 INFO  ReliabilityLayer:83 - ReliabilityLayer uses ACK_TIMEOUT=2000, ACK_RANDOM_FACTOR=1.5, and ACK_TIMEOUT_SCALE=2.0
+2020-09-27 22:23:57 INFO  CoapServer:207 - Starting server
+2020-09-27 22:23:57 INFO  UDPConnector:161 - UDPConnector starts up 1 sender threads and 1 receiver threads
+2020-09-27 22:23:57 INFO  UDPConnector:187 - UDPConnector listening on 0.0.0.0/0.0.0.0:8072, recv buf = 65507, send buf = 65507, recv packet size = 2048
+2020-09-27 22:23:57 INFO  CoapEndpoint:485 - Started endpoint at coap://0.0.0.0:8072
+2020-09-27 22:24:26 INFO  CoapResource:722 - successfully established observe relation between /127.0.0.1:50364#[d75f50dc467140fe] and resource /ctxtearoom/waiter (Exchange[R1], size 1)
+2020-09-27 22:24:36 INFO  CoapResource:722 - successfully established observe relation between /127.0.0.1:50364#[5944edfd97d88242] and resource /ctxtearoom/waiter (Exchange[R6], size 2)
+2020-09-27 22:24:36 INFO  CoapResource:722 - successfully established observe relation between /127.0.0.1:50364#[1bc128d3cba7a614] and resource /ctxtearoom/waiter (Exchange[R5], size 3)
+2020-09-27 22:24:46 INFO  CoapResource:722 - successfully established observe relation between /127.0.0.1:50364#[834a5e0e3b70e651] and resource /ctxtearoom/waiter (Exchange[R9], size 4)
+2020-09-27 22:24:46 INFO  CoapResource:722 - successfully established observe relation between /127.0.0.1:50364#[5525006f8d93cd27] and resource /ctxtearoom/waiter (Exchange[R10], size 5)
+2020-09-27 22:26:41 INFO  NetworkConfig:372 - loading properties from file /Users/lallu/Desktop/Laura/Uni/Magistrale/1A_2C/Ingegneria dei Sistemi Software/EsameIss2020/SPRINTS/tearoom.SPRINT3/build/distributions/tearoom.SPRINT3-1.0/bin/Californium.properties
+2020-09-27 22:26:41 INFO  RandomTokenGenerator:55 - using tokens of 8 bytes in length
+2020-09-27 22:26:41 INFO  CoapEndpoint:423 - CoapEndpoint uses udp plain
+2020-09-27 22:26:42 INFO  BlockwiseLayer:207 - BlockwiseLayer uses MAX_MESSAGE_SIZE=1024, PREFERRED_BLOCK_SIZE=512, BLOCKWISE_STATUS_LIFETIME=300000 and MAX_RESOURCE_BODY_SIZE=8192
+2020-09-27 22:26:42 INFO  ReliabilityLayer:83 - ReliabilityLayer uses ACK_TIMEOUT=2000, ACK_RANDOM_FACTOR=1.5, and ACK_TIMEOUT_SCALE=2.0
+2020-09-27 22:26:42 INFO  CoapServer:207 - Starting server
+2020-09-27 22:26:42 INFO  UDPConnector:161 - UDPConnector starts up 1 sender threads and 1 receiver threads
+2020-09-27 22:26:42 INFO  UDPConnector:187 - UDPConnector listening on 0.0.0.0/0.0.0.0:8072, recv buf = 65507, send buf = 65507, recv packet size = 2048
+2020-09-27 22:26:42 INFO  CoapEndpoint:485 - Started endpoint at coap://0.0.0.0:8072
+2020-09-27 22:27:20 INFO  CoapResource:722 - successfully established observe relation between /127.0.0.1:59899#[871c6bc38abe12b7] and resource /ctxtearoom/waiter (Exchange[R3], size 1)
+2020-09-27 22:31:06 INFO  NetworkConfig:372 - loading properties from file /Users/lallu/Desktop/Laura/Uni/Magistrale/1A_2C/Ingegneria dei Sistemi Software/EsameIss2020/SPRINTS/tearoom.SPRINT3/build/distributions/tearoom.SPRINT3-1.0/bin/Californium.properties
+2020-09-27 22:31:06 INFO  RandomTokenGenerator:55 - using tokens of 8 bytes in length
+2020-09-27 22:31:06 INFO  CoapEndpoint:423 - CoapEndpoint uses udp plain
+2020-09-27 22:31:06 INFO  BlockwiseLayer:207 - BlockwiseLayer uses MAX_MESSAGE_SIZE=1024, PREFERRED_BLOCK_SIZE=512, BLOCKWISE_STATUS_LIFETIME=300000 and MAX_RESOURCE_BODY_SIZE=8192
+2020-09-27 22:31:06 INFO  ReliabilityLayer:83 - ReliabilityLayer uses ACK_TIMEOUT=2000, ACK_RANDOM_FACTOR=1.5, and ACK_TIMEOUT_SCALE=2.0
+2020-09-27 22:31:06 INFO  CoapServer:207 - Starting server
+2020-09-27 22:31:06 INFO  UDPConnector:161 - UDPConnector starts up 1 sender threads and 1 receiver threads
+2020-09-27 22:31:06 INFO  UDPConnector:187 - UDPConnector listening on 0.0.0.0/0.0.0.0:8072, recv buf = 65507, send buf = 65507, recv packet size = 2048
+2020-09-27 22:31:06 INFO  CoapEndpoint:485 - Started endpoint at coap://0.0.0.0:8072
+2020-09-27 22:31:40 INFO  CoapResource:722 - successfully established observe relation between /127.0.0.1:59899#[41e762b75e0e2818] and resource /ctxtearoom/waiter (Exchange[R3], size 1)
+2020-09-27 22:31:58 INFO  CoapResource:722 - successfully established observe relation between /127.0.0.1:59899#[871c6bc38abe12b7] and resource /ctxtearoom/waiter (Exchange[R8], size 2)
+2020-09-28 09:35:11 INFO  NetworkConfig:372 - loading properties from file /Users/lallu/Desktop/Laura/Uni/Magistrale/1A_2C/Ingegneria dei Sistemi Software/EsameIss2020/SPRINTS/tearoom.SPRINT3/build/distributions/tearoom.SPRINT3-1.0/bin/Californium.properties
+2020-09-28 09:35:11 INFO  RandomTokenGenerator:55 - using tokens of 8 bytes in length
+2020-09-28 09:35:12 INFO  CoapEndpoint:423 - CoapEndpoint uses udp plain
+2020-09-28 09:35:12 INFO  BlockwiseLayer:207 - BlockwiseLayer uses MAX_MESSAGE_SIZE=1024, PREFERRED_BLOCK_SIZE=512, BLOCKWISE_STATUS_LIFETIME=300000 and MAX_RESOURCE_BODY_SIZE=8192
+2020-09-28 09:35:12 INFO  ReliabilityLayer:83 - ReliabilityLayer uses ACK_TIMEOUT=2000, ACK_RANDOM_FACTOR=1.5, and ACK_TIMEOUT_SCALE=2.0
+2020-09-28 09:35:12 INFO  CoapServer:207 - Starting server
+2020-09-28 09:35:12 INFO  UDPConnector:161 - UDPConnector starts up 1 sender threads and 1 receiver threads
+2020-09-28 09:35:12 INFO  UDPConnector:187 - UDPConnector listening on 0.0.0.0/0.0.0.0:8072, recv buf = 65507, send buf = 65507, recv packet size = 2048
+2020-09-28 09:35:12 INFO  CoapEndpoint:485 - Started endpoint at coap://0.0.0.0:8072
+2020-09-28 09:35:38 INFO  CoapResource:722 - successfully established observe relation between /127.0.0.1:64177#[15d1feae872f7272] and resource /ctxtearoom/waiter (Exchange[R1], size 1)
+2020-09-28 09:35:43 INFO  CoapResource:722 - successfully established observe relation between /127.0.0.1:64177#[0d43338ff35808e4] and resource /ctxtearoom/waiter (Exchange[R2], size 2)
+2020-09-28 09:36:15 INFO  CoapResource:722 - successfully established observe relation between /127.0.0.1:64177#[2f051513b0d4df47] and resource /ctxtearoom/waiter (Exchange[R5], size 3)
+2020-09-28 09:37:39 INFO  CoapResource:722 - successfully established observe relation between /127.0.0.1:64177#[bfb44879c6b9a23a] and resource /ctxtearoom/waiter (Exchange[R17], size 4)

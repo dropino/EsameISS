@@ -47,7 +47,7 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 						updateResourceRep("listening" 
 						)
 						stateTimer = TimerActor("timer_listening", 
-							scope, context!!, "local_tout_waiter_listening", 5000.toLong() )
+							scope, context!!, "local_tout_waiter_listening", 10000.toLong() )
 					}
 					 transition(edgeName="t01",targetState="goHome",cond=whenTimeout("local_tout_waiter_listening"))   
 					transition(edgeName="t02",targetState="answerTime",cond=whenRequest("waitTime"))

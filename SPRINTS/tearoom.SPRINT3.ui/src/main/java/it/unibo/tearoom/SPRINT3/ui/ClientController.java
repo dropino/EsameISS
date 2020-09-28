@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import connQak.configurator;
 import connQak.connQakCoap;
@@ -84,10 +85,9 @@ public class ClientController {
 	SimpMessagingTemplate simpMessagingTemplate;
 	
 	private void preparePageUpdating() {
-    	waiterConn.getClient().observe(new CoapHandler() {
+    	waiterConn.getClient().observe(new CoapHandler() { 
 			@Override
 			public void onLoad(CoapResponse response) {
-				
 				if(response.getResponseText().contains("deliver-tea")) {
 					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
 					simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForClient, 

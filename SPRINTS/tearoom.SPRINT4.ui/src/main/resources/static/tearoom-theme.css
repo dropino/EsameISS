@@ -1,0 +1,61 @@
+.content {
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+#headingGroup span {
+    color: #EA1C2C;
+}
+
+h1 {
+    font-size: 3rem;
+    font-family: 'Montserrat', sans-serif;
+    text-align: center;
+}
+
+h2 {
+    font-size: 1.5rem;
+    font-family: 'Montserrat', sans-serif;
+    text-align: center;
+}
+
+h3 {
+    font-family: 'Montserrat', sans-serif;
+    text-align: center;
+}
+
+p {
+    font-family: 'Montserrat', sans-serif;
+    text-align: center;
+    font-size: 1.25rem;
+}
+
+@media (max-width: 1200px) {
+    #headingGroup h1 {
+        font-weight: 100;
+        font-size: 3rem;
+    }
+    .blurb h2 {
+        font-size: 2rem;
+    }
+}
+
+#header {
+    background: url("imgs/black-horizontal-tea.jpg");
+    background-size: cover;
+}
+
+#txt-input {
+    display: none;
+    margin-bottom: 1rem;
+}
+
+#title {
+    padding-bottom: 4rem;
+    padding-top: 1rem;
+}
+
+#caption {
+    padding-bottom: 2rem;
+}
+

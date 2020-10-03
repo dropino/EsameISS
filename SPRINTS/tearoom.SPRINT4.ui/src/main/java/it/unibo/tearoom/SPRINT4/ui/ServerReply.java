@@ -49,6 +49,7 @@ public class ServerReply {
 		this.payload4 = payload4;
 		this.payload0 = payload0;
 	}
+	
 	public String getRedir() {
 		return redir;
 	}

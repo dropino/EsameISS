@@ -1,5 +1,7 @@
 System walkersys  
 
+mqttBroker "localhost" : 1883 eventTopic "unibo/basicrobot" 
+
 Event    walkerstarted   : walkerstarted(X)
  
 Dispatch cmd       	: cmd(MOVE) 
@@ -15,7 +17,7 @@ Context ctxwalker		        ip [host="localhost"		port=8050]
 Context ctxbasicrobot     		ip [host="192.168.1.55"		port=8020]    //"192.168.1.121"
  
 ExternalQActor basicrobot    context ctxbasicrobot
-
+ 
  QActor walker context ctxwalker{	
 	 [# 
 		var XT = "0"

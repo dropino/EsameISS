@@ -1,4 +1,4 @@
-System clientsys 
+System clientsys  
  
 mqttBroker "localhost" : 1883 eventTopic "unibo/basicrobot"   
 
@@ -83,8 +83,8 @@ QActor simclient context ctxclient {
 			}
 			println("Client $MyCID | the waiter told me to wait $WaitTime time")
 		}
-//		Goto waitingInTheHall
-		Goto end if [# WaitTime == 20000 #] else waitingInTheHall 
+		Goto waitingInTheHall
+//		Goto end if [# WaitTime == 20000 #] else waitingInTheHall 
 		
 		State waitingInTheHall{
 			println("Client $MyCID | waiting in the hall")

@@ -2,7 +2,7 @@ System tearoomsys
 //mqttBroker "localhost" : 1883 eventTopic "unibo/waiter"   
  
 //MESSAGES
-mqttBroker "localhost" : 1883 eventTopic "unibo/basicrobot"   
+mqttBroker "localhost" : 1883 eventTopic "unibo/basicrobot"    
 
 //waiterwalker-walker
 Event    waiterwalkerstarted   : waiterwalkerstarted(X)
@@ -74,7 +74,7 @@ QActor waiter context ctxtearoom {
 		var Dest			= ""
 	#]
 	
-	State s0 initial {	
+	State s0 initial {	 
 		println("WAITER | INIT ")
  		discardMsg Off
 		
@@ -128,8 +128,12 @@ QActor waiter context ctxtearoom {
 		}
 		
 		if [# Ntables != 0 #] {
+			println("WAITER | Client can come in")
+			
 			replyTo waitTime with wait : wait(0)
 		} else {
+			println("WAITER | Client Must Wait")
+			
 			replyTo waitTime with wait : wait(20000)
 			updateResource [#"Client_must_wait"#]
 		}
@@ -381,7 +385,7 @@ QActor smartbell context ctxtearoom {
 	
 	State waitForClient {
 		println("  SmartBell | Wait Client  ")
-		updateResource[#"Waiting"#]
+//		updateResource[#"Waiting"#]
 	}
 	Transition t0 whenRequest ringBell -> checkTemp
 	 

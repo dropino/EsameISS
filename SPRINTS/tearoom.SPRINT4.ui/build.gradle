@@ -100,7 +100,7 @@ test {
 	useJUnitPlatform()
 }
 
-mainClassName = 'it.unibo.tearoom.SPRINT3.ui.Application'
+mainClassName = 'it.unibo.tearoom.SPRINT4.ui.Application'
 
 jar {
     println("executing jar")

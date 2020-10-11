@@ -8,15 +8,18 @@ import it.unibo.kactor.MsgUtil
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken
 import it.unibo.kactor.ApplMessage
 
-class connQakMqtt(hostIP : String,  port : String,  ctxDest : String, destName : String ) :
-										         connQakBase(hostIP, port, ctxDest, destName), MqttCallback{
+class connQakMqtt(hostIP : String,  port : String,  destName : String, context : String ) :
+										         connQakBase(hostIP, port, destName, context), MqttCallback{
  	lateinit var client  : MqttClient
  	val clientid         = "clientmqtt"
-	val answerTopic      = "unibo/qak/$clientid"
+	var answerTopic      = "unibo/qak/$clientid"
+		
+	lateinit var messageArrivedCallback: (String, MqttMessage) -> ApplMessage 
+	
 
 	override fun messageArrived(topic: String, msg: MqttMessage) {
         //sysUtil.traceprintln("$tt ActorBasic $name |  MQTT messageArrived on "+ topic + ": "+msg.toString());
-        val m = ApplMessage( msg.toString() )
+        val m = messageArrivedCallback
         println("       %%% connQakMqtt |  ARRIVED on $topic  m=$m  " )
     }
 	override fun connectionLost(cause: Throwable?) {
@@ -42,7 +45,7 @@ class connQakMqtt(hostIP : String,  port : String,  ctxDest : String, destName :
  		}
 	}
 	
-	override fun createConnection(  ){
+	override fun createConnection(  ) {
 		val brokerAddr = "tcp://$hostIP:$port"
 		try {
   			//println("     %%% connQakMqtt | doing connect for $clientid to $brokerAddr "  );
@@ -65,9 +68,10 @@ class connQakMqtt(hostIP : String,  port : String,  ctxDest : String, destName :
  		publish(msg.toString(), "unibo/qak/$destName")		
 	}
 	
-	override fun request(  msg: ApplMessage){
+	override fun request(  msg: ApplMessage) : ApplMessage? {
  		publish(msg.toString(), "unibo/qak/$destName")
-		//The answer should be in unibo/qak/clientmqtt		
+		//The answer should be in unibo/qak/clientmqtt
+		return null
 	}
 	
 	override fun emit( msg: ApplMessage ){

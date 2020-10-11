@@ -16,8 +16,8 @@ import connQak.connQakCoap;
 import connQak.utils.ApplMessageUtils;
 import it.unibo.kactor.ApplMessage;
 import it.unibo.kactor.MsgUtil;
-import it.unibo.tearoom.SPRINT3.ui.ServerReply;
-import it.unibo.tearoom.SPRINT3.ui.WebSocketConfig;
+import it.unibo.tearoom.SPRINT4.ui.ServerReply;
+import it.unibo.tearoom.SPRINT4.ui.WebSocketConfig;
 
 @Controller
 public class ManagerController {

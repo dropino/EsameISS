@@ -20,6 +20,17 @@ import kotlinx.coroutines.delay
 import org.eclipse.californium.core.CoapClient
 import org.eclipse.californium.core.CoapResponse
 import kotlinx.coroutines.channels.actor
+import kotlinx.coroutines.withContext
+import com.sun.xml.internal.ws.api.streaming.XMLStreamReaderFactory.Default
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
+import kotlinx.coroutines.joinAll
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.test.TestCoroutineDispatcher
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.Deferred
+
 
 
 
@@ -39,7 +50,8 @@ class testMultiClient {
 	var j				  = 0
 
 	var counterAtomic = java.util.concurrent.atomic.AtomicInteger()
-	
+	val testDispatcher : TestCoroutineDispatcher = TestCoroutineDispatcher()
+
 	
 	
 	@kotlinx.coroutines.ObsoleteCoroutinesApi
@@ -74,12 +86,13 @@ class testMultiClient {
 	@Test
 	fun main() = runBlocking{
 		GlobalScope.massiveRun{counterAtomic.incrementAndGet()}
+		//launchClients()
 	}
 	
-	
+//	GlobalScope.massiveRun( action: suspend () -> Unit )
 	@kotlinx.coroutines.ObsoleteCoroutinesApi
 	@kotlinx.coroutines.ExperimentalCoroutinesApi
-    suspend fun  CoroutineScope.massiveRun( action: suspend () -> Unit ){
+    suspend fun GlobalScope.massiveRun( action: suspend () -> Unit ){
 		
 			while( waiter == null ){
 				delay(1000)
@@ -95,150 +108,203 @@ class testMultiClient {
 				delay(1000)
 				barman = it.unibo.kactor.sysUtil.getActor("barman") 
 			}
-				
 			
-		val jobs = List(4){
-			kotlin.concurrent.thread(start = true) { 
-  				j++
-				when (j) {
-				1-> client1()
-				2-> client2()
-				3-> client3()
-				4-> client4()
-			 else-> {println("=====ERROR======")}
-  				}	
+			val handler = CoroutineExceptionHandler { _, exception -> 
+				//fail()
+				println("=========	Coroutine exception caught")
 			}
-		}			
-		jobs.forEach{ it.join()  }  //wait for termination of all threads
+		
+		
+			var c1 : Deferred<Boolean> = GlobalScope.async(handler)	{
+				client1()
+			}
 			
-
+	
+			var c2 : Deferred<Boolean> = GlobalScope.async(handler)	{
+				client2()
+			}
 		
+			var c3 : Deferred<Boolean> = GlobalScope.async(handler)	{
+				client3()
+			}
 		
-
+			var c4 : Deferred<Boolean> = GlobalScope.async(handler)	{
+				client4()
+			}
 		
-		
-
+			//awaitAll(c1, c2, c3, c4)
+			assertTrue(c1.await())
+			println("=============== 1OK =============")
+			assertTrue(c2.await())
+			println("=============== 2OK =============")
+			assertTrue(c3.await())
+			println("=============== 3OK =============")
+			assertTrue(c4.await())
+			println("=============== 4OK =============")
+	
+//		val jobs = List(4){
+////kotlin.concurrent.thread(start = true)
+//			 withContext(Dispatchers.Default)	{ 
+//  				j++
+//			when (j) {
+//				1-> client1()
+//				2-> client2()
+//				3-> client3()
+//				4-> client4()
+//			 else-> {println("=====ERROR======")}
+//  				}	
+//			}
+//		}			
+//		jobs.forEach{ it.join() }  //wait for termination of all threads
+			
 }
 	
+
 @kotlinx.coroutines.ObsoleteCoroutinesApi
 @kotlinx.coroutines.ExperimentalCoroutinesApi
-fun client1() {
+fun client1(): Boolean = runBlocking {
 	//-----------------TEST CLIENT1---------------
-	runBlocking{
+	
 		i=0
-		delay(1000)
+		delay(5000)
 		println("===========================	TEST CLIENT1		===========================")
-		MsgUtil.sendMsg (MsgUtil.buildRequest( "test", "ringBell", "ringBell(36)", "smartbell"), smartbell!!   )
-		delay(1000)
-		while (checkResource(smartbell!!) != "Accept" && i<30000) {
-			i++
-		}
-		testClient(1, 10)
+		MsgUtil.sendMsg (MsgUtil.buildRequest( "test10", "ringBell", "ringBell(36)", "smartbell"), smartbell!!   )
+		delay(2000)
+
+//		assertTrue(checkResource(smartbell!!) == "Accept" )
+		
 		println(checkResource(smartbell!!))
-		assertTrue(i<30000)
-	}		
-}
-	
-@kotlinx.coroutines.ObsoleteCoroutinesApi
-@kotlinx.coroutines.ExperimentalCoroutinesApi
-fun client2() {
-	//-----------------TEST CLIENT2---------------
-		runBlocking{
-			i = 0	
-			delay (10000)
-			println("===========================	TEST CLIENT2		===========================")
-			MsgUtil.sendMsg (MsgUtil.buildRequest( "test", "ringBell", "ringBell(39)", "smartbell"), smartbell!!   )
-			delay(1000)
-			while (checkResource(smartbell!!) != "Discard" && i<30000) {
-				i++
-			}
-			println(checkResource(smartbell!!))
-//			assertTrue(i<30000)
-		}	
-	
-}
-	
-@kotlinx.coroutines.ObsoleteCoroutinesApi
-@kotlinx.coroutines.ExperimentalCoroutinesApi
-fun client3() {
+		if (checkResource(smartbell!!) == "Accept") {
 			
-		//-----------------TEST CLIENT3---------------
-	runBlocking{
-		i=0
-		delay (15000)
-		println("===========================	TEST CLIENT3		===========================")
-		MsgUtil.sendMsg (MsgUtil.buildRequest( "test", "ringBell", "ringBell(36)", "smartbell"), smartbell!!   )
-		delay(1000)
-		while (checkResource(smartbell!!) != "Accept" && i<30000) {
-			i++
-		}
-		testClient(2, 20)
-		println(checkResource(smartbell!!))
-//		assertTrue(i<30000)
-	}		
+			testClient(1, 10)
+			true
+		} else false
+	
+		
+		
+			
+}
+	
+@kotlinx.coroutines.ObsoleteCoroutinesApi
+@kotlinx.coroutines.ExperimentalCoroutinesApi
+suspend fun client2() : Boolean = runBlocking{
+	//-----------------TEST CLIENT2---------------
+		
+			i = 0	
+			delay (15000)
+			println("===========================	TEST CLIENT2		===========================")
+			MsgUtil.sendMsg (MsgUtil.buildRequest( "test20", "ringBell", "ringBell(39)", "smartbell"), smartbell!!   )
+			delay(1000)
+//			while (checkResource(smartbell!!) != "Discard" && i<30000) {
+//				i++
+//			}
+			println(checkResource(smartbell!!))
+//			assertTrue(checkResource(smartbell!!) == "Discard" )
+			if (checkResource(smartbell!!) == "Discard") {
+				 true
+			} else  false
+//			assertTrue(i<30000)
+			
 	
 }
 	
 @kotlinx.coroutines.ObsoleteCoroutinesApi
 @kotlinx.coroutines.ExperimentalCoroutinesApi
-fun client4() {
-		//-----------------TEST CLIENT4---------------
-	runBlocking{
+suspend fun client3() : Boolean = runBlocking{
+	//-----------------TEST CLIENT3---------------
+	
 		i=0
-		delay (25000)
-		println("===========================	TEST CLIENT4		===========================")
-		MsgUtil.sendMsg (MsgUtil.buildRequest( "test", "ringBell", "ringBell(36)", "smartbell"), smartbell!!   )
+		delay (30000)
+		println("===========================	TEST CLIENT3		===========================")
+		MsgUtil.sendMsg (MsgUtil.buildRequest( "test30", "ringBell", "ringBell(36)", "smartbell"), smartbell!!   )
 		delay(1000)
-		while (checkResource(waiter!!) != "Client_must_wait" && i<30000) {
-			i++
-		}
-		println(checkResource(waiter!!))
+//		while (checkResource(smartbell!!) != "Accept" && i<30000) {
+//			i++
+//		}
+		println(checkResource(smartbell!!))
+		if (checkResource(smartbell!!) == "Accept") {
+			
+			testClient(2, 30)
+			 true
+		} else  false
+		
 //		assertTrue(i<30000)
-	}
+			
+	
+}
+	
+@kotlinx.coroutines.ObsoleteCoroutinesApi
+@kotlinx.coroutines.ExperimentalCoroutinesApi
+suspend fun client4() : Boolean = runBlocking{
+	//-----------------TEST CLIENT4---------------
+	
+		i=0
+		delay (45000)
+		println("===========================	TEST CLIENT4		===========================")
+		MsgUtil.sendMsg (MsgUtil.buildRequest( "test40", "ringBell", "ringBell(36)", "smartbell"), smartbell!!   )
+		MsgUtil.sendMsg (MsgUtil.buildRequest( "test40", "waitTime", "waitTime(40)", "waiter"), waiter!!   )
+
+	
+		while (checkResource(waiter!!) != "Client_must_wait") {}
+//		println(checkResource(waiter!!))
+		true
+//		if (checkResource(waiter!!) == "Client_must_wait") {
+//			 true
+//		} else
+//			false
+	
 			
 }
 	
 @kotlinx.coroutines.ObsoleteCoroutinesApi
 @kotlinx.coroutines.ExperimentalCoroutinesApi
 suspend fun testClient(table: Int, IDC: Int){
-		
-			//-----------------TEST DEPLOYMENT---------------
-			delay(1000)
-			println("---------------------------	TESTDEPLOYMENT		---------------------------")
-			MsgUtil.sendMsg (MsgUtil.buildRequest( "test", "deploy", "deploy(entrancedoor, table, $IDC)", "waiter"), waiter!!   )
-			delay(100)
-		
-		
-			//-----------------TEST CLIENTREQUEST---------------
-			delay(9000)
-			println("---------------------------	TESTCLIENTREQUEST		---------------------------")
-			MsgUtil.sendMsg (MsgUtil.buildRequest( "test", "clientRequest", "clientRequest(order, $table, $IDC)", "waiter"), waiter!!   )
-			delay(100)
-		
-			//-----------------TEST ORDER---------------
-			delay(9000)
-			println("---------------------------	TESTORDER		---------------------------")
-			MsgUtil.sendMsg ("test", "order", "order(tea)", waiter!! )
-			delay(100)
-			
-			//-----------------TEST CLIENTREQUEST---------------
-			delay(9000)
-			println("---------------------------	TESTCLIENTREQUEST		---------------------------")
-			MsgUtil.sendMsg (MsgUtil.buildRequest( "test", "clientRequest", "clientRequest(pay, $table, $IDC)", "waiter"), waiter!!   )
-			delay(100)
-			
-			//-----------------TEST PAY---------------
-			delay(9000)
-			println("---------------------------	TESTPAY		---------------------------")
-			MsgUtil.sendMsg ("test", "pay", "pay(3)", waiter!! )
-			delay(100)
+	
 	
 			//-----------------TEST DEPLOYMENT---------------
-			delay(9000)
+//			delay(15000)
 			println("---------------------------	TESTDEPLOYMENT		---------------------------")
-			MsgUtil.sendMsg (MsgUtil.buildRequest( "test", "deploy", "deploy(teatable, exitdoor, $IDC)", "waiter"), waiter!!   )
+			MsgUtil.sendMsg (MsgUtil.buildRequest( "test"+IDC, "deploy", "deploy(entrancedoor, table, $IDC)", "waiter"), waiter!!   )
 			delay(100)
+		
+		
+			//-----------------TEST CLIENTREQUEST---------------
+//			delay(15000)
+//			println("---------------------------	TESTCLIENTREQUESTORDER		---------------------------")
+//			MsgUtil.sendMsg (MsgUtil.buildRequest( "test"+IDC, "clientRequest", "clientRequest(order, $table, $IDC)", "waiter"), waiter!!   )
+//			delay(100)
+//		
+//			//-----------------TEST ORDER---------------
+//			delay(15000)
+//			println("---------------------------	TESTORDER		---------------------------")
+//			MsgUtil.sendMsg ("test"+IDC, "order", "order(tea)", waiter!! )
+//			delay(100)
+//			
+//			//-----------------TEST CLIENTREQUEST---------------
+//			delay(15000)
+//			println("---------------------------	TESTCLIENTREQUESTPAY		---------------------------")
+//			MsgUtil.sendMsg (MsgUtil.buildRequest( "test"+IDC, "clientRequest", "clientRequest(pay, $table, $IDC)", "waiter"), waiter!!   )
+//			delay(100)
+//			
+//			//-----------------TEST PAY---------------
+//			delay(15000)
+//			println("---------------------------	TESTPAY		---------------------------")
+//			MsgUtil.sendMsg ("test"+IDC, "pay", "pay(3)", waiter!! )
+//			delay(100)
+//	
+//			//-----------------TEST DEPLOYMENT---------------
+//			delay(15000)
+//			println("---------------------------	TESTDEPLOYMENTEXIT		---------------------------")
+//			MsgUtil.sendMsg (MsgUtil.buildRequest( "test"+IDC, "deploy", "deploy($table, exitdoor, $IDC)", "waiter"), waiter!!   )
+			//delay(30000)
+//			MsgUtil.sendMsg ("test", "tableDirty", "tableDirty($table)", waiter!!)
+//			delay(10000)
 			
+//			//-----------------TEST DEPLOYMENT---------------
+//			delay(10000)
+//			println("---------------------------	TESTDEPLOYMENTEXIT		---------------------------")
+//			MsgUtil.sendMsg (MsgUtil.buildRequest( "test", "deploy", "deploy(home, 1)", "waiter"), waiter!!   )
+//			delay(15000)
 
 	}
 }

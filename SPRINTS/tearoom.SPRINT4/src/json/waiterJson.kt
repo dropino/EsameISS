@@ -6,15 +6,7 @@ class waiterJson {
 	var jobj = JSONObject()
 	
 	init {
-		jobj.put("busy", false)
-		jobj.put("clientID", -1)
-		jobj.put("table", -1)
-		jobj.put("order", "")
-		jobj.put("payment", false)
-		jobj.put("waitTime", -1)
-		jobj.put("movingTo", "")
-		jobj.put("movingFrom", "")
-		jobj.put("receivedRequest", "")
+		reset()
 	}
 	
 	fun setBusy(stat: Boolean){
@@ -55,5 +47,17 @@ class waiterJson {
 	
 	fun toJson():String{
 		return jobj.toString()
+	}
+	
+	fun reset(){
+		jobj.put("busy", false)
+		jobj.put("clientID", -1)
+		jobj.put("table", -1)
+		jobj.put("order", "")
+		jobj.put("payment", false)
+		jobj.put("waitTime", -1)
+		jobj.put("movingTo", "")
+		jobj.put("movingFrom", "")
+		jobj.put("receivedRequest", "")
 	}
 }

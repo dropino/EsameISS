@@ -87,17 +87,18 @@ QActor waiter context ctxtearoom {
 
  	}	
   	Transition t0 whenEvent waiterwalkerstarted -> listening
+  	
   	 
   	State listening {
   		[
   			#
-  				
   				CCID = ""
   				CTABLE = 0
+  				wJson.reset()
   			#
   		]
  		println("WAITER | listening... ")
-// 		updateResource [#"listening"#]
+ 		updateResource [#wJson.toJson()#]
 	}
 	  Transition t0  	whenTime 	15000	 	 		-> goHome
 	  					whenRequest waitTime			-> answerTime
@@ -120,28 +121,17 @@ QActor waiter context ctxtearoom {
   		} 
 		else{ 
 			forward waiter -m rest : rest(0)
-		}
-		
-		[#
-			wjson.setBusy(false)
-			wjson.setClientID(-1)
-			wjson.setTable(-1)
-			wjson.setOrder(-1)
-			wjson.setPayment(-1)
-			wjson.setwaitTime()
-			wjson.setMovingTo()
-			wjson.setMovingFrom()
-			wjson.setReceivedRequest()
-		#]
-		updateResource [#wjson.toJson()#]
-
-		
+		}		
   	}
 	  Transition t0 	whenReply	movementDone 	-> listening
 	  	  				whenReply	walkbreak	 	-> error
 	  					whenMsg		rest	 		-> listening
   	
+  	
+  	
   	State answerTime {
+  		[# var waitTime = 0 #]
+  		
   		solve( numavailabletables(N) ) 
 		ifSolved { [# Ntables = getCurSol("N").toString().toInt()  #] 
 			println("WAITER | numavailabletables=$Ntables")
@@ -150,11 +140,23 @@ QActor waiter context ctxtearoom {
 		if [# Ntables != 0 #] {
 			replyTo waitTime with wait : wait(0)
 		} else {
+			[# waitTime = 20000#]
 			replyTo waitTime with wait : wait(20000)
 			updateResource [#"Client_must_wait"#]
 		}
+		
+		[#
+			wJson.setBusy(true)
+//			wJson.setClientID(-1)
+//			wJson.setTable(-1)
+			wJson.setWaitTime(waitTime)
+//			wJson.setMovingTo("")
+//			wJson.setMovingFrom("")	
+		#]
+		
   	}
   	Goto listening
+
   	
   	State handleDeploy {
   		println("WAITER | handling simclient request... ")  		
@@ -163,10 +165,18 @@ QActor waiter context ctxtearoom {
   				CTABLE = payloadArg(0).toString().toIntOrNull()
   				Dest = payloadArg(1).toString()
   				CCID = payloadArg(2).toString()
+  				
+  				
+				wJson.setBusy(true)
+				wJson.setClientID(CCID)
+				wJson.setTable(CTABLE)
+				wJson.setMovingTo(Dest)
+				wJson.setReceivedRequest("deploy")	  				
   			#]
   		}
   	}
   	Goto goToEntrance if [# Dest == "table" #] else deployClientExit
+
 
 	State goToEntrance {
 		
@@ -177,9 +187,8 @@ QActor waiter context ctxtearoom {
 	 Transition t0		whenReply	movementDone -> deployClientEntrance
 	  					whenReply	walkbreak	 -> error
 	
-	State deployClientEntrance {		
-		updateResource[# "waiter_arrived" #]
-		
+	
+	State deployClientEntrance {				
 		println("WAITER | DEPLOYING simclient $CCID to table $CTABLE")
 		
 		solve( tableavailable(N) ) 
@@ -193,6 +202,7 @@ QActor waiter context ctxtearoom {
 	 Transition t0		whenReply	movementDone -> confirmClientArrival
 	  					whenReply	walkbreak	 -> error	
 
+
 	State deployClientExit {
 		
 		println("WAITER | deploying simclient from table to exit door... ")
@@ -203,6 +213,7 @@ QActor waiter context ctxtearoom {
 	} 	
 	 Transition t0		whenReply	movementDone -> confirmClientArrival
 	  					whenReply	walkbreak	 -> error	
+	  	
 	  					
 	State confirmClientArrival {
 		updateResource[# "waiter_rdy_leave" #] // stato usato per deploy simclient exit
@@ -210,7 +221,9 @@ QActor waiter context ctxtearoom {
 		println("WAITER | SENDING CONFIRMATION to simclient $CCID: arrived $Dest")
 		
 		replyTo deploy with  arrived	: arrived($CTABLE)
-	} Goto listening
+	} 
+	Goto listening
+		
 						 
 	State answerClientRequest {
 		onMsg(clientRequest : clientRequest(KIND, TABLE, CID)) {
@@ -227,6 +240,7 @@ QActor waiter context ctxtearoom {
 	}
 	 Transition t0		whenReply	movementDone -> atTableForRequest
 	  					whenReply	walkbreak	 -> error	
+	
 	
 	State atTableForRequest {
 		

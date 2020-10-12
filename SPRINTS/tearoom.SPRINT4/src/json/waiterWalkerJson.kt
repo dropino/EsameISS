@@ -6,8 +6,7 @@ class waiterWalkerJson {
 	var jobj = JSONObject()
 	
 	init {
-		jobj.put("positionX", "")
-		jobj.put("positionY", "")
+		reset()
 	}
 	
 	fun setPosition(x: Int, y: Int){
@@ -17,5 +16,9 @@ class waiterWalkerJson {
 	
 	fun toJson():String{
 		return jobj.toString()
+	}
+	
+	fun reset(){
+		setPosition(0,0)
 	}
 }

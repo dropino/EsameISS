@@ -6,10 +6,7 @@ class smartBellJson {
 	var jobj = JSONObject()
 	
 	init {
-		jobj.put("busy", false)
-		jobj.put("ClientArrived", false)
-		jobj.put("ClientAccepted", -1)
-		jobj.put("ClientDenied", -1)
+		reset()
 	}
 	
 	fun setBusy(stat: Boolean){
@@ -31,4 +28,12 @@ class smartBellJson {
 	fun toJson():String{
 		return jobj.toString()
 	}
+	
+	fun reset(){
+		jobj.put("busy", false)
+		jobj.put("ClientArrived", false)
+		jobj.put("ClientAccepted", -1)
+		jobj.put("ClientDenied", -1)
+	}
+	
 }

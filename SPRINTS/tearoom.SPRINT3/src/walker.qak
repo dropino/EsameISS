@@ -13,14 +13,8 @@ Request	doPlan 		: doPlan(X,Y)
 Reply walkerDone 	: walkerDone(OK)
 Reply walkerError 	: walkerError( $XT,$YT ) 
 
-Context ctxwalker		        ip [host="localhost"		port=8050]     
-<<<<<<< HEAD
+Context ctxwalker		        ip [host="localhost"		port=8050]  
 Context ctxbasicrobot     		ip [host="localhost"		port=8020]    //"192.168.1.121"
-
-=======
-Context ctxbasicrobot     		ip [host="192.168.1.55"		port=8020]    //"192.168.1.121"
- 
->>>>>>> bdc772ce64dd91b5e0faff7b360ef0adb031f4e8
 ExternalQActor basicrobot    context ctxbasicrobot
  
  QActor walker context ctxwalker{	

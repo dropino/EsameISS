@@ -33,6 +33,8 @@ class Smartbell ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, 
 									Temp = 0
 									CID = 0	
 						println("  SmartBell | Wait Client  ")
+						updateResourceRep("Waiting" 
+						)
 					}
 					 transition(edgeName="t030",targetState="checkTemp",cond=whenRequest("ringBell"))
 				}	 

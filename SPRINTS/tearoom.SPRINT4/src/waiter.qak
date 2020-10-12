@@ -390,7 +390,7 @@ QActor smartbell context ctxtearoom {
 			[#Temp = payloadArg(0).toString().toInt() #]
 			
 			println("  SmartBell | Check Temp $Temp ")
-			
+			 
 		}
 	}
 	Goto handleEventTempOK if [# Temp < 37.5 && Temp >= 35.5 #] else handleEventTempKO

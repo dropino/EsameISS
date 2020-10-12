@@ -19,6 +19,7 @@ class Smartbell ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, 
 		 
 		 	var Temp = 0
 		 	var CID = 0 
+		 	val sJson = json.smartBellJson()
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State

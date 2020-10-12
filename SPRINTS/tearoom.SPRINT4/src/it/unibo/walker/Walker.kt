@@ -26,8 +26,8 @@ class Walker ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 				val inmapname			= "teaRoomExplored"
 				val PauseTime          	= 250L 
 				val BackTime           	= 2 * StepTime / 3 
-				 
 				
+				val jobj = json.waiterWalkerJson()		
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
@@ -40,6 +40,13 @@ class Walker ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 						forward("cmd", "cmd(r)" ,"basicrobot" ) 
 						delay(500) 
 						emit("walkerstarted", "walkerstarted(0)" ) 
+						 
+							    	val Curx = itunibo.planner.plannerUtil.getPosX()
+							       	val Cury = itunibo.planner.plannerUtil.getPosY()	
+							       	jobj.setPositionX(Curx)
+							       	jobj.setPositionY(Cury)
+						updateResourceRep(jobj.toJson() 
+						)
 						println("walker | STARTS")
 					}
 					 transition( edgeName="goto",targetState="waitReq", cond=doswitch() )
@@ -94,6 +101,13 @@ class Walker ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 				state("stepDone") { //this:State
 					action { //it:State
 						itunibo.planner.plannerUtil.updateMap( "w"  )
+						 
+							    	val Curx = itunibo.planner.plannerUtil.getPosX()
+							       	val Cury = itunibo.planner.plannerUtil.getPosY()	
+							       	jobj.setPositionX(Curx)
+							       	jobj.setPositionY(Cury)
+						updateResourceRep(jobj.toJson() 
+						)
 					}
 					 transition( edgeName="goto",targetState="execPlannedMoves", cond=doswitchGuarded({ CurrentPlannedMove.length > 0  
 					}) )
@@ -141,8 +155,9 @@ class Walker ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 				state("sendFailureAnswer") { //this:State
 					action { //it:State
 						println("waiterwalker | FAILS")
-						 val Curx = itunibo.planner.plannerUtil.getPosX()
-							       val Cury = itunibo.planner.plannerUtil.getPosY()	
+						 
+							    	val Curx = itunibo.planner.plannerUtil.getPosX()
+							       	val Cury = itunibo.planner.plannerUtil.getPosY()	
 						itunibo.planner.plannerUtil.showCurrentRobotState(  )
 						answer("doPlan", "walkerError", "walkerError($Curx,$Cury)"   )  
 					}

@@ -18,6 +18,7 @@ class Barman ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		
 				var CTABLE = 0
+				val bJson = json.barmanJson()
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State

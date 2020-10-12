@@ -27,8 +27,8 @@ ExternalQActor basicrobot    context ctxbasicrobot
 		val inmapname			= "teaRoomExplored"
 		val PauseTime          	= 250L 
 		val BackTime           	= 2 * StepTime / 3 
-		 
 		
+		val jobj = json.waiterWalkerJson()		
 	#] 
 		
 	State s0 initial {	     
@@ -44,6 +44,14 @@ ExternalQActor basicrobot    context ctxbasicrobot
 		forward basicrobot -m cmd : cmd(r)    
 		delay 500
 		emit walkerstarted : walkerstarted(0)
+
+		[# 
+	    	val Curx = itunibo.planner.plannerUtil.getPosX()
+	       	val Cury = itunibo.planner.plannerUtil.getPosY()	
+	       	jobj.setPositionX(Curx)
+	       	jobj.setPositionY(Cury)
+	    #]
+	    updateResource [#jobj.toJson()#]
 
 		println("walker | STARTS")
 	}	
@@ -108,6 +116,13 @@ ExternalQActor basicrobot    context ctxbasicrobot
  	State stepDone{  
  		//updateResource [# itunibo.planner.plannerUtil.getMapOneLine() #]
  		run itunibo.planner.plannerUtil.updateMap(  "w" )
+ 		[# 
+	    	val Curx = itunibo.planner.plannerUtil.getPosX()
+	       	val Cury = itunibo.planner.plannerUtil.getPosY()	
+	       	jobj.setPositionX(Curx)
+	       	jobj.setPositionY(Cury)
+	    #]
+	    updateResource [#jobj.toJson()#]
   	}
 	Goto execPlannedMoves if [# CurrentPlannedMove.length > 0 #] else sendSuccessAnswer
 		
@@ -153,9 +168,11 @@ ExternalQActor basicrobot    context ctxbasicrobot
 
 	State sendFailureAnswer{
 	    println("waiterwalker | FAILS")
-	    [# val Curx = itunibo.planner.plannerUtil.getPosX()
-	       val Cury = itunibo.planner.plannerUtil.getPosY()	
+	    [# 
+	    	val Curx = itunibo.planner.plannerUtil.getPosX()
+	       	val Cury = itunibo.planner.plannerUtil.getPosY()	
 	    #]
+	    
   		run itunibo.planner.plannerUtil.showCurrentRobotState()
 	    replyTo doPlan with walkerError : walkerError( $Curx, $Cury ) 					
 	}

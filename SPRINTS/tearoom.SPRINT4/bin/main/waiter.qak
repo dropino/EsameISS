@@ -8,6 +8,7 @@ mqttBroker "localhost" : 1883 eventTopic "unibo/basicrobot"
 Event    waiterwalkerstarted   : waiterwalkerstarted(X)
 Event    walkerstarted   	: walkerstarted(X)
 
+
 Request	 doPlan 			: doPlan(X,Y)
 Reply 	 walkerError 		: walkerError( $XT,$YT )
 Reply	 walkerDone 		: walkerDone(X,Y)
@@ -72,6 +73,9 @@ QActor waiter context ctxtearoom {
 		var CurST			= ""
 		var PL				= ""
 		var Dest			= ""
+		
+		val wJson = json.waiterJson()
+		
 	#]
 	
 	State s0 initial {	
@@ -286,6 +290,9 @@ QActor waiter context ctxtearoom {
 	} Goto listening
 }
 
+
+
+
 QActor waiterwalker context ctxtearoom {  
 	[#
 		var XT = "0"
@@ -367,10 +374,12 @@ QActor waiterwalker context ctxtearoom {
  
 
 
+
 QActor smartbell context ctxtearoom {
  [# 
  	var Temp = 0
  	var CID = 0 
+ 	val sJson = json.smartBellJson()
  #]
  
 	State s0 initial {
@@ -416,9 +425,12 @@ QActor smartbell context ctxtearoom {
 }
 
 
+
+
 QActor barman context ctxtearoom {
 	[#
 		var CTABLE = 0
+		val bJson = json.barmanJson()
 	#]
 	
 	State s0 initial {

@@ -1,5 +1,6 @@
 System tearoomsys
-
+//mqttBroker "localhost" : 1883 eventTopic "unibo/waiter"   
+ 
 //MESSAGES
 mqttBroker "localhost" : 1883 eventTopic "unibo/basicrobot"   
 
@@ -90,9 +91,13 @@ QActor waiter context ctxtearoom {
   			#
   		]
  		println("WAITER | listening... ")
- 		updateResource [#"listening"#]
+// 		updateResource [#"listening"#]
 	}
+<<<<<<< HEAD
 	  Transition t0  	whenTime 	10000	 	 		-> goHome
+=======
+	  Transition t0  	whenTime 	15000	 	 		-> goHome
+>>>>>>> bdc772ce64dd91b5e0faff7b360ef0adb031f4e8
 	  					whenRequest waitTime			-> answerTime
 	  					whenRequest	deploy			 	-> handleDeploy
 						whenRequest	clientRequest 		-> answerClientRequest
@@ -321,7 +326,7 @@ QActor waiterwalker context ctxtearoom {
 				N = payloadArg(1).toString()
 			#]
 			println("waiterwalker | task received: $TASK, jolly: $N")
-			
+			 
 			solve( pos($TASK,$N,X,Y)  )  
 			ifSolved { 
 				[# 
@@ -384,9 +389,10 @@ QActor smartbell context ctxtearoom {
 		#
 		]
 		println("  SmartBell | Wait Client  ")
+		updateResource[#"Waiting"#]
 	}
 	Transition t0 whenRequest ringBell -> checkTemp
-	
+	 
 	State checkTemp {
 		onMsg ( ringBell : ringBell (T) ) {
 			[#Temp = (36..42).random() #]

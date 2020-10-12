@@ -29,13 +29,13 @@ class Simclient ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, 
 				state("s0") { //this:State
 					action { //it:State
 						println("Client | INIT")
-						 MyTemp = (36..37).random()  
 					}
 					 transition( edgeName="goto",targetState="outside", cond=doswitch() )
 				}	 
 				state("outside") { //this:State
 					action { //it:State
 						println("Client | ringing the bell")
+						 MyTemp = (36..39).random()  
 						request("ringBell", "ringBell($MyTemp)" ,"smartbell" )  
 					}
 					 transition(edgeName="t00",targetState="evalTemperature",cond=whenReply("tempStatus"))

@@ -1,5 +1,5 @@
 System clientsys 
-
+ 
 mqttBroker "localhost" : 1883 eventTopic "unibo/basicrobot"   
 
 //ENTERING THE TEAROOM
@@ -47,14 +47,13 @@ QActor simclient context ctxclient {
 	
 		State s0 initial{
 			println("Client | INIT")
-			[# MyTemp = (36..37).random() #]
-		}
+		} 
 		Goto outside
 		
 		
 		State outside{
 			println("Client | ringing the bell")
-			
+			[# MyTemp = (36..39).random() #] 
 			request smartbell -m ringBell: ringBell($MyTemp) //temperature of the client		
 		}
 		Transition t0 whenReply tempStatus -> evalTemperature

@@ -27,10 +27,10 @@ import org.junit.runners.MethodSorters
 
 class testTearoomSysMsg {
 
-	var waiterConn		: connQakCoap? = null
-	var smartbellConn	: connQakCoap? = null
-	
-	
+	var waiterConn: connQakCoap? = null
+	var smartbellConn: connQakCoap? = null
+
+
 	@kotlinx.coroutines.ObsoleteCoroutinesApi
 	@kotlinx.coroutines.ExperimentalCoroutinesApi
 	@Before
@@ -38,7 +38,7 @@ class testTearoomSysMsg {
 
 		kotlin.concurrent.thread(start = true) {
 			it.unibo.ctxtearoom.main()
-		} 
+		}
 
 		//avviare connessione
 		//delay per essere sicuri che si avvii ctxtearoom
@@ -138,7 +138,7 @@ class testTearoomSysMsg {
 		waiterConn!!.forward(ringMsg)
 
 		delay(1000)
-		
+
 		//-----------------TEST WAITER DEPLOY ---------------	
 		ringMsg = MsgUtil.buildRequest("web", "deploy", "deploy(1, exitdoor, $CID)", "waiter")
 		reply = waiterConn!!.request(ringMsg)

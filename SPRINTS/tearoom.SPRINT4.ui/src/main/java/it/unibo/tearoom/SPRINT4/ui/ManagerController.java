@@ -67,6 +67,8 @@ public class ManagerController {
 	@Autowired
 	SimpMessagingTemplate simpMessagingTemplate;
 
+
+	
 	private void preparePageUpdating() {
 		waiterConn.getClient().observe(new CoapHandler() {
 			@Override
@@ -78,32 +80,35 @@ public class ManagerController {
 				} catch (Exception ex) { 
 					ex.printStackTrace();
 				}
-
-				if (response.getResponseText().contains("listening")) {
-					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
-					simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForClient,
-							new ServerReply("", "listening"));
-				} else if (response.getResponseText().contains("Client_must_wait")) {
-					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
-					simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForClient,
-							new ServerReply("", "Client_must_wait"));
-				} else if (response.getResponseText().contains("waiter_arrived")) {
-					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
-					simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForClient,
-							new ServerReply("", "waiter_arrived"));
-				} else if (response.getResponseText().contains("waiter_rdy_leave")) {
-					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
-					simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForClient,
-							new ServerReply("", "waiter_rdy_leave"));
-				} else if (response.getResponseText().contains("waiter_rdy_getDrink")) {
-					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
-					simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForClient,
-							new ServerReply("", "waiter_rdy_getDrink"));
-				} else if (response.getResponseText().contains("deliver-tea-$CTABLE")) {
-					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
-					simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForClient,
-							new ServerReply("", "deliver-tea-$CTABLE"));
-				}
+				
+				msg.get()
+				
+				
+//				if (response.getResponseText().contains("listening")) {
+//					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
+//					simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForClient,
+//							new ServerReply("", "listening"));
+//				} else if (response.getResponseText().contains("Client_must_wait")) {
+//					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
+//					simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForClient,
+//							new ServerReply("", "Client_must_wait"));
+//				} else if (response.getResponseText().contains("waiter_arrived")) {
+//					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
+//					simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForClient,
+//							new ServerReply("", "waiter_arrived"));
+//				} else if (response.getResponseText().contains("waiter_rdy_leave")) {
+//					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
+//					simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForClient,
+//							new ServerReply("", "waiter_rdy_leave"));
+//				} else if (response.getResponseText().contains("waiter_rdy_getDrink")) {
+//					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
+//					simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForClient,
+//							new ServerReply("", "waiter_rdy_getDrink"));
+//				} else if (response.getResponseText().contains("deliver-tea-$CTABLE")) {
+//					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
+//					simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForClient,
+//							new ServerReply("", "deliver-tea-$CTABLE"));
+//				}
 			}
 
 			@Override
@@ -123,14 +128,14 @@ public class ManagerController {
 					ex.printStackTrace();
 				}
 				
-				if (response.getResponseText().contains("Discard")) {
-					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
-					simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForClient,
-							new ServerReply("", "Discard"));
-				} else if (response.getResponseText().contains("Accept")) {
-					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
-					simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForClient, new ServerReply("", "Accept"));
-				}
+//				if (response.getResponseText().contains("Discard")) {
+//					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
+//					simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForClient,
+//							new ServerReply("", "Discard"));
+//				} else if (response.getResponseText().contains("Accept")) {
+//					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
+//					simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForClient, new ServerReply("", "Accept"));
+//				}
 			}
 
 			@Override
@@ -150,12 +155,11 @@ public class ManagerController {
 					ex.printStackTrace();
 				}
 				msg.get("order_ready");
-				// STILL MISSING FROM QAK
-				if (response.getResponseText().contains("making-tea")) {
-					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
-					simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForClient,
-							new ServerReply("", "making-tea"));
-				}
+//				if (response.getResponseText().contains("making-tea")) {
+//					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
+//					simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForClient,
+//							new ServerReply("", "making-tea"));
+//				}
 			}
 
 			@Override

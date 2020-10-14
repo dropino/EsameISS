@@ -2,7 +2,7 @@ package json
 
 import org.json.JSONObject
 
-class waiterJson {
+class waiterJson : ActorJson {
 	var jobj = JSONObject()
 	
 	init {
@@ -45,11 +45,14 @@ class waiterJson {
 		jobj.put("receivedRequest", stat)
 	}
 	
-	fun toJson():String{
+	
+	//transforms the jsonObject in a json string string
+	override fun toJson():String{
 		return jobj.toString()
 	}
 	
-	fun reset(){
+	//resets to initial values the json object
+	override fun reset(){
 		jobj.put("busy", false)
 		jobj.put("clientID", "")
 		jobj.put("table", -1)

@@ -102,11 +102,7 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 						 }
 						
 									wJson.setBusy(true)
-						//			wJson.setClientID(-1)
-						//			wJson.setTable(-1)
 									wJson.setWaitTime(WaitTime)
-						//			wJson.setMovingTo("")
-						//			wJson.setMovingFrom("")	
 					}
 					 transition( edgeName="goto",targetState="listening", cond=doswitch() )
 				}	 
@@ -159,8 +155,6 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 				}	 
 				state("deployClientEntrance") { //this:State
 					action { //it:State
-						updateResourceRep( "waiter_arrived"  
-						)
 						solve("tableavailable(N)","") //set resVar	
 						if( currentSolution.isSuccess() ) { CTABLE = getCurSol("N").toString().toInt()   
 						println("WAITER | tableavailable=$CTABLE")
@@ -284,8 +278,6 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 				}	 
 				state("bringDrinkToClient") { //this:State
 					action { //it:State
-						updateResourceRep( "waiter_rdy_getDrink"  
-						)
 						println("WAITER | taking tea... ")
 						println("WAITER | GOING TO CLIENT table $CTABLE... ")
 						request("moveForTask", "moveForTask(teatable,$CTABLE)" ,"waiterwalker" )  
@@ -296,8 +288,6 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 				state("leaveDrinkAtTable") { //this:State
 					action { //it:State
 						println("WAITER | giving the simclient the tea")
-						updateResourceRep( "waiter_rdy_bringDrink"  
-						)
 						emit("deliver", "deliver(tea,$CTABLE)" ) 
 					}
 					 transition( edgeName="goto",targetState="listening", cond=doswitch() )

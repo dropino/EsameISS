@@ -41,7 +41,7 @@ class BarmanJson : ActorJson {
 		jobj.put("busy", false)
 		jobj.put("PreparingForTable", -1)
 		jobj.put("PreparingOrder", "")
-		jobj.put("ClientDenied", -1)
+		jobj.put("OrderReadyTable", -1)
 		jobj.put("OrderReady", false)
 	}
 }

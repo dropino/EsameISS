@@ -1,6 +1,5 @@
 System tearoomsys
-
-//mqttBroker "localhost" : 1883 eventTopic "unibo/waiter" 
+ 
 //MESSAGES
 mqttBroker "localhost" : 1883 eventTopic "unibo/basicrobot"    
 

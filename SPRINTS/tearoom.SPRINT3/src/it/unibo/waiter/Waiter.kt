@@ -83,10 +83,12 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 						else
 						{}
 						if(  Ntables != 0  
-						 ){answer("waitTime", "wait", "wait(0)"   )  
+						 ){println("WAITER | Client can come in")
+						answer("waitTime", "wait", "wait(0)"   )  
 						}
 						else
-						 {answer("waitTime", "wait", "wait(20000)"   )  
+						 {println("WAITER | Client Must Wait")
+						 answer("waitTime", "wait", "wait(20000)"   )  
 						 updateResourceRep("Client_must_wait" 
 						 )
 						 }

@@ -18,6 +18,8 @@ class Barman ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		
 				var CTABLE = 0
+				var CTEA = 0
+				val bJson = json.barmanJson()
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
@@ -29,6 +31,15 @@ class Barman ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 				state("waitForNewOrder") { //this:State
 					action { //it:State
 						println("  Barman | Waiting Order  ")
+						
+									CTABLE = payloadArg(1).toString().toInt()
+									bJson.setBusy(false)
+									bJson.setPreparingForTable(-1)
+									bJson.setPreparingOrder("")
+									bJson.setOrderReadyTable(-1)
+									bJson.setOrderReady(false)
+						updateResourceRep(bJson.toJson() 
+						)
 					}
 					 transition(edgeName="t031",targetState="prepare",cond=whenDispatch("sendOrder"))
 				}	 
@@ -39,9 +50,22 @@ class Barman ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 								println("  Barman | Making tea ")
 								
 												CTABLE = payloadArg(1).toString().toInt()
+												CTEA = payloadArg(2).toString().toInt()
+												bJson.setBusy(true)
+												bJson.setPreparingForTable(CTABLE)
+												bJson.setPreparingOrder(CTEA)
+								updateResourceRep(bJson.toJson() 
+								)
 						}
 						delay(2000) 
 						forward("orderReady", "orderReady(tea,$CTABLE)" ,"waiter" ) 
+						
+										bJson.setPreparingForTable(-1)
+										bJson.setPreparingOrder("")
+										bJson.setOrderReadyTable(CTABLE)
+										bJson.setOrderReady(true)
+						updateResourceRep(bJson.toJson() 
+						)
 						println("  Barman | Tea ready to be served ")
 					}
 					 transition( edgeName="goto",targetState="waitForNewOrder", cond=doswitch() )

@@ -6,34 +6,36 @@ public class ClientRequest {
 	private String payload0;
 	private String payload1;
 	private String payload2;
-	
+
 	public ClientRequest() {
 		super();
 	}
-	
+
 	public ClientRequest(String name, String payload0) {
 		super();
 		this.name = name;
 		this.payload0 = payload0;
 	}
-	
+
 	public ClientRequest(String name, String payload0, String payload1) {
 		super();
 		this.name = name;
 		this.payload0 = payload0;
-		this.payload1 = payload1;}
-	
+		this.payload1 = payload1;
+	}
+
 	public ClientRequest(String name, String payload0, String payload1, String payload2) {
 		super();
 		this.name = name;
 		this.payload0 = payload0;
 		this.payload1 = payload1;
-		this.payload2 = payload2;	}
-	
+		this.payload2 = payload2;
+	}
+
 	public String getName() {
 		return name;
 	}
-	
+
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -61,5 +63,5 @@ public class ClientRequest {
 	public void setPayload2(String payload2) {
 		this.payload2 = payload2;
 	}
-	
+
 }

@@ -3,6 +3,7 @@ package json
 import org.json.JSONObject
 
 class BarmanJson : ActorJson {
+	//JsonObject is similar to a map
 	var jobj = JSONObject()
 	
 	init {

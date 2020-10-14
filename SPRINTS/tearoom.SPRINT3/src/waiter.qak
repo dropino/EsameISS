@@ -1,5 +1,4 @@
 System tearoomsys
-//mqttBroker "localhost" : 1883 eventTopic "unibo/waiter"   
  
 //MESSAGES
 mqttBroker "localhost" : 1883 eventTopic "unibo/basicrobot"    
@@ -93,11 +92,7 @@ QActor waiter context ctxtearoom {
  		println("WAITER | listening... ")
 // 		updateResource [#"listening"#]
 	}
-<<<<<<< HEAD
-	  Transition t0  	whenTime 	10000	 	 		-> goHome
-=======
 	  Transition t0  	whenTime 	15000	 	 		-> goHome
->>>>>>> bdc772ce64dd91b5e0faff7b360ef0adb031f4e8
 	  					whenRequest waitTime			-> answerTime
 	  					whenRequest	deploy			 	-> handleDeploy
 						whenRequest	clientRequest 		-> answerClientRequest

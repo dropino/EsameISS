@@ -2,7 +2,7 @@ package json
 
 import org.json.JSONObject
 
-class barmanJson {
+class BarmanJson : ActorJson() {
 	var jobj = JSONObject()
 	
 	init {

@@ -46,9 +46,9 @@ ExternalQActor basicrobot    context ctxbasicrobot
 		emit walkerstarted : walkerstarted(0)
 
 		[# 
-	    	val Curx = itunibo.planner.plannerUtil.getPosX()
-	       	val Cury = itunibo.planner.plannerUtil.getPosY()	
-	       	jobj.setPosition(CurX,CurY)
+	    	var Curx = itunibo.planner.plannerUtil.getPosX()
+	       	var Cury = itunibo.planner.plannerUtil.getPosY()	
+	       	jobj.setPosition(Curx,Cury)
 	    #]
 	    updateResource [#jobj.toJson()#]
 
@@ -116,9 +116,9 @@ ExternalQActor basicrobot    context ctxbasicrobot
  		//updateResource [# itunibo.planner.plannerUtil.getMapOneLine() #]
  		run itunibo.planner.plannerUtil.updateMap(  "w" )
  		[# 
-	    	val Curx = itunibo.planner.plannerUtil.getPosX()
-	       	val Cury = itunibo.planner.plannerUtil.getPosY()	
-	       	jobj.setPosition(CurX,CurY)
+	    	var Curx = itunibo.planner.plannerUtil.getPosX()
+	       	var Cury = itunibo.planner.plannerUtil.getPosY()	
+	       	jobj.setPosition(Curx,Cury)
 	    #]
 	    updateResource [#jobj.toJson()#]
   	}
@@ -130,7 +130,11 @@ ExternalQActor basicrobot    context ctxbasicrobot
 	    [# obstacleFound = true #]
  		println("waiterwalker | stepFailed")
 		onMsg(stepfail : stepfail(DURATION, CAUSE) ){
-			[# val D = payloadArg(0).toLong()  ; val Dt = Math.abs(StepTime-D); val BackT = D/2 #] 
+			[# 
+				val D = payloadArg(0).toLong()  ; 
+				val Dt = Math.abs(StepTime-D); 
+				val BackT = D/2 
+			#] 
 			println("waiterwalker stepFail D= $D, BackTime = ${BackTime}")
 			if [# D > BackTime #] {    
 				forward basicrobot -m cmd : cmd( s )
@@ -167,8 +171,8 @@ ExternalQActor basicrobot    context ctxbasicrobot
 	State sendFailureAnswer{
 	    println("waiterwalker | FAILS")
 	    [# 
-	    	val Curx = itunibo.planner.plannerUtil.getPosX()
-	       	val Cury = itunibo.planner.plannerUtil.getPosY()	
+	    	var Curx = itunibo.planner.plannerUtil.getPosX()
+	       	var Cury = itunibo.planner.plannerUtil.getPosY()	
 	    #]
 	    
   		run itunibo.planner.plannerUtil.showCurrentRobotState()

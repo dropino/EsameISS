@@ -41,10 +41,9 @@ class Walker ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 						delay(500) 
 						emit("walkerstarted", "walkerstarted(0)" ) 
 						 
-							    	val Curx = itunibo.planner.plannerUtil.getPosX()
-							       	val Cury = itunibo.planner.plannerUtil.getPosY()	
-							       	jobj.setPositionX(Curx)
-							       	jobj.setPositionY(Cury)
+							    	var Curx = itunibo.planner.plannerUtil.getPosX()
+							       	var Cury = itunibo.planner.plannerUtil.getPosY()	
+							       	jobj.setPosition(Curx,Cury)
 						updateResourceRep(jobj.toJson() 
 						)
 						println("walker | STARTS")
@@ -102,10 +101,9 @@ class Walker ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 					action { //it:State
 						itunibo.planner.plannerUtil.updateMap( "w"  )
 						 
-							    	val Curx = itunibo.planner.plannerUtil.getPosX()
-							       	val Cury = itunibo.planner.plannerUtil.getPosY()	
-							       	jobj.setPositionX(Curx)
-							       	jobj.setPositionY(Cury)
+							    	var Curx = itunibo.planner.plannerUtil.getPosX()
+							       	var Cury = itunibo.planner.plannerUtil.getPosY()	
+							       	jobj.setPosition(Curx,Cury)
 						updateResourceRep(jobj.toJson() 
 						)
 					}
@@ -120,7 +118,10 @@ class Walker ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 						println("waiterwalker | stepFailed")
 						if( checkMsgContent( Term.createTerm("stepfail(DURATION,CAUSE)"), Term.createTerm("stepfail(DURATION,CAUSE)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
-								 val D = payloadArg(0).toLong()  ; val Dt = Math.abs(StepTime-D); val BackT = D/2  
+								 
+												val D = payloadArg(0).toLong()  ; 
+												val Dt = Math.abs(StepTime-D); 
+												val BackT = D/2 
 								println("waiterwalker stepFail D= $D, BackTime = ${BackTime}")
 								if(  D > BackTime  
 								 ){forward("cmd", "cmd(s)" ,"basicrobot" ) 
@@ -156,8 +157,8 @@ class Walker ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 					action { //it:State
 						println("waiterwalker | FAILS")
 						 
-							    	val Curx = itunibo.planner.plannerUtil.getPosX()
-							       	val Cury = itunibo.planner.plannerUtil.getPosY()	
+							    	var Curx = itunibo.planner.plannerUtil.getPosX()
+							       	var Cury = itunibo.planner.plannerUtil.getPosY()	
 						itunibo.planner.plannerUtil.showCurrentRobotState(  )
 						answer("doPlan", "walkerError", "walkerError($Curx,$Cury)"   )  
 					}

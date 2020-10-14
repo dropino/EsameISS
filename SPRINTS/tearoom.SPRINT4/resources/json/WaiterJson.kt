@@ -13,11 +13,11 @@ class waiterJson {
 		jobj.put("busy", stat)
 	}
 	
-	fun setClientID(stat: Int){
+	fun setClientID(stat: String){
 		jobj.put("clientID", stat)
 	}
 	
-	fun setTable(stat: Int){
+	fun setTable(stat: Int?){
 		jobj.put("table", stat)
 	}
 	
@@ -51,7 +51,7 @@ class waiterJson {
 	
 	fun reset(){
 		jobj.put("busy", false)
-		jobj.put("clientID", -1)
+		jobj.put("clientID", "")
 		jobj.put("table", -1)
 		jobj.put("order", "")
 		jobj.put("payment", false)

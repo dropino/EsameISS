@@ -22,6 +22,7 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 				var BILL			= 5
 				var KIND			= ""
 				var CDRINK			= ""
+				var WaitingClient : Boolean	= false
 				
 				var Ntables			= 0
 				
@@ -82,7 +83,7 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 				}	 
 				state("answerTime") { //this:State
 					action { //it:State
-						 var waitTime = 0  
+						 var WaitTime = 0  
 						solve("numavailabletables(N)","") //set resVar	
 						if( currentSolution.isSuccess() ) { Ntables = getCurSol("N").toString().toInt()   
 						println("WAITER | numavailabletables=$Ntables")
@@ -93,12 +94,15 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 						 ){answer("waitTime", "wait", "wait(0)"   )  
 						}
 						else
-						 { waitTime = 20000 
-						 answer("waitTime", "wait", "wait(20000)"   )  
+						 { WaitTime = 20000
+						 				WaitingClient = true  
+						 answer("waitTime", "wait", "wait($WaitTime)"   )  
+						 updateResourceRep("Client_must_wait" 
+						 )
 						 }
 						
 									wJson.setBusy(true)
-									wJson.setWaitTime(waitTime)
+									wJson.setWaitTime(WaitTime)
 					}
 					 transition( edgeName="goto",targetState="listening", cond=doswitch() )
 				}	 
@@ -114,8 +118,8 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 								  				
 								  				
 												wJson.setBusy(true)
-												wJson.setClientID(CCID.toIntOrNull())
-												wJson.setTable(CTABLE.toIntOrNull())
+												wJson.setClientID(CCID)
+												wJson.setTable(CTABLE)
 												wJson.setMovingTo(Dest)
 												wJson.setReceivedRequest("deploy")	  				
 						}
@@ -127,12 +131,27 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 				}	 
 				state("goToEntrance") { //this:State
 					action { //it:State
-						println("WAITER | GOING to ENTRANCE door ")
-						request("moveForTask", "moveForTask(entrancedoor,1)" ,"waiterwalker" )  
-						solve("changeWaiterState(moving)","") //set resVar	
+						solve("numavailabletables(N)","") //set resVar	
+						if( currentSolution.isSuccess() ) { Ntables = getCurSol("N").toString().toInt()   
+						println("WAITER | numavailabletables=$Ntables")
+						}
+						else
+						{}
+						if(  WaitingClient && Ntables == 0  
+						 ){println("WAITER | ASKING CLIENT TO WAIT SOME MORE")
+						answer("deploy", "arrived", "arrived(ko)"   )  
+						forward("listen", "listen(ok)" ,"waiter" ) 
+						}
+						else
+						 { WaitingClient = false  
+						 println("WAITER | GOING to ENTRANCE door ")
+						 request("moveForTask", "moveForTask(entrancedoor,1)" ,"waiterwalker" )  
+						 solve("changeWaiterState(moving)","") //set resVar	
+						 }
 					}
 					 transition(edgeName="t010",targetState="deployClientEntrance",cond=whenReply("movementDone"))
 					transition(edgeName="t011",targetState="error",cond=whenReply("walkbreak"))
+					transition(edgeName="t012",targetState="listening",cond=whenDispatch("listen"))
 				}	 
 				state("deployClientEntrance") { //this:State
 					action { //it:State
@@ -146,8 +165,8 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 						{}
 						request("moveForTask", "moveForTask(teatable,$CTABLE)" ,"waiterwalker" )  
 					}
-					 transition(edgeName="t012",targetState="confirmClientArrival",cond=whenReply("movementDone"))
-					transition(edgeName="t013",targetState="error",cond=whenReply("walkbreak"))
+					 transition(edgeName="t013",targetState="confirmClientArrival",cond=whenReply("movementDone"))
+					transition(edgeName="t014",targetState="error",cond=whenReply("walkbreak"))
 				}	 
 				state("deployClientExit") { //this:State
 					action { //it:State
@@ -155,8 +174,8 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 						forward("tableDirty", "tableDirty($CTABLE)" ,"waiter" ) 
 						request("moveForTask", "moveForTask(exitdoor,1)" ,"waiterwalker" )  
 					}
-					 transition(edgeName="t014",targetState="confirmClientArrival",cond=whenReply("movementDone"))
-					transition(edgeName="t015",targetState="error",cond=whenReply("walkbreak"))
+					 transition(edgeName="t015",targetState="confirmClientArrival",cond=whenReply("movementDone"))
+					transition(edgeName="t016",targetState="error",cond=whenReply("walkbreak"))
 				}	 
 				state("confirmClientArrival") { //this:State
 					action { //it:State
@@ -174,7 +193,7 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 												CTABLE 	= payloadArg(1).toString().toInt()
 												CCID 	= payloadArg(2).toString()
 												wJson.setBusy(true)
-												wJson.setClientID(CCID.toIntOrNull())
+												wJson.setClientID(CCID)
 												wJson.setTable(CTABLE)
 								updateResourceRep(wJson.toJson() 
 								)
@@ -183,8 +202,8 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 						request("moveForTask", "moveForTask(teatable,$CTABLE)" ,"waiterwalker" )  
 						solve("changeWaiterState(moving)","") //set resVar	
 					}
-					 transition(edgeName="t016",targetState="atTableForRequest",cond=whenReply("movementDone"))
-					transition(edgeName="t017",targetState="error",cond=whenReply("walkbreak"))
+					 transition(edgeName="t017",targetState="atTableForRequest",cond=whenReply("movementDone"))
+					transition(edgeName="t018",targetState="error",cond=whenReply("walkbreak"))
 				}	 
 				state("atTableForRequest") { //this:State
 					action { //it:State
@@ -196,8 +215,8 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 						println("WAITER | CLIENT $CCID requested $KIND")
 						answer("clientRequest", "atTable", "atTable($PL)"   )  
 					}
-					 transition(edgeName="t018",targetState="transferOrder",cond=whenDispatch("order"))
-					transition(edgeName="t019",targetState="listening",cond=whenDispatch("pay"))
+					 transition(edgeName="t019",targetState="transferOrder",cond=whenDispatch("order"))
+					transition(edgeName="t020",targetState="listening",cond=whenDispatch("pay"))
 				}	 
 				state("transferOrder") { //this:State
 					action { //it:State
@@ -228,8 +247,8 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 									wJson.setTable(CTABLE)
 									wJson.setMovingTo("table "+CTABLE)						
 					}
-					 transition(edgeName="t020",targetState="atTableToClean",cond=whenReply("movementDone"))
-					transition(edgeName="t021",targetState="error",cond=whenReply("walkbreak"))
+					 transition(edgeName="t021",targetState="atTableToClean",cond=whenReply("movementDone"))
+					transition(edgeName="t022",targetState="error",cond=whenReply("walkbreak"))
 				}	 
 				state("atTableToClean") { //this:State
 					action { //it:State
@@ -254,8 +273,8 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 						updateResourceRep( wJson.toJson()  
 						)
 					}
-					 transition(edgeName="t022",targetState="bringDrinkToClient",cond=whenReply("movementDone"))
-					transition(edgeName="t023",targetState="error",cond=whenReply("walkbreak"))
+					 transition(edgeName="t023",targetState="bringDrinkToClient",cond=whenReply("movementDone"))
+					transition(edgeName="t024",targetState="error",cond=whenReply("walkbreak"))
 				}	 
 				state("bringDrinkToClient") { //this:State
 					action { //it:State
@@ -263,8 +282,8 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 						println("WAITER | GOING TO CLIENT table $CTABLE... ")
 						request("moveForTask", "moveForTask(teatable,$CTABLE)" ,"waiterwalker" )  
 					}
-					 transition(edgeName="t024",targetState="leaveDrinkAtTable",cond=whenReply("movementDone"))
-					transition(edgeName="t025",targetState="error",cond=whenReply("walkbreak"))
+					 transition(edgeName="t025",targetState="leaveDrinkAtTable",cond=whenReply("movementDone"))
+					transition(edgeName="t026",targetState="error",cond=whenReply("walkbreak"))
 				}	 
 				state("leaveDrinkAtTable") { //this:State
 					action { //it:State

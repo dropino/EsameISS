@@ -470,7 +470,7 @@ QActor smartbell context ctxsmartbell {
 	State checkTemp {
 		onMsg ( ringBell : ringBell (T) ) {
 			[#
-				Temp = payloadArg(0).toString().toInt()	
+				Temp = (36..38).random()
 				sJson.setBusy(true)
 			#]
 			updateResource[#sJson.toJson()#]
@@ -486,7 +486,6 @@ QActor smartbell context ctxsmartbell {
 		println("  SmartBell | Client Discard  ")
 		replyTo ringBell with tempStatus : tempStatus (0, $CID)
 		[#
-			Temp = payloadArg(0).toString().toInt()	
 			sJson.setBusy(true)
 			sJson.setClientArrived(true)
 		#]

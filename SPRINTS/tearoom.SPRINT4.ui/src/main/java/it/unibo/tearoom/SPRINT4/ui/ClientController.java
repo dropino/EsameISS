@@ -35,14 +35,14 @@ public class ClientController {
     
     connQakCoap smartbellConn;   
     connQakCoap waiterConn;
-    
+     
 	public ClientController() {
 	    configurator.configure();
 	    htmlPageMain  = configurator.getPageTemplate();
 	    robotHost =	configurator.getHostAddr();	
 	    robotPort = configurator.getPort();
 	
-	    smartbellConn = new connQakCoap(robotHost, robotPort, configurator.getQakdest(), configurator.getCtxqadest()  );  
+	    smartbellConn = new connQakCoap(robotHost, "8071", configurator.getQakdest(), "ctxsmartbell"  );  
 	    smartbellConn.createConnection();
  		
 	    waiterConn = new connQakCoap(robotHost, robotPort, "waiter", configurator.getCtxqadest()  );  
@@ -57,7 +57,7 @@ public class ClientController {
 	 } 
 	   
 	 @GetMapping("/tearoom")
-	 public String getApplicationModelTearoom(Model viewmodel) {
+	 public String getApplicationModelTearoom(Model viewmodel) { 
 		 preparePageUpdating();
 		 return htmlPageTearoom; 
 	 } 
@@ -125,7 +125,7 @@ public class ClientController {
 	 * 
 	 * 	If the Client got in or is waiting in the hall, he's now only in contact with the waiter, so the message mapping will follow /waiter.
 	 * */
-	@MessageMapping("/smartbell")
+	@MessageMapping("/smartbell") 
 	@SendTo("/topic/display")
 	public ServerReply ringSmartbell() throws Exception {
 	 		ApplMessage ringMsg = MsgUtil.buildRequest("web", "ringBell", "ringBell(ok)", "smartbell" );

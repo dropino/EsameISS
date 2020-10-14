@@ -75,7 +75,7 @@ public class ManagerController {
 				JsonNode msg = null;
 				try {
 					msg = mapper.readTree(response.getResponseText());
-				} catch (Exception ex) {
+				} catch (Exception ex) { 
 					ex.printStackTrace();
 				}
 

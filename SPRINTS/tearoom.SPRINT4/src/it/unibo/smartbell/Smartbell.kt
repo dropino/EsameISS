@@ -39,7 +39,7 @@ class Smartbell ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, 
 						if( checkMsgContent( Term.createTerm("ringBell(TEMP)"), Term.createTerm("ringBell(T)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								
-												Temp = payloadArg(0).toString().toInt()	
+												Temp = (36..38).random()
 												sJson.setBusy(true)
 								updateResourceRep(sJson.toJson() 
 								)
@@ -57,7 +57,6 @@ class Smartbell ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, 
 						println("  SmartBell | Client Discard  ")
 						answer("ringBell", "tempStatus", "tempStatus(0,$CID)"   )  
 						
-									Temp = payloadArg(0).toString().toInt()	
 									sJson.setBusy(true)
 									sJson.setClientArrived(true)
 						updateResourceRep(sJson.toJson() 

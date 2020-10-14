@@ -70,20 +70,24 @@ class Simclient ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, 
 						}
 						println("Client $MyCID | the waiter told me to wait $WaitTime time")
 					}
-					 transition( edgeName="goto",targetState="end", cond=doswitchGuarded({ WaitTime == 20000  
-					}) )
-					transition( edgeName="goto",targetState="waitingInTheHall", cond=doswitchGuarded({! ( WaitTime == 20000  
-					) }) )
+					 transition( edgeName="goto",targetState="waitingInTheHall", cond=doswitch() )
 				}	 
 				state("waitingInTheHall") { //this:State
 					action { //it:State
 						println("Client $MyCID | waiting in the hall")
+						if( WaitTime < 0 
+						 ){forward("timeExpired", "timeExpired(ok)" ,"simclient" ) 
+						}
+						else
+						 { WaitTime -= 5000  
+						 }
 						request("deploy", "deploy(entrancedoor,table,$MyCID)" ,"waiter" )  
 						stateTimer = TimerActor("timer_waitingInTheHall", 
-							scope, context!!, "local_tout_simclient_waitingInTheHall", 20000.toLong() )
+							scope, context!!, "local_tout_simclient_waitingInTheHall", 5000.toLong() )
 					}
-					 transition(edgeName="t02",targetState="end",cond=whenTimeout("local_tout_simclient_waitingInTheHall"))   
-					transition(edgeName="t03",targetState="seated",cond=whenReply("arrived"))
+					 transition(edgeName="t02",targetState="waitingInTheHall",cond=whenTimeout("local_tout_simclient_waitingInTheHall"))   
+					transition(edgeName="t03",targetState="end",cond=whenDispatch("timeExpired"))
+					transition(edgeName="t04",targetState="seated",cond=whenReply("arrived"))
 				}	 
 				state("seated") { //this:State
 					action { //it:State
@@ -94,7 +98,7 @@ class Simclient ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, 
 						println("Client $MyCID | my table is $MyTable")
 						request("clientRequest", "clientRequest(order,$MyTable,$MyCID)" ,"waiter" )  
 					}
-					 transition(edgeName="t04",targetState="ordering",cond=whenReply("atTable"))
+					 transition(edgeName="t05",targetState="ordering",cond=whenReply("atTable"))
 				}	 
 				state("ordering") { //this:State
 					action { //it:State
@@ -102,7 +106,7 @@ class Simclient ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, 
 						delay(2000) 
 						forward("order", "order(tea)" ,"waiter" ) 
 					}
-					 transition(edgeName="t05",targetState="drinkingTea",cond=whenEvent("deliver"))
+					 transition(edgeName="t06",targetState="drinkingTea",cond=whenEvent("deliver"))
 				}	 
 				state("drinkingTea") { //this:State
 					action { //it:State
@@ -110,7 +114,7 @@ class Simclient ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, 
 						delay(10000) 
 						request("clientRequest", "clientRequest(pay,$MyTable,$MyCID)" ,"waiter" )  
 					}
-					 transition(edgeName="t06",targetState="paying",cond=whenReply("atTable"))
+					 transition(edgeName="t07",targetState="paying",cond=whenReply("atTable"))
 				}	 
 				state("paying") { //this:State
 					action { //it:State
@@ -123,7 +127,7 @@ class Simclient ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, 
 						forward("pay", "pay($ToPay)" ,"waiter" ) 
 						request("deploy", "deploy($MyTable,exitdoor,$MyCID)" ,"waiter" )  
 					}
-					 transition(edgeName="t07",targetState="end",cond=whenReply("arrived"))
+					 transition(edgeName="t08",targetState="end",cond=whenReply("arrived"))
 				}	 
 				state("end") { //this:State
 					action { //it:State

@@ -8,6 +8,7 @@ mqttBroker "localhost" : 1883 eventTopic "unibo/basicrobot"
 Event    waiterwalkerstarted   : waiterwalkerstarted(X)
 Event    walkerstarted   	: walkerstarted(X)
 
+
 Request	 doPlan 			: doPlan(X,Y)
 Reply 	 walkerError 		: walkerError( $XT,$YT )
 Reply	 walkerDone 		: walkerDone(X,Y)
@@ -72,6 +73,9 @@ QActor waiter context ctxtearoom {
 		var CurST			= ""
 		var PL				= ""
 		var Dest			= ""
+		
+		val wJson = json.waiterJson()
+		
 	#]
 	
 	State s0 initial {	
@@ -83,16 +87,18 @@ QActor waiter context ctxtearoom {
 
  	}	
   	Transition t0 whenEvent waiterwalkerstarted -> listening
+  	
   	 
   	State listening {
   		[
   			#
   				CCID = ""
   				CTABLE = 0
+  				wJson.reset()
   			#
   		]
  		println("WAITER | listening... ")
-// 		updateResource [#"listening"#]
+ 		updateResource [#wJson.toJson()#]
 	}
 	  Transition t0  	whenTime 	15000	 	 		-> goHome
 	  					whenRequest waitTime			-> answerTime
@@ -115,13 +121,16 @@ QActor waiter context ctxtearoom {
   		} 
 		else{ 
 			forward waiter -m rest : rest(0)
-		}
+		}		
   	}
 	  Transition t0 	whenReply	movementDone 	-> listening
 	  	  				whenReply	walkbreak	 	-> error
 	  					whenMsg		rest	 		-> listening
+  		
   	
   	State answerTime {
+  		[# var waitTime = 0 #]
+  		
   		solve( numavailabletables(N) ) 
 		ifSolved { [# Ntables = getCurSol("N").toString().toInt()  #] 
 			println("WAITER | numavailabletables=$Ntables")
@@ -130,11 +139,23 @@ QActor waiter context ctxtearoom {
 		if [# Ntables != 0 #] {
 			replyTo waitTime with wait : wait(0)
 		} else {
+			[# waitTime = 20000#]
 			replyTo waitTime with wait : wait(20000)
 			updateResource [#"Client_must_wait"#]
 		}
+		
+		[#
+			wJson.setBusy(true)
+//			wJson.setClientID(-1)
+//			wJson.setTable(-1)
+			wJson.setWaitTime(waitTime)
+//			wJson.setMovingTo("")
+//			wJson.setMovingFrom("")	
+		#]
+		
   	}
   	Goto listening
+
   	
   	State handleDeploy {
   		println("WAITER | handling simclient request... ")  		
@@ -143,10 +164,18 @@ QActor waiter context ctxtearoom {
   				CTABLE = payloadArg(0).toString().toIntOrNull()
   				Dest = payloadArg(1).toString()
   				CCID = payloadArg(2).toString()
+  				
+  				
+				wJson.setBusy(true)
+				wJson.setClientID(CCID.toIntOrNull())
+				wJson.setTable(CTABLE.toIntOrNull())
+				wJson.setMovingTo(Dest)
+				wJson.setReceivedRequest("deploy")	  				
   			#]
   		}
   	}
   	Goto goToEntrance if [# Dest == "table" #] else deployClientExit
+
 
 	State goToEntrance {
 		
@@ -157,9 +186,8 @@ QActor waiter context ctxtearoom {
 	 Transition t0		whenReply	movementDone -> deployClientEntrance
 	  					whenReply	walkbreak	 -> error
 	
-	State deployClientEntrance {		
-		updateResource[# "waiter_arrived" #]
-		
+	
+	State deployClientEntrance {				
 		println("WAITER | DEPLOYING simclient $CCID to table $CTABLE")
 		
 		solve( tableavailable(N) ) 
@@ -173,6 +201,7 @@ QActor waiter context ctxtearoom {
 	 Transition t0		whenReply	movementDone -> confirmClientArrival
 	  					whenReply	walkbreak	 -> error	
 
+
 	State deployClientExit {
 		
 		println("WAITER | deploying simclient from table to exit door... ")
@@ -183,20 +212,29 @@ QActor waiter context ctxtearoom {
 	} 	
 	 Transition t0		whenReply	movementDone -> confirmClientArrival
 	  					whenReply	walkbreak	 -> error	
+	  	
 	  					
 	State confirmClientArrival {
-		updateResource[# "waiter_rdy_leave" #] // stato usato per deploy simclient exit
+//		updateResource[# "waiter_rdy_leave" #] // stato usato per deploy simclient exit
 		
 		println("WAITER | SENDING CONFIRMATION to simclient $CCID: arrived $Dest")
 		
 		replyTo deploy with  arrived	: arrived($CTABLE)
-	} Goto listening
+	} 
+	Goto listening
+		
 						 
 	State answerClientRequest {
 		onMsg(clientRequest : clientRequest(KIND, TABLE, CID)) {
-			[#  KIND	= payloadArg(0).toString()
+			[#  
+				KIND	= payloadArg(0).toString()
 				CTABLE 	= payloadArg(1).toString().toInt()
-				CCID 	= payloadArg(2).toString() #]
+				CCID 	= payloadArg(2).toString()
+				wJson.setBusy(true)
+				wJson.setClientID(CCID.toIntOrNull())
+				wJson.setTable(CTABLE)
+			#]
+			updateResource [#wJson.toJson()#]
 		}
 		
 		println("WAITER | received CLIENTREQUEST $KIND $CTABLE ")
@@ -207,6 +245,7 @@ QActor waiter context ctxtearoom {
 	}
 	 Transition t0		whenReply	movementDone -> atTableForRequest
 	  					whenReply	walkbreak	 -> error	
+	
 	
 	State atTableForRequest {
 		
@@ -227,6 +266,12 @@ QActor waiter context ctxtearoom {
 			[#  CDRINK	= payloadArg(0).toString() #]
 		}
 		forward barman -m sendOrder : sendOrder($CDRINK, $CTABLE)
+		
+		[#
+ 			wJson.setOrder(CDRINK)
+		#]
+		updateResource [# wJson.toJson() #]
+				
 	}
 	Goto listening
 	
@@ -236,7 +281,12 @@ QActor waiter context ctxtearoom {
 		}
 		println("WAITER | going to table for CLEANING $CTABLE... ")
 		request waiterwalker -m moveForTask : moveForTask(teatable, $CTABLE)
-		solve ( changeWaiterState(moving) )		
+		solve ( changeWaiterState(moving) )	
+		[#
+			wJson.setBusy(true)
+			wJson.setTable(CTABLE)
+			wJson.setMovingTo("table "+CTABLE)						
+		#]
 	}
 	Transition t0		whenReply	movementDone -> atTableToClean
 	  					whenReply	walkbreak	 -> error
@@ -258,7 +308,14 @@ QActor waiter context ctxtearoom {
 		
 		println("WAITER | going to barman... ")
 		request waiterwalker -m moveForTask : moveForTask(barman, 1)
-		solve ( changeWaiterState(moving) )	
+		solve ( changeWaiterState(moving) )
+		
+		[#
+			wJson.setBusy(true)
+			wJson.setTable(CTABLE)
+		#]		
+		updateResource [# wJson.toJson() #]
+		
 	}
 	Transition t0 		whenReply	movementDone -> bringDrinkToClient
 	  					whenReply	walkbreak	 -> error	
@@ -267,7 +324,7 @@ QActor waiter context ctxtearoom {
 		updateResource[# "waiter_rdy_getDrink" #]
 		println("WAITER | taking tea... ")
 		println("WAITER | GOING TO CLIENT table $CTABLE... ")
-
+		
 		request waiterwalker -m moveForTask : moveForTask(teatable, $CTABLE)
 	}
 	Transition t0 		whenReply	movementDone -> leaveDrinkAtTable
@@ -286,13 +343,16 @@ QActor waiter context ctxtearoom {
 	} Goto listening
 }
 
+
+
+
 QActor waiterwalker context ctxtearoom {  
 	[#
 		var XT = "0"
 		var YT = "0"
 		
-		var TASK				= "" 
-		var N					= ""
+		var TASK	= "" 
+		var N		= ""
 	#] 
 
 
@@ -307,7 +367,6 @@ QActor waiterwalker context ctxtearoom {
 		
 	}	
 	Transition t0 whenEvent walkerstarted -> waitCmd   
-
 
 	 
 	State waitCmd {	     
@@ -367,10 +426,12 @@ QActor waiterwalker context ctxtearoom {
  
 
 
+
 QActor smartbell context ctxtearoom {
  [# 
  	var Temp = 0
  	var CID = 0 
+ 	val sJson = json.smartBellJson()
  #]
  
 	State s0 initial {
@@ -381,14 +442,17 @@ QActor smartbell context ctxtearoom {
 	
 	State waitForClient {
 		println("  SmartBell | Wait Client  ")
-		updateResource[#"Waiting"#]
 	}
 	Transition t0 whenRequest ringBell -> checkTemp
 	 
 	State checkTemp {
 		onMsg ( ringBell : ringBell (T) ) {
-			[#Temp = payloadArg(0).toString().toInt() #]
-			
+			[#
+				Temp = payloadArg(0).toString().toInt()	
+				sJson.setBusy(true)
+			#]
+			updateResource[#sJson.toJson()#]
+		
 			println("  SmartBell | Check Temp $Temp ")
 			
 		}
@@ -399,7 +463,12 @@ QActor smartbell context ctxtearoom {
 		println("  SmartBell | Temp is over  ")
 		println("  SmartBell | Client Discard  ")
 		replyTo ringBell with tempStatus : tempStatus (0, $CID)
-		updateResource [#"Discard"#]
+		[#
+			Temp = payloadArg(0).toString().toInt()	
+			sJson.setBusy(true)
+			sJson.setClientArrived(true)
+		#]
+		updateResource[#sJson.toJson()#]		
 		
 	}
 	Goto waitForClient
@@ -407,18 +476,26 @@ QActor smartbell context ctxtearoom {
 	State handleEventTempOK {
 		println("  SmartBell | Temp is OK  ")
 		println("  SmartBell | Client Accepted  ")
-		[# CID = (1..100).random() #]
+		[# 	
+			CID = (1..100).random()
+			sJson.setClientArrived(false)
+			sJson.setClientAccepted(CID)
+		#]		
 		replyTo ringBell with tempStatus : tempStatus (1, $CID)
 		forward waiter -m clientID : clientID ($CID)
-		updateResource [#"Accept"#]
+		updateResource[#sJson.toJson()#]		
 	}
 	Goto waitForClient		
 }
 
 
+
+
 QActor barman context ctxtearoom {
 	[#
 		var CTABLE = 0
+		var CTEA = 0
+		val bJson = json.barmanJson()
 	#]
 	
 	State s0 initial {
@@ -429,6 +506,15 @@ QActor barman context ctxtearoom {
 
 	State waitForNewOrder {
 		println("  Barman | Waiting Order  ")
+		[#
+			CTABLE = payloadArg(1).toString().toInt()
+			bJson.setBusy(false)
+			bJson.setPreparingForTable(-1)
+			bJson.setPreparingOrder("")
+			bJson.setOrderReadyTable(-1)
+			bJson.setOrderReady(false)
+		#]
+		updateResource [#bJson.toJson()#]
 	}
 	Transition t0 whenMsg sendOrder -> prepare
 	
@@ -437,11 +523,23 @@ QActor barman context ctxtearoom {
 			println("  Barman | Making tea ")
 			[#
 				CTABLE = payloadArg(1).toString().toInt()
+				CTEA = payloadArg(2).toString().toInt()
+				bJson.setBusy(true)
+				bJson.setPreparingForTable(CTABLE)
+				bJson.setPreparingOrder(CTEA)
 			#]
+			updateResource [#bJson.toJson()#]
 		}
 		
 		delay 2000
 		forward waiter -m orderReady : orderReady(tea, $CTABLE)
+			[#
+				bJson.setPreparingForTable(-1)
+				bJson.setPreparingOrder("")
+				bJson.setOrderReadyTable(CTABLE)
+				bJson.setOrderReady(true)
+			#]
+			updateResource [#bJson.toJson()#]
 			println("  Barman | Tea ready to be served ")
 	}
 	Goto waitForNewOrder

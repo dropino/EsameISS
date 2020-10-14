@@ -20,8 +20,8 @@ class Waiterwalker ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 				var XT = "0"
 				var YT = "0"
 				
-				var TASK				= "" 
-				var N					= ""
+				var TASK	= "" 
+				var N		= ""
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State

@@ -19,6 +19,7 @@ class Smartbell ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, 
 		 
 		 	var Temp = 0
 		 	var CID = 0 
+		 	val sJson = json.smartBellJson()
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
@@ -30,8 +31,6 @@ class Smartbell ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, 
 				state("waitForClient") { //this:State
 					action { //it:State
 						println("  SmartBell | Wait Client  ")
-						updateResourceRep("Waiting" 
-						)
 					}
 					 transition(edgeName="t030",targetState="checkTemp",cond=whenRequest("ringBell"))
 				}	 
@@ -39,7 +38,11 @@ class Smartbell ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, 
 					action { //it:State
 						if( checkMsgContent( Term.createTerm("ringBell(TEMP)"), Term.createTerm("ringBell(T)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
-								Temp = payloadArg(0).toString().toInt()  
+								
+												Temp = payloadArg(0).toString().toInt()	
+												sJson.setBusy(true)
+								updateResourceRep(sJson.toJson() 
+								)
 								println("  SmartBell | Check Temp $Temp ")
 						}
 					}
@@ -53,7 +56,11 @@ class Smartbell ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, 
 						println("  SmartBell | Temp is over  ")
 						println("  SmartBell | Client Discard  ")
 						answer("ringBell", "tempStatus", "tempStatus(0,$CID)"   )  
-						updateResourceRep("Discard" 
+						
+									Temp = payloadArg(0).toString().toInt()	
+									sJson.setBusy(true)
+									sJson.setClientArrived(true)
+						updateResourceRep(sJson.toJson() 
 						)
 					}
 					 transition( edgeName="goto",targetState="waitForClient", cond=doswitch() )
@@ -62,10 +69,13 @@ class Smartbell ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, 
 					action { //it:State
 						println("  SmartBell | Temp is OK  ")
 						println("  SmartBell | Client Accepted  ")
-						 CID = (1..100).random()  
+						 	
+									CID = (1..100).random()
+									sJson.setClientArrived(false)
+									sJson.setClientAccepted(CID)
 						answer("ringBell", "tempStatus", "tempStatus(1,$CID)"   )  
 						forward("clientID", "clientID($CID)" ,"waiter" ) 
-						updateResourceRep("Accept" 
+						updateResourceRep(sJson.toJson() 
 						)
 					}
 					 transition( edgeName="goto",targetState="waitForClient", cond=doswitch() )

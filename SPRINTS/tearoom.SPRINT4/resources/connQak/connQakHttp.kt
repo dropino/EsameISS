@@ -15,8 +15,8 @@ import it.unibo.kactor.ApplMessage
  * The interaction is with an instance of httpserver/server.kt
  */
 
-class connQakHttp(hostIP : String,  port : String,  ctxDest : String, destName : String ) :
-										           connQakBase(hostIP, port, ctxDest, destName){
+class connQakHttp(hostIP : String,  port : String,  destName : String, context : String ) :
+										           connQakBase(hostIP, port, destName, context){
 lateinit var client   : CloseableHttpClient  
 lateinit var hostAddr : String 
 	 
@@ -30,8 +30,9 @@ lateinit var hostAddr : String
  		 	
 	}
 	
-	override fun request(  msg: ApplMessage){
- 	}
+	override fun request(  msg: ApplMessage) : ApplMessage? {
+		return null
+	}
 	
 	override fun emit( msg: ApplMessage ){
   	}	

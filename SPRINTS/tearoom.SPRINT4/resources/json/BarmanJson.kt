@@ -29,10 +29,13 @@ class BarmanJson : ActorJson {
 		jobj.put("OrderReady", stat)
 	}
 	
+	//transforms the jsonObject in a json string string
 	override fun toJson():String{
 		return jobj.toString()
 	}
 	
+	
+	//resets to initial values the json object
 	override fun reset(){
 		jobj.put("busy", false)
 		jobj.put("PreparingForTable", -1)

@@ -122,11 +122,11 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 					action { //it:State
 						updateResourceRep( "waiter_arrived"  
 						)
-						println("WAITER | DEPLOYING simclient $CCID to table $CTABLE")
 						solve("tableavailable(N)","") //set resVar	
 						if( currentSolution.isSuccess() ) { CTABLE = getCurSol("N").toString().toInt()   
 						println("WAITER | tableavailable=$CTABLE")
 						solve("engageTable($CTABLE,$CCID)","") //set resVar	
+						println("WAITER | DEPLOYING simclient $CCID to table $CTABLE")
 						}
 						else
 						{}
@@ -148,7 +148,7 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 					action { //it:State
 						updateResourceRep( "waiter_rdy_leave"  
 						)
-						println("WAITER | SENDING CONFIRMATION to simclient $CCID: arrived $Dest")
+						println("WAITER | SENDING CONFIRMATION to simclient $CCID: arrived $Dest $CTABLE")
 						answer("deploy", "arrived", "arrived($CTABLE)"   )  
 					}
 					 transition( edgeName="goto",targetState="listening", cond=doswitch() )

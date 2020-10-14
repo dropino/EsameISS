@@ -30,7 +30,7 @@ lateinit var client   : CoapClient
  			println("connQakCoap | createConnection hostIP=${hostIP} port=${port}")
 			val url = "coap://$hostIP:$port/$context/$destName"
 			client = CoapClient( url )
-			client.setTimeout( 10000L )
+			client.setTimeout( 250000L )
  			//initialCmd: to make console more reactive at the first user cmd
  		    val respGet  = client.get( ) //CoapResponse
 			if( respGet != null )

@@ -1,0 +1,15 @@
+item(smartbell,s0,msg(autoStartSysMsg,dispatch,smartbell,smartbell,start,11)).
+item(smartbell,waitForClient,msg(waiterwalkerstarted,event,waiterwalker,none,waiterwalkerstarted(ok),15)).
+discard(smartbell,waitForClient,msg(waiterwalkerstarted,event,waiterwalker,none,waiterwalkerstarted(ok),15)).
+item(smartbell,waitForClient,msg(walkerstarted,event,walker,none,walkerstarted(0),19)).
+discard(smartbell,waitForClient,msg(walkerstarted,event,walker,none,walkerstarted(0),19)).
+item(smartbell,waitForClient,msg(ringBell,request,caoproute1,smartbell,ringBell(36),22)).
+item(smartbell,waitForClient,msg(ringBell,request,caoproute2,smartbell,ringBell(36),39)).
+item(smartbell,waitForClient,msg(local_tout_waiter_listening,event,timer_listening,none,local_tout_waiter_listening,61)).
+discard(smartbell,waitForClient,msg(local_tout_waiter_listening,event,timer_listening,none,local_tout_waiter_listening,61)).
+item(smartbell,waitForClient,msg(local_tout_waiter_listening,event,timer_listening,none,local_tout_waiter_listening,74)).
+discard(smartbell,waitForClient,msg(local_tout_waiter_listening,event,timer_listening,none,local_tout_waiter_listening,74)).
+item(smartbell,waitForClient,msg(local_tout_waiter_listening,event,timer_listening,none,local_tout_waiter_listening,81)).
+discard(smartbell,waitForClient,msg(local_tout_waiter_listening,event,timer_listening,none,local_tout_waiter_listening,81)).
+item(smartbell,waitForClient,msg(local_tout_waiter_listening,event,timer_listening,none,local_tout_waiter_listening,88)).
+discard(smartbell,waitForClient,msg(local_tout_waiter_listening,event,timer_listening,none,local_tout_waiter_listening,88)).

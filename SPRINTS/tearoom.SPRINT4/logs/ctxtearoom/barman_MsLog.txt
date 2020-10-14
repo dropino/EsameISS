@@ -1,0 +1,13 @@
+item(barman,s0,msg(autoStartSysMsg,dispatch,barman,barman,start,13)).
+item(barman,waitForNewOrder,msg(waiterwalkerstarted,event,waiterwalker,none,waiterwalkerstarted(ok),15)).
+discard(barman,waitForNewOrder,msg(waiterwalkerstarted,event,waiterwalker,none,waiterwalkerstarted(ok),15)).
+item(barman,waitForNewOrder,msg(walkerstarted,event,walker,none,walkerstarted(0),19)).
+discard(barman,waitForNewOrder,msg(walkerstarted,event,walker,none,walkerstarted(0),19)).
+item(barman,waitForNewOrder,msg(local_tout_waiter_listening,event,timer_listening,none,local_tout_waiter_listening,61)).
+discard(barman,waitForNewOrder,msg(local_tout_waiter_listening,event,timer_listening,none,local_tout_waiter_listening,61)).
+item(barman,waitForNewOrder,msg(local_tout_waiter_listening,event,timer_listening,none,local_tout_waiter_listening,74)).
+discard(barman,waitForNewOrder,msg(local_tout_waiter_listening,event,timer_listening,none,local_tout_waiter_listening,74)).
+item(barman,waitForNewOrder,msg(local_tout_waiter_listening,event,timer_listening,none,local_tout_waiter_listening,81)).
+discard(barman,waitForNewOrder,msg(local_tout_waiter_listening,event,timer_listening,none,local_tout_waiter_listening,81)).
+item(barman,waitForNewOrder,msg(local_tout_waiter_listening,event,timer_listening,none,local_tout_waiter_listening,88)).
+discard(barman,waitForNewOrder,msg(local_tout_waiter_listening,event,timer_listening,none,local_tout_waiter_listening,88)).

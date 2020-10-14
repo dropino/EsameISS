@@ -1,10 +1,10 @@
-System tearoomsys
+System -msglog tearoomsys 
 //mqttBroker "localhost" : 1883 eventTopic "unibo/waiter"   
  
 //MESSAGES
 mqttBroker "localhost" : 1883 eventTopic "unibo/basicrobot"   
 
-//waiterwalker-walker
+//waiterwalker-walker 
 Event    waiterwalkerstarted   : waiterwalkerstarted(X)
 Event    walkerstarted   	: walkerstarted(X)
 
@@ -54,7 +54,10 @@ Dispatch orderReady			: orderReady(TEA, TABLE)
 //TABLE DIRTY NOTIFICATION
 Dispatch tableDirty 		: tableDirty(N)
 
-Context ctxtearoom 	ip [host="localhost" 	port=8072] 
+Context ctxtearoom 		ip [host="localhost" 	port=8072] 
+Context ctxsmartbell	ip [host="localhost" 	port=8071] 
+Context ctxbarman 		ip [host="localhost" 	port=8070] 
+
 
 CodedQActor walker context ctxtearoom className "it.unibo.walker.Walker" 
 
@@ -92,7 +95,7 @@ QActor waiter context ctxtearoom {
   			#
   		]
  		println("WAITER | listening... ")
-// 		updateResource [#"listening"#]
+
 	}
 	  Transition t0  	whenTime 	15000	 	 		-> goHome
 	  					whenRequest waitTime			-> answerTime
@@ -159,13 +162,13 @@ QActor waiter context ctxtearoom {
 	
 	State deployClientEntrance {		
 		updateResource[# "waiter_arrived" #]
-		
-		println("WAITER | DEPLOYING simclient $CCID to table $CTABLE")
-		
+				
 		solve( tableavailable(N) ) 
 		ifSolved { [# CTABLE = getCurSol("N").toString().toInt()  #] 
 			println("WAITER | tableavailable=$CTABLE")					 
 			solve( engageTable($CTABLE, $CCID ) ) 
+			println("WAITER | DEPLOYING simclient $CCID to table $CTABLE")
+			
 	 	}	
 		
 		request waiterwalker -m moveForTask : moveForTask(teatable, $CTABLE)
@@ -187,7 +190,7 @@ QActor waiter context ctxtearoom {
 	State confirmClientArrival {
 		updateResource[# "waiter_rdy_leave" #] // stato usato per deploy simclient exit
 		
-		println("WAITER | SENDING CONFIRMATION to simclient $CCID: arrived $Dest")
+		println("WAITER | SENDING CONFIRMATION to simclient $CCID: arrived $Dest $CTABLE")
 		
 		replyTo deploy with  arrived	: arrived($CTABLE)
 	} Goto listening
@@ -367,7 +370,7 @@ QActor waiterwalker context ctxtearoom {
  
 
 
-QActor smartbell context ctxtearoom {
+QActor smartbell context ctxsmartbell {
  [# 
  	var Temp = 0
  	var CID = 0 
@@ -416,7 +419,7 @@ QActor smartbell context ctxtearoom {
 }
 
 
-QActor barman context ctxtearoom {
+QActor barman context ctxbarman {
 	[#
 		var CTABLE = 0
 	#]

@@ -144,16 +144,12 @@ QActor waiter context ctxtearoom {
 		} else {
 			[# waitTime = 20000#]
 			replyTo waitTime with wait : wait(20000)
-			updateResource [#"Client_must_wait"#]
+//			updateResource [#"Client_must_wait"#]
 		}
 		
 		[#
 			wJson.setBusy(true)
-//			wJson.setClientID(-1)
-//			wJson.setTable(-1)
 			wJson.setWaitTime(waitTime)
-//			wJson.setMovingTo("")
-//			wJson.setMovingFrom("")	
 		#]
 		
   	}
@@ -190,7 +186,7 @@ QActor waiter context ctxtearoom {
 	  					whenReply	walkbreak	 -> error
 	
 	State deployClientEntrance {		
-		updateResource[# "waiter_arrived" #]
+//		updateResource[# "waiter_arrived" #]
 				
 		solve( tableavailable(N) ) 
 		ifSolved { [# CTABLE = getCurSol("N").toString().toInt()  #] 
@@ -325,7 +321,7 @@ QActor waiter context ctxtearoom {
 	  					whenReply	walkbreak	 -> error	
 	
 	State bringDrinkToClient {
-		updateResource[# "waiter_rdy_getDrink" #]
+//		updateResource[# "waiter_rdy_getDrink" #]
 		println("WAITER | taking tea... ")
 		println("WAITER | GOING TO CLIENT table $CTABLE... ")
 		
@@ -336,7 +332,7 @@ QActor waiter context ctxtearoom {
 			
 	State leaveDrinkAtTable {
 		println("WAITER | giving the simclient the tea")
-		updateResource[# "waiter_rdy_bringDrink" #]
+//		updateResource[# "waiter_rdy_bringDrink" #]
 		
 		emit deliver : deliver(tea, $CTABLE)
 	}

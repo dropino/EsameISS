@@ -95,16 +95,10 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 						else
 						 { waitTime = 20000 
 						 answer("waitTime", "wait", "wait(20000)"   )  
-						 updateResourceRep("Client_must_wait" 
-						 )
 						 }
 						
 									wJson.setBusy(true)
-						//			wJson.setClientID(-1)
-						//			wJson.setTable(-1)
 									wJson.setWaitTime(waitTime)
-						//			wJson.setMovingTo("")
-						//			wJson.setMovingFrom("")	
 					}
 					 transition( edgeName="goto",targetState="listening", cond=doswitch() )
 				}	 
@@ -142,8 +136,6 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 				}	 
 				state("deployClientEntrance") { //this:State
 					action { //it:State
-						updateResourceRep( "waiter_arrived"  
-						)
 						solve("tableavailable(N)","") //set resVar	
 						if( currentSolution.isSuccess() ) { CTABLE = getCurSol("N").toString().toInt()   
 						println("WAITER | tableavailable=$CTABLE")
@@ -168,8 +160,6 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 				}	 
 				state("confirmClientArrival") { //this:State
 					action { //it:State
-						updateResourceRep( "waiter_rdy_leave"  
-						)
 						println("WAITER | SENDING CONFIRMATION to simclient $CCID: arrived $Dest $CTABLE")
 						answer("deploy", "arrived", "arrived($CTABLE)"   )  
 					}
@@ -269,8 +259,6 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 				}	 
 				state("bringDrinkToClient") { //this:State
 					action { //it:State
-						updateResourceRep( "waiter_rdy_getDrink"  
-						)
 						println("WAITER | taking tea... ")
 						println("WAITER | GOING TO CLIENT table $CTABLE... ")
 						request("moveForTask", "moveForTask(teatable,$CTABLE)" ,"waiterwalker" )  
@@ -281,8 +269,6 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 				state("leaveDrinkAtTable") { //this:State
 					action { //it:State
 						println("WAITER | giving the simclient the tea")
-						updateResourceRep( "waiter_rdy_bringDrink"  
-						)
 						emit("deliver", "deliver(tea,$CTABLE)" ) 
 					}
 					 transition( edgeName="goto",targetState="listening", cond=doswitch() )

@@ -3,9 +3,9 @@ package json
 import org.json.JSONObject
 
 class BarmanJson : ActorJson {
-	//var jobj = JSONObject()
+	var jobj = JSONObject()
 	
-	override init {
+	init {
 		reset()
 	}
 	
@@ -29,9 +29,9 @@ class BarmanJson : ActorJson {
 		jobj.put("OrderReady", stat)
 	}
 	
-//	fun toJson():String{
-//		return jobj.toString()
-//	}
+	override fun toJson():String{
+		return jobj.toString()
+	}
 	
 	override fun reset(){
 		jobj.put("busy", false)

@@ -3,6 +3,7 @@ package it.unibo.tearoom.SPRINT4.ui;
 import org.eclipse.californium.core.CoapHandler;
 import org.eclipse.californium.core.CoapResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.jackson.JsonComponent;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -66,6 +67,7 @@ public class ManagerController {
     	waiterConn.getClient().observe(new CoapHandler() { 
 			@Override
 			public void onLoad(CoapResponse response) {
+				
 				if(response.getResponseText().contains("listening")) {
 					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
 					simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForClient, 

@@ -155,20 +155,34 @@ class testMultiClientMsg {
 		c3 = GlobalScope.async(handler) {
 			testRing(36)
 		}
-		CID3 = CID
 		assertTrue(c1.await())
 		assertTrue(c2.await())
-		assertTrue(c3.await())		
+		assertTrue(c3.await())
+		CID3 = CID
+		println("&&&&&&&&&&=========	CID1: $CID1 CID2: $CID2 CID3: $CID3")	
+		assertTrue((CID3 != CID2) && (CID3 != CID1))
+
+		TABLE2 = TABLE
 		assertTrue(TABLE1 != TABLE2)
 	
 //--------------CHECK WAITTIME FOR C3------------		
 		c3 = GlobalScope.async(handler) {
 			testWaitTime(CID3.toInt())
 		}
-		assertTrue(c3.await())		
-		assertTrue((CID3 != CID2) && (CID3 != CID1))
+		assertTrue(c3.await())
 				
 //--------------WAITER GO TO ENTRANCEDOOR FOR C3------------		
+		c3 = GlobalScope.async(handler) {
+			testDeployEntrance(CID3.toInt())
+		}
+		assertTrue(c3.await())
+		
+		delay(5000)
+		c3 = GlobalScope.async(handler) {
+			testDeployEntrance(CID3.toInt())
+		}
+		assertTrue(c3.await())
+		delay(5000)
 		c3 = GlobalScope.async(handler) {
 			testDeployEntrance(CID3.toInt())
 		}
@@ -176,7 +190,7 @@ class testMultiClientMsg {
 
 //--------------PAY REQUEST FOR C1	&& ORDER REQUEST FOR C2------------		
 		c2 = GlobalScope.async(handler) {
-			testRequestOrder(CID2.toInt(), TABLE1.toInt())
+			testRequestOrder(CID2.toInt(), TABLE2.toInt())
 		}
 		delay(5000)
 		c1 = GlobalScope.async(handler) {
@@ -184,7 +198,12 @@ class testMultiClientMsg {
 		}
 		assertTrue(c1.await())
 		assertTrue(c2.await())
-
+		
+		c3 = GlobalScope.async(handler) {
+			testDeployEntrance(CID3.toInt())
+		}
+		assertTrue(c3.await())
+		
 //--------------WAITER GO TO EXITDOOR FOR C1------------		
 		c1 = GlobalScope.async(handler) {
 			testDeployExit(CID1.toInt(), TABLE1.toInt())
@@ -243,7 +262,7 @@ fun testDeployEntrance(cid: Int): Boolean {
 
 
 		if ((ringRepArgs.size == 1) &&
-			(TABLE.matches("-?\\d+(\\.\\d+)?".toRegex()))) return true
+			(TABLE.matches("-?\\d+(\\.\\d+)?".toRegex()) || TABLE == "ko")) return true
 		else return false
 	}
 

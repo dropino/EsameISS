@@ -2,7 +2,7 @@ package json
 
 import org.json.JSONObject
 
-class waiterJson {
+class waiterJson : ActorJson {
 	var jobj = JSONObject()
 	
 	init {
@@ -13,11 +13,11 @@ class waiterJson {
 		jobj.put("busy", stat)
 	}
 	
-	fun setClientID(stat: Int){
+	fun setClientID(stat: String){
 		jobj.put("clientID", stat)
 	}
 	
-	fun setTable(stat: Int){
+	fun setTable(stat: Int?){
 		jobj.put("table", stat)
 	}
 	
@@ -45,13 +45,16 @@ class waiterJson {
 		jobj.put("receivedRequest", stat)
 	}
 	
-	fun toJson():String{
+	
+	//transforms the jsonObject in a json string string
+	override fun toJson():String{
 		return jobj.toString()
 	}
 	
-	fun reset(){
+	//resets to initial values the json object
+	override fun reset(){
 		jobj.put("busy", false)
-		jobj.put("clientID", -1)
+		jobj.put("clientID", "")
 		jobj.put("table", -1)
 		jobj.put("order", "")
 		jobj.put("payment", false)

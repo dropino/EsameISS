@@ -2,7 +2,7 @@ package json
 
 import org.json.JSONObject
 
-class smartBellJson {
+class smartBellJson : ActorJson {
 	var jobj = JSONObject()
 	
 	init {
@@ -25,11 +25,14 @@ class smartBellJson {
 		jobj.put("ClientDenied", stat)
 	}
 	
-	fun toJson():String{
+	
+	//transforms the jsonObject in a json string string
+	override fun toJson():String{
 		return jobj.toString()
 	}
 	
-	fun reset(){
+	//resets to initial values the json object
+	override fun reset(){
 		jobj.put("busy", false)
 		jobj.put("ClientArrived", false)
 		jobj.put("ClientAccepted", -1)

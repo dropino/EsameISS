@@ -23,6 +23,8 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 				var KIND			= ""
 				var CDRINK			= ""
 				var WaitingClient : Boolean	= false
+				val MaxStayTime		= 20000
+				val MaxWaitTime		= 20000
 				
 				var Ntables			= 0
 				
@@ -94,7 +96,7 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 						 ){answer("waitTime", "wait", "wait(0)"   )  
 						}
 						else
-						 { WaitTime = 20000
+						 { WaitTime = MaxWaitTime
 						 				WaitingClient = true  
 						 answer("waitTime", "wait", "wait($WaitTime)"   )  
 						 updateResourceRep("Client_must_wait" 
@@ -288,6 +290,10 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 				state("leaveDrinkAtTable") { //this:State
 					action { //it:State
 						println("WAITER | giving the simclient the tea")
+						 
+									wJson.setWaitTime(MaxStayTime)
+						updateResourceRep( wJson.toJson()  
+						)
 						emit("deliver", "deliver(tea,$CTABLE)" ) 
 					}
 					 transition( edgeName="goto",targetState="listening", cond=doswitch() )

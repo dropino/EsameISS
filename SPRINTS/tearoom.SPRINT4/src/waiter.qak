@@ -72,6 +72,8 @@ QActor waiter context ctxtearoom {
 		var KIND			= ""
 		var CDRINK			= ""
 		var WaitingClient : Boolean	= false
+		val MaxStayTime		= 20000
+		val MaxWaitTime		= 20000
 		
 		var Ntables			= 0
 		
@@ -144,7 +146,7 @@ QActor waiter context ctxtearoom {
 		if [# Ntables != 0 #] {
 			replyTo waitTime with wait : wait(0)
 		} else {
-			[# WaitTime = 20000
+			[# WaitTime = MaxWaitTime
 				WaitingClient = true #
 			]
 			replyTo waitTime with wait : wait($WaitTime)
@@ -351,8 +353,10 @@ QActor waiter context ctxtearoom {
 			
 	State leaveDrinkAtTable {
 		println("WAITER | giving the simclient the tea")
-//		updateResource[# "waiter_rdy_bringDrink" #]
-		
+		[# 
+			wJson.setWaitTime(MaxStayTime)
+		#]
+		updateResource [# wJson.toJson() #]
 		emit deliver : deliver(tea, $CTABLE)
 	}
 	Goto listening

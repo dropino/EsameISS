@@ -20,6 +20,8 @@ class Smartbell ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, 
 		 	var Temp = 0
 		 	var CID = 0 
 		 	val sJson = json.smartBellJson()
+		 	
+		 	var id = 1
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
@@ -70,7 +72,8 @@ class Smartbell ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, 
 						println("  SmartBell | Temp is OK  ")
 						println("  SmartBell | Client Accepted  ")
 						 	
-									CID = (1..100).random()
+									id++;
+									CID = id; 
 									sJson.setClientArrived(false)
 									sJson.setClientAccepted(CID)
 						answer("ringBell", "tempStatus", "tempStatus(1,$CID)"   )  

@@ -9,31 +9,38 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
 import org.springframework.core.env.Environment;
+//import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
-public class Application  implements ApplicationListener<ApplicationReadyEvent> {
+/*@EnableScheduling		--> The @EnableScheduling annotation is used to enable the scheduler for your application. 
+ * 							This annotation should be added into the main Spring Boot application class file.
+ * 							The @Scheduled annotation is used to trigger the scheduler for a specific time period.
+ * 
+ */
+public class Application implements ApplicationListener<ApplicationReadyEvent> {
 	public static String myipAddr = "";
-	public static String myport   = "0";
-	
+	public static String myport = "0";
+
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);
 	}
-	
+
 	@Autowired
-    private ApplicationContext applicationContext; 
-	 @Override
-	  public void onApplicationEvent(ApplicationReadyEvent event) {
-	      try {
-	          String ip = InetAddress.getLocalHost().getHostAddress();
-	          int port = applicationContext.getBean(Environment.class).getProperty("server.port", Integer.class, 8080);
-	          System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%" );
-	          System.out.printf("IP=%s:PORT=%d", ip,port );
-	          myipAddr = ip;
-	          myport   = ""+port; 
-	          System.out.println("\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%" );
-	      } catch ( Exception e) {
-	          e.printStackTrace();
-	      }
-	  }
+	private ApplicationContext applicationContext;
+
+	@Override
+	public void onApplicationEvent(ApplicationReadyEvent event) {
+		try {
+			String ip = InetAddress.getLocalHost().getHostAddress();
+			int port = applicationContext.getBean(Environment.class).getProperty("server.port", Integer.class, 8080);
+			System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+			System.out.printf("IP=%s:PORT=%d", ip, port);
+			myipAddr = ip;
+			myport = "" + port;
+			System.out.println("\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 }

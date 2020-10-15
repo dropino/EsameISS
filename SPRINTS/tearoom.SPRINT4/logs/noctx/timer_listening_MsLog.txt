@@ -1,1 +1,2 @@
 item(timer_listening,nostate,msg(start,dispatch,timer_listening,timer_listening,start,220)).
+item(timer_listening,nostate,msg(start,dispatch,timer_listening,timer_listening,start,70)).

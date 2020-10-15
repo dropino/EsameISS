@@ -28,9 +28,9 @@ ExternalQActor basicrobot    context ctxbasicrobot
 		val PauseTime          	= 250L 
 		val BackTime           	= 2 * StepTime / 3 
 		
-		val jobj = json.waiterWalkerJson()		
+		val jobj = json.WalkerJson()		
 	#] 
-		
+	
 	State s0 initial {	     
 		println("walker | INIT")
 			

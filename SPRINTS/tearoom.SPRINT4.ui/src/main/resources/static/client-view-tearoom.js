@@ -78,12 +78,12 @@ function initialSetup() {
 
 function connect() {
 
-    var socket = new SockJS( '/it-unibo-iss');
+    var socket = new SockJS('/it-unibo-iss');
     stompClient = Stomp.over(socket);
     
     stompClient.connect({}, function (frame) {
     	try {
-    	stompClient.subscribe('/topic/display', handleWaiterReply);
+    	stompClient.subscribe('user/topic/tearoom', handleWaiterReply);
     	initialSetup();
     	} catch (error) {
     		console.log(error);

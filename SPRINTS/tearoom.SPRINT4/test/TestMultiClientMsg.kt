@@ -38,20 +38,20 @@ class testMultiClientMsg {
 	var waiterConn: connQakCoap? = null
 	var smartbellConn: connQakCoap? = null
 
-	var i 		= 0
-	var IDC 	= 0
-	var j 		= 0
-	var CID 	= "0"
-	var CID1 	= "0"
-	var CID2 	= "0"
-	var CID3 	= "0"
-	var TABLE	= "0"
-	var TABLE1  = "0"
-	var TABLE2  = "0"
-	var TABLE3  = "0"
-	var Status 	= "0"
-	var V 		= "0"
-	var TIME 	= "0"
+	var i = 0
+	var IDC = 0
+	var j = 0
+	var CID = "0"
+	var CID1 = "0"
+	var CID2 = "0"
+	var CID3 = "0"
+	var TABLE = "0"
+	var TABLE1 = "0"
+	var TABLE2 = "0"
+	var TABLE3 = "0"
+	var Status = "0"
+	var V = "0"
+	var TIME = "0"
 
 	var counterAtomic = java.util.concurrent.atomic.AtomicInteger()
 
@@ -69,10 +69,10 @@ class testMultiClientMsg {
 		//avviare connessione
 		//delay per essere sicuri che si avvii ctxtearoom
 		delay(5000)
-		
+
 		smartbellConn = connQakCoap("localhost", "8071", "smartbell", "ctxsmartbell")
 		smartbellConn!!.createConnection()
-		
+
 		waiterConn = connQakCoap("localhost", "8072", "waiter", "ctxtearoom")
 		waiterConn!!.createConnection()
 
@@ -112,7 +112,7 @@ class testMultiClientMsg {
 		c1 = GlobalScope.async(handler) {
 			testRing(36)
 		}
-		
+
 		assertTrue(c1.await())
 		CID1 = CID
 
@@ -122,7 +122,7 @@ class testMultiClientMsg {
 		}
 		assertTrue(c1.await())
 
-		
+
 //--------------WAITER GO TO ENTRANCEDOOR FOR C1	&&	CLIENT2 ARRIVED------------		
 		c1 = GlobalScope.async(handler) {
 			testDeployEntrance(CID1.toInt())
@@ -131,13 +131,13 @@ class testMultiClientMsg {
 		c2 = GlobalScope.async(handler) {
 			testRing(37)
 		}
-		
+
 		assertTrue(c2.await())
 		assertTrue(c1.await())
 		TABLE1 = TABLE
 		CID2 = CID
 		assertTrue(CID1 != CID2)
-		
+
 //--------------CHECK WAITTIME FOR C2----------------------		
 		c2 = GlobalScope.async(handler) {
 			testWaitTime(CID2.toInt())
@@ -159,24 +159,24 @@ class testMultiClientMsg {
 		assertTrue(c2.await())
 		assertTrue(c3.await())
 		CID3 = CID
-		println("&&&&&&&&&&=========	CID1: $CID1 CID2: $CID2 CID3: $CID3")	
+		println("&&&&&&&&&&=========	CID1: $CID1 CID2: $CID2 CID3: $CID3")
 		assertTrue((CID3 != CID2) && (CID3 != CID1))
 
 		TABLE2 = TABLE
 		assertTrue(TABLE1 != TABLE2)
-	
+
 //--------------CHECK WAITTIME FOR C3------------		
 		c3 = GlobalScope.async(handler) {
 			testWaitTime(CID3.toInt())
 		}
 		assertTrue(c3.await())
-				
+
 //--------------WAITER GO TO ENTRANCEDOOR FOR C3------------		
 		c3 = GlobalScope.async(handler) {
 			testDeployEntrance(CID3.toInt())
 		}
 		assertTrue(c3.await())
-		
+
 		delay(5000)
 		c3 = GlobalScope.async(handler) {
 			testDeployEntrance(CID3.toInt())
@@ -198,12 +198,12 @@ class testMultiClientMsg {
 		}
 		assertTrue(c1.await())
 		assertTrue(c2.await())
-		
+
 		c3 = GlobalScope.async(handler) {
 			testDeployEntrance(CID3.toInt())
 		}
 		assertTrue(c3.await())
-		
+
 //--------------WAITER GO TO EXITDOOR FOR C1------------		
 		c1 = GlobalScope.async(handler) {
 			testDeployExit(CID1.toInt(), TABLE1.toInt())
@@ -213,22 +213,21 @@ class testMultiClientMsg {
 //--------------PAY REQUEST FOR C2------------
 		c2 = GlobalScope.async(handler) {
 			testRequestPay(CID2.toInt(), TABLE2.toInt())
-		}	
+		}
 		assertTrue(c2.await())
-		
+
 //--------------WAITER GO TO EXITDOOR FOR C2------------		
 		c2 = GlobalScope.async(handler) {
 			testDeployExit(CID2.toInt(), TABLE2.toInt())
 		}
 		assertTrue(c2.await())
 	}
-	
 
 
-//------------------RINGBELL FUNCTION------------------------
-@kotlinx.coroutines.ObsoleteCoroutinesApi
-@kotlinx.coroutines.ExperimentalCoroutinesApi
-fun testRing(temp: Int): Boolean {
+	//------------------RINGBELL FUNCTION------------------------
+	@kotlinx.coroutines.ObsoleteCoroutinesApi
+	@kotlinx.coroutines.ExperimentalCoroutinesApi
+	fun testRing(temp: Int): Boolean {
 		var ringMsg: ApplMessage? = null
 		var reply: ApplMessage? = null
 		var ringRepArgs = arrayOf<String>()
@@ -241,16 +240,16 @@ fun testRing(temp: Int): Boolean {
 		CID = ringRepArgs[1].toString()
 
 		if ((ringRepArgs.size == 2) &&
-			(Status.matches("-?\\d+(\\.\\d+)?".toRegex())) &&
-			(CID.matches("-?\\d+(\\.\\d+)?".toRegex())) &&
-			(Status.toInt() == 1)) return true
+				(Status.matches("-?\\d+(\\.\\d+)?".toRegex())) &&
+				(CID.matches("-?\\d+(\\.\\d+)?".toRegex())) &&
+				(Status.toInt() == 1)) return true
 		else return false
 	}
 
-//------------------DEPLOY FUNCTION------------------------	
-@kotlinx.coroutines.ObsoleteCoroutinesApi
-@kotlinx.coroutines.ExperimentalCoroutinesApi
-fun testDeployEntrance(cid: Int): Boolean {
+	//------------------DEPLOY FUNCTION------------------------	
+	@kotlinx.coroutines.ObsoleteCoroutinesApi
+	@kotlinx.coroutines.ExperimentalCoroutinesApi
+	fun testDeployEntrance(cid: Int): Boolean {
 		var ringMsg: ApplMessage? = null
 		var reply: ApplMessage? = null
 		var ringRepArgs = arrayOf<String>()
@@ -262,14 +261,14 @@ fun testDeployEntrance(cid: Int): Boolean {
 
 
 		if ((ringRepArgs.size == 1) &&
-			(TABLE.matches("-?\\d+(\\.\\d+)?".toRegex()) || TABLE == "ko")) return true
+				(TABLE.matches("-?\\d+(\\.\\d+)?".toRegex()) || TABLE == "ko")) return true
 		else return false
 	}
 
-//------------------WAITTIME FUNCTION------------------------
-@kotlinx.coroutines.ObsoleteCoroutinesApi
-@kotlinx.coroutines.ExperimentalCoroutinesApi
-fun testWaitTime(cid: Int): Boolean {
+	//------------------WAITTIME FUNCTION------------------------
+	@kotlinx.coroutines.ObsoleteCoroutinesApi
+	@kotlinx.coroutines.ExperimentalCoroutinesApi
+	fun testWaitTime(cid: Int): Boolean {
 		var ringMsg: ApplMessage? = null
 		var reply: ApplMessage? = null
 		var ringRepArgs = arrayOf<String>()
@@ -283,14 +282,14 @@ fun testWaitTime(cid: Int): Boolean {
 		assertTrue(TIME.matches("-?\\d+(\\.\\d+)?".toRegex()))
 
 		if ((ringRepArgs.size == 1) &&
-			(TIME.matches("-?\\d+(\\.\\d+)?".toRegex()))) return true
+				(TIME.matches("-?\\d+(\\.\\d+)?".toRegex()))) return true
 		else return false
 	}
 
-//------------------ORDERREQUEST FUNCTION------------------------
-@kotlinx.coroutines.ObsoleteCoroutinesApi
-@kotlinx.coroutines.ExperimentalCoroutinesApi
-fun testRequestOrder(cid: Int, table : Int): Boolean {
+	//------------------ORDERREQUEST FUNCTION------------------------
+	@kotlinx.coroutines.ObsoleteCoroutinesApi
+	@kotlinx.coroutines.ExperimentalCoroutinesApi
+	fun testRequestOrder(cid: Int, table: Int): Boolean {
 		var ringMsg: ApplMessage? = null
 		var reply: ApplMessage? = null
 		var ringRepArgs = arrayOf<String>()
@@ -302,17 +301,17 @@ fun testRequestOrder(cid: Int, table : Int): Boolean {
 
 		ringMsg = MsgUtil.buildDispatch("web", "order", "order(tea)", "waiter")
 		waiterConn!!.forward(ringMsg)
-	
+
 		if ((ringRepArgs.size == 1) &&
-			(V.toString() == "ok")) return true
+				(V.toString() == "ok")) return true
 		else return false
 	}
-	
-	
-//------------------PAYREQUEST FUNCTION------------------------
-@kotlinx.coroutines.ObsoleteCoroutinesApi
-@kotlinx.coroutines.ExperimentalCoroutinesApi
-fun testRequestPay(cid: Int, table : Int): Boolean {
+
+
+	//------------------PAYREQUEST FUNCTION------------------------
+	@kotlinx.coroutines.ObsoleteCoroutinesApi
+	@kotlinx.coroutines.ExperimentalCoroutinesApi
+	fun testRequestPay(cid: Int, table: Int): Boolean {
 		var ringMsg: ApplMessage? = null
 		var reply: ApplMessage? = null
 		var ringRepArgs = arrayOf<String>()
@@ -323,17 +322,17 @@ fun testRequestPay(cid: Int, table : Int): Boolean {
 		V = ringRepArgs[0].toString()
 		ringMsg = MsgUtil.buildDispatch("web", "pay", "pay($V)", "waiter")
 		waiterConn!!.forward(ringMsg)
-	
-	
+
+
 		if ((ringRepArgs.size == 1) &&
-			(V.matches("-?\\d+(\\.\\d+)?".toRegex()))) return true
+				(V.matches("-?\\d+(\\.\\d+)?".toRegex()))) return true
 		else return false
 	}
-	
-//------------------DEPLOY EXIT FUNCTION------------------------
-@kotlinx.coroutines.ObsoleteCoroutinesApi
-@kotlinx.coroutines.ExperimentalCoroutinesApi
-fun testDeployExit(cid: Int, table : Int): Boolean {
+
+	//------------------DEPLOY EXIT FUNCTION------------------------
+	@kotlinx.coroutines.ObsoleteCoroutinesApi
+	@kotlinx.coroutines.ExperimentalCoroutinesApi
+	fun testDeployExit(cid: Int, table: Int): Boolean {
 		var ringMsg: ApplMessage? = null
 		var reply: ApplMessage? = null
 		var ringRepArgs = arrayOf<String>()
@@ -342,12 +341,12 @@ fun testDeployExit(cid: Int, table : Int): Boolean {
 		reply = waiterConn!!.request(ringMsg)
 		ringRepArgs = ApplMessageUtils.extractApplMessagePayloadArgs(reply)
 		V = ringRepArgs[0].toString()
-	
+
 		if ((ringRepArgs.size == 1) &&
-			(V.matches("-?\\d+(\\.\\d+)?".toRegex()))) return true
+				(V.matches("-?\\d+(\\.\\d+)?".toRegex()))) return true
 		else return false
-	}	
-	
+	}
+
 }
 	
 	

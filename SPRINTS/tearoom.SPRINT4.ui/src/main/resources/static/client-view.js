@@ -9,6 +9,8 @@ function showMsg(message) {
 }
 
 function startTimer(duration, display) {
+    console.log("Timer started");
+
     var timer = duration, minutes, seconds;
     setInterval(function () {
         minutes = parseInt(timer / 60, 10);
@@ -42,7 +44,8 @@ function handleSmartbellReply(msg) {
     	window.location.replace(url);
     }
     else {
-        $( "#btn-waiter" ).hide();
+	    console.log("Client has to wait");
+        $( "#btn-smartbell" ).hide();
         $( "#h-countdown" ).show();
         $( "#countdown" ).show();
         startTimer(ttw/1000, $( "#countdown" ));
@@ -54,7 +57,7 @@ function connect() {
     var socket = new SockJS('/it-unibo-iss');
     stompClient = Stomp.over(socket);
     stompClient.connect({}, function (frame) {
-        stompClient.subscribe('/topic/display', handleSmartbellReply);
+        stompClient.subscribe('/user/topic/main', handleSmartbellReply);
     });
 }
 

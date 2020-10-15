@@ -67,8 +67,6 @@ public class ManagerController {
 	@Autowired
 	SimpMessagingTemplate simpMessagingTemplate;
 
-
-	
 	private void preparePageUpdating() {
 		waiterConn.getClient().observe(new CoapHandler() {
 			@Override
@@ -77,13 +75,10 @@ public class ManagerController {
 				JsonNode msg = null;
 				try {
 					msg = mapper.readTree(response.getResponseText());
-				} catch (Exception ex) { 
+				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
-				
-				msg.get()
-				
-				
+
 //				if (response.getResponseText().contains("listening")) {
 //					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
 //					simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForClient,
@@ -128,14 +123,23 @@ public class ManagerController {
 					ex.printStackTrace();
 				}
 				
-//				if (response.getResponseText().contains("Discard")) {
-//					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
-//					simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForClient,
-//							new ServerReply("", "Discard"));
-//				} else if (response.getResponseText().contains("Accept")) {
-//					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
-//					simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForClient, new ServerReply("", "Accept"));
-//				}
+
+				if (msg.get("busy").asBoolean() == true) {
+					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
+					simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForClient,
+							new ServerReply("", "checkTemp"));
+				} else if (msg.get("busy").asBoolean() == true && msg.get("ClientArrived").asBoolean() == true
+						&& msg.get("ClientDenied").asInt() != -1) {
+					int CID = msg.get("ClientDenied").asInt();
+					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
+					simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForClient, 
+							new ServerReply("", "TempKO" + CID));
+				} else if (msg.get("ClientArrived").asBoolean() == false && msg.get("ClientAccepted").asInt() != -1) {
+					int CID = msg.get("ClientAccepted").asInt();
+					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
+					simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForClient, 
+							new ServerReply("", "TempOK" + CID));
+				}
 			}
 
 			@Override
@@ -154,12 +158,26 @@ public class ManagerController {
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
-				msg.get("order_ready");
-//				if (response.getResponseText().contains("making-tea")) {
-//					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
-//					simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForClient,
-//							new ServerReply("", "making-tea"));
-//				}
+
+				if (msg.get("busy").asBoolean() == false && msg.get("PreparingForTable").asInt() == -1
+						&& msg.get("PreparingOrder").asText().equals("") && msg.get("OrderReadyTable").asInt() == -1
+						&& msg.get("OrderReady").asBoolean() == false) {
+					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
+					simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForClient,
+							new ServerReply("", "waitForOrder"));
+				} else if (msg.get("busy").asBoolean() == true && msg.get("PreparingForTable").asInt() != -1
+						&& msg.get("PreparingOrder").asText() != "") {
+					int TABLE = msg.get("PreparingForTable").asInt();
+					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
+					simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForClient,
+							new ServerReply("", "preparingOrder for table: " + TABLE));
+				} else if (msg.get("PreparingForTable").asInt() == -1 && msg.get("PreparingOrder").asText().equals("")
+						&& msg.get("OrderReadyTable").asInt() != -1 && msg.get("OrderReady").asBoolean() == true) {
+					int TABLE = msg.get("OrderReadyTable").asInt();
+					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
+					simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForClient,
+							new ServerReply("", "orderReady for table: " + TABLE));
+				}
 			}
 
 			@Override

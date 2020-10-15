@@ -90,3 +90,11 @@ item(waiter,listening,msg(local_tout_waiter_listening,event,timer_listening,none
 item(waiter,goHome,msg(rest,dispatch,waiter,waiter,rest(0),198)).
 item(waiter,listening,msg(local_tout_waiter_listening,event,timer_listening,none,local_tout_waiter_listening,201)).
 item(waiter,goHome,msg(rest,dispatch,waiter,waiter,rest(0),202)).
+item(waiter,listening,msg(local_tout_waiter_listening,event,timer_listening,none,local_tout_waiter_listening,205)).
+item(waiter,goHome,msg(rest,dispatch,waiter,waiter,rest(0),206)).
+item(waiter,listening,msg(local_tout_waiter_listening,event,timer_listening,none,local_tout_waiter_listening,209)).
+item(waiter,goHome,msg(rest,dispatch,waiter,waiter,rest(0),210)).
+item(waiter,listening,msg(local_tout_waiter_listening,event,timer_listening,none,local_tout_waiter_listening,213)).
+item(waiter,goHome,msg(rest,dispatch,waiter,waiter,rest(0),214)).
+item(waiter,listening,msg(local_tout_waiter_listening,event,timer_listening,none,local_tout_waiter_listening,217)).
+item(waiter,goHome,msg(rest,dispatch,waiter,waiter,rest(0),218)).

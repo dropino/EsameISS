@@ -61,6 +61,7 @@ class Smartbell ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, 
 						
 									sJson.setBusy(true)
 									sJson.setClientArrived(true)
+									sJson.ClientDenied($CID)
 						updateResourceRep(sJson.toJson() 
 						)
 					}

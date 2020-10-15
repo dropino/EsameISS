@@ -27,7 +27,7 @@ class Walker ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 				val PauseTime          	= 250L 
 				val BackTime           	= 2 * StepTime / 3 
 				
-				val jobj = json.waiterWalkerJson()		
+				val jobj = json.WalkerJson()		
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State

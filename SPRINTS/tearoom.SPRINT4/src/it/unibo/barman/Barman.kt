@@ -59,6 +59,7 @@ class Barman ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 						}
 						delay(2000) 
 						forward("orderReady", "orderReady(tea,$CTABLE)" ,"waiter" ) 
+						println("  Barman | Tea ready to be served ")
 						
 										bJson.setPreparingForTable(-1)
 										bJson.setPreparingOrder("")
@@ -66,7 +67,6 @@ class Barman ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 										bJson.setOrderReady(true)
 						updateResourceRep(bJson.toJson() 
 						)
-						println("  Barman | Tea ready to be served ")
 					}
 					 transition( edgeName="goto",targetState="waitForNewOrder", cond=doswitch() )
 				}	 

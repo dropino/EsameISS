@@ -5317,6 +5317,33 @@ java.net.BindException: Address already in use: Cannot bind
 2020-10-14 16:59:04 INFO  CoapEndpoint:485 - Started endpoint at coap://0.0.0.0:8070
 2020-10-14 16:59:21 INFO  ServerMessageDeliverer:111 - did not find resource [ctxtearoom, smartbell] requested by /127.0.0.1:62570
 2020-10-14 16:59:21 INFO  ServerMessageDeliverer:111 - did not find resource [ctxtearoom, barman] requested by /127.0.0.1:62570
+2020-10-14 17:00:35 INFO  NetworkConfig:372 - loading properties from file C:\Users\pe96p\Documents\GitHub\EsameIss2020\SPRINTS\tearoom.SPRINT4\Californium.properties
+2020-10-14 17:00:36 INFO  RandomTokenGenerator:55 - using tokens of 8 bytes in length
+2020-10-14 17:00:36 INFO  CoapEndpoint:423 - CoapEndpoint uses udp plain
+2020-10-14 17:00:36 INFO  BlockwiseLayer:207 - BlockwiseLayer uses MAX_MESSAGE_SIZE=1024, PREFERRED_BLOCK_SIZE=512, BLOCKWISE_STATUS_LIFETIME=300000 and MAX_RESOURCE_BODY_SIZE=8192
+2020-10-14 17:00:36 INFO  ReliabilityLayer:83 - ReliabilityLayer uses ACK_TIMEOUT=2000, ACK_RANDOM_FACTOR=1.5, and ACK_TIMEOUT_SCALE=2.0
+2020-10-14 17:00:36 INFO  CoapServer:207 - Starting server
+2020-10-14 17:00:36 INFO  UDPConnector:161 - UDPConnector starts up 1 sender threads and 1 receiver threads
+2020-10-14 17:00:36 INFO  UDPConnector:187 - UDPConnector listening on 0.0.0.0/0.0.0.0:8072, recv buf = 65536, send buf = 65536, recv packet size = 2048
+2020-10-14 17:00:36 INFO  CoapEndpoint:485 - Started endpoint at coap://0.0.0.0:8072
+2020-10-14 17:00:36 INFO  RandomTokenGenerator:55 - using tokens of 8 bytes in length
+2020-10-14 17:00:36 INFO  CoapEndpoint:423 - CoapEndpoint uses udp plain
+2020-10-14 17:00:36 INFO  BlockwiseLayer:207 - BlockwiseLayer uses MAX_MESSAGE_SIZE=1024, PREFERRED_BLOCK_SIZE=512, BLOCKWISE_STATUS_LIFETIME=300000 and MAX_RESOURCE_BODY_SIZE=8192
+2020-10-14 17:00:36 INFO  ReliabilityLayer:83 - ReliabilityLayer uses ACK_TIMEOUT=2000, ACK_RANDOM_FACTOR=1.5, and ACK_TIMEOUT_SCALE=2.0
+2020-10-14 17:00:36 INFO  CoapServer:207 - Starting server
+2020-10-14 17:00:36 INFO  UDPConnector:161 - UDPConnector starts up 1 sender threads and 1 receiver threads
+2020-10-14 17:00:36 INFO  UDPConnector:187 - UDPConnector listening on 0.0.0.0/0.0.0.0:8071, recv buf = 65536, send buf = 65536, recv packet size = 2048
+2020-10-14 17:00:36 INFO  CoapEndpoint:485 - Started endpoint at coap://0.0.0.0:8071
+2020-10-14 17:00:36 INFO  RandomTokenGenerator:55 - using tokens of 8 bytes in length
+2020-10-14 17:00:36 INFO  CoapEndpoint:423 - CoapEndpoint uses udp plain
+2020-10-14 17:00:36 INFO  BlockwiseLayer:207 - BlockwiseLayer uses MAX_MESSAGE_SIZE=1024, PREFERRED_BLOCK_SIZE=512, BLOCKWISE_STATUS_LIFETIME=300000 and MAX_RESOURCE_BODY_SIZE=8192
+2020-10-14 17:00:36 INFO  ReliabilityLayer:83 - ReliabilityLayer uses ACK_TIMEOUT=2000, ACK_RANDOM_FACTOR=1.5, and ACK_TIMEOUT_SCALE=2.0
+2020-10-14 17:00:36 INFO  CoapServer:207 - Starting server
+2020-10-14 17:00:36 INFO  UDPConnector:161 - UDPConnector starts up 1 sender threads and 1 receiver threads
+2020-10-14 17:00:36 INFO  UDPConnector:187 - UDPConnector listening on 0.0.0.0/0.0.0.0:8070, recv buf = 65536, send buf = 65536, recv packet size = 2048
+2020-10-14 17:00:36 INFO  CoapEndpoint:485 - Started endpoint at coap://0.0.0.0:8070
+2020-10-14 17:00:49 INFO  ServerMessageDeliverer:111 - did not find resource [ctxtearoom, smartbell] requested by /127.0.0.1:62570
+2020-10-14 17:00:49 INFO  ServerMessageDeliverer:111 - did not find resource [ctxtearoom, barman] requested by /127.0.0.1:62570
 2020-10-14 17:26:17 INFO  NetworkConfig:372 - loading properties from file /Users/lallu/Desktop/Laura/Uni/Magistrale/1A_2C/Ingegneria dei Sistemi Software/EsameIss2020/SPRINTS/tearoom.SPRINT4/Californium.properties
 2020-10-14 17:26:17 INFO  RandomTokenGenerator:55 - using tokens of 8 bytes in length
 2020-10-14 17:26:18 INFO  CoapEndpoint:423 - CoapEndpoint uses udp plain

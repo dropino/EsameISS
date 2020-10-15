@@ -5692,3 +5692,325 @@ java.net.BindException: Address already in use: Cannot bind
 2020-10-14 21:14:01 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:52482#[b545a833c99e43ba] and resource /ctxtearoom/waiter (new Exchange[R39], size 2)
 2020-10-14 21:15:03 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:52482#[053e1a07f341807a] and resource /ctxtearoom/waiter (new Exchange[R56], size 2)
 2020-10-14 21:15:03 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:52482#[b545a833c99e43ba] and resource /ctxtearoom/waiter (new Exchange[R55], size 2)
+2020-10-15 13:29:42 INFO  NetworkConfig:372 - loading properties from file /Users/lallu/Desktop/Laura/Uni/Magistrale/1A_2C/Ingegneria dei Sistemi Software/EsameIss2020/SPRINTS/tearoom.SPRINT4/Californium.properties
+2020-10-15 13:29:42 INFO  RandomTokenGenerator:55 - using tokens of 8 bytes in length
+2020-10-15 13:29:42 INFO  CoapEndpoint:423 - CoapEndpoint uses udp plain
+2020-10-15 13:29:42 INFO  BlockwiseLayer:207 - BlockwiseLayer uses MAX_MESSAGE_SIZE=1024, PREFERRED_BLOCK_SIZE=512, BLOCKWISE_STATUS_LIFETIME=300000 and MAX_RESOURCE_BODY_SIZE=8192
+2020-10-15 13:29:42 INFO  ReliabilityLayer:83 - ReliabilityLayer uses ACK_TIMEOUT=2000, ACK_RANDOM_FACTOR=1.5, and ACK_TIMEOUT_SCALE=2.0
+2020-10-15 13:29:42 INFO  CoapServer:207 - Starting server
+2020-10-15 13:29:43 INFO  UDPConnector:161 - UDPConnector starts up 1 sender threads and 1 receiver threads
+2020-10-15 13:29:43 INFO  UDPConnector:187 - UDPConnector listening on 0.0.0.0/0.0.0.0:8072, recv buf = 65507, send buf = 65507, recv packet size = 2048
+2020-10-15 13:29:43 INFO  CoapEndpoint:485 - Started endpoint at coap://0.0.0.0:8072
+2020-10-15 13:29:43 INFO  RandomTokenGenerator:55 - using tokens of 8 bytes in length
+2020-10-15 13:29:43 INFO  CoapEndpoint:423 - CoapEndpoint uses udp plain
+2020-10-15 13:29:43 INFO  BlockwiseLayer:207 - BlockwiseLayer uses MAX_MESSAGE_SIZE=1024, PREFERRED_BLOCK_SIZE=512, BLOCKWISE_STATUS_LIFETIME=300000 and MAX_RESOURCE_BODY_SIZE=8192
+2020-10-15 13:29:43 INFO  ReliabilityLayer:83 - ReliabilityLayer uses ACK_TIMEOUT=2000, ACK_RANDOM_FACTOR=1.5, and ACK_TIMEOUT_SCALE=2.0
+2020-10-15 13:29:43 INFO  CoapServer:207 - Starting server
+2020-10-15 13:29:43 INFO  UDPConnector:161 - UDPConnector starts up 1 sender threads and 1 receiver threads
+2020-10-15 13:29:43 INFO  UDPConnector:187 - UDPConnector listening on 0.0.0.0/0.0.0.0:8071, recv buf = 65507, send buf = 65507, recv packet size = 2048
+2020-10-15 13:29:43 INFO  CoapEndpoint:485 - Started endpoint at coap://0.0.0.0:8071
+2020-10-15 13:29:43 INFO  RandomTokenGenerator:55 - using tokens of 8 bytes in length
+2020-10-15 13:29:43 INFO  CoapEndpoint:423 - CoapEndpoint uses udp plain
+2020-10-15 13:29:43 INFO  BlockwiseLayer:207 - BlockwiseLayer uses MAX_MESSAGE_SIZE=1024, PREFERRED_BLOCK_SIZE=512, BLOCKWISE_STATUS_LIFETIME=300000 and MAX_RESOURCE_BODY_SIZE=8192
+2020-10-15 13:29:43 INFO  ReliabilityLayer:83 - ReliabilityLayer uses ACK_TIMEOUT=2000, ACK_RANDOM_FACTOR=1.5, and ACK_TIMEOUT_SCALE=2.0
+2020-10-15 13:29:43 INFO  CoapServer:207 - Starting server
+2020-10-15 13:29:43 INFO  UDPConnector:161 - UDPConnector starts up 1 sender threads and 1 receiver threads
+2020-10-15 13:29:43 INFO  UDPConnector:187 - UDPConnector listening on 0.0.0.0/0.0.0.0:8070, recv buf = 65507, send buf = 65507, recv packet size = 2048
+2020-10-15 13:29:43 INFO  CoapEndpoint:485 - Started endpoint at coap://0.0.0.0:8070
+2020-10-15 13:54:27 INFO  NetworkConfig:372 - loading properties from file /Users/lallu/Desktop/Laura/Uni/Magistrale/1A_2C/Ingegneria dei Sistemi Software/EsameIss2020/SPRINTS/tearoom.SPRINT4/Californium.properties
+2020-10-15 13:54:27 INFO  RandomTokenGenerator:55 - using tokens of 8 bytes in length
+2020-10-15 13:54:27 INFO  CoapEndpoint:423 - CoapEndpoint uses udp plain
+2020-10-15 13:54:27 INFO  BlockwiseLayer:207 - BlockwiseLayer uses MAX_MESSAGE_SIZE=1024, PREFERRED_BLOCK_SIZE=512, BLOCKWISE_STATUS_LIFETIME=300000 and MAX_RESOURCE_BODY_SIZE=8192
+2020-10-15 13:54:27 INFO  ReliabilityLayer:83 - ReliabilityLayer uses ACK_TIMEOUT=2000, ACK_RANDOM_FACTOR=1.5, and ACK_TIMEOUT_SCALE=2.0
+2020-10-15 13:54:27 INFO  CoapServer:207 - Starting server
+2020-10-15 13:54:27 INFO  UDPConnector:161 - UDPConnector starts up 1 sender threads and 1 receiver threads
+2020-10-15 13:54:27 INFO  UDPConnector:187 - UDPConnector listening on 0.0.0.0/0.0.0.0:8072, recv buf = 65507, send buf = 65507, recv packet size = 2048
+2020-10-15 13:54:27 INFO  CoapEndpoint:485 - Started endpoint at coap://0.0.0.0:8072
+2020-10-15 13:54:27 INFO  RandomTokenGenerator:55 - using tokens of 8 bytes in length
+2020-10-15 13:54:27 INFO  CoapEndpoint:423 - CoapEndpoint uses udp plain
+2020-10-15 13:54:27 INFO  BlockwiseLayer:207 - BlockwiseLayer uses MAX_MESSAGE_SIZE=1024, PREFERRED_BLOCK_SIZE=512, BLOCKWISE_STATUS_LIFETIME=300000 and MAX_RESOURCE_BODY_SIZE=8192
+2020-10-15 13:54:27 INFO  ReliabilityLayer:83 - ReliabilityLayer uses ACK_TIMEOUT=2000, ACK_RANDOM_FACTOR=1.5, and ACK_TIMEOUT_SCALE=2.0
+2020-10-15 13:54:27 INFO  CoapServer:207 - Starting server
+2020-10-15 13:54:27 INFO  UDPConnector:161 - UDPConnector starts up 1 sender threads and 1 receiver threads
+2020-10-15 13:54:27 INFO  UDPConnector:187 - UDPConnector listening on 0.0.0.0/0.0.0.0:8071, recv buf = 65507, send buf = 65507, recv packet size = 2048
+2020-10-15 13:54:27 INFO  CoapEndpoint:485 - Started endpoint at coap://0.0.0.0:8071
+2020-10-15 13:54:27 INFO  RandomTokenGenerator:55 - using tokens of 8 bytes in length
+2020-10-15 13:54:27 INFO  CoapEndpoint:423 - CoapEndpoint uses udp plain
+2020-10-15 13:54:27 INFO  BlockwiseLayer:207 - BlockwiseLayer uses MAX_MESSAGE_SIZE=1024, PREFERRED_BLOCK_SIZE=512, BLOCKWISE_STATUS_LIFETIME=300000 and MAX_RESOURCE_BODY_SIZE=8192
+2020-10-15 13:54:27 INFO  ReliabilityLayer:83 - ReliabilityLayer uses ACK_TIMEOUT=2000, ACK_RANDOM_FACTOR=1.5, and ACK_TIMEOUT_SCALE=2.0
+2020-10-15 13:54:27 INFO  CoapServer:207 - Starting server
+2020-10-15 13:54:27 INFO  UDPConnector:161 - UDPConnector starts up 1 sender threads and 1 receiver threads
+2020-10-15 13:54:27 INFO  UDPConnector:187 - UDPConnector listening on 0.0.0.0/0.0.0.0:8070, recv buf = 65507, send buf = 65507, recv packet size = 2048
+2020-10-15 13:54:27 INFO  CoapEndpoint:485 - Started endpoint at coap://0.0.0.0:8070
+2020-10-15 13:55:58 INFO  NetworkConfig:372 - loading properties from file /Users/lallu/Desktop/Laura/Uni/Magistrale/1A_2C/Ingegneria dei Sistemi Software/EsameIss2020/SPRINTS/tearoom.SPRINT4/Californium.properties
+2020-10-15 13:55:58 INFO  RandomTokenGenerator:55 - using tokens of 8 bytes in length
+2020-10-15 13:55:58 INFO  CoapEndpoint:423 - CoapEndpoint uses udp plain
+2020-10-15 13:55:58 INFO  BlockwiseLayer:207 - BlockwiseLayer uses MAX_MESSAGE_SIZE=1024, PREFERRED_BLOCK_SIZE=512, BLOCKWISE_STATUS_LIFETIME=300000 and MAX_RESOURCE_BODY_SIZE=8192
+2020-10-15 13:55:58 INFO  ReliabilityLayer:83 - ReliabilityLayer uses ACK_TIMEOUT=2000, ACK_RANDOM_FACTOR=1.5, and ACK_TIMEOUT_SCALE=2.0
+2020-10-15 13:55:58 INFO  CoapServer:207 - Starting server
+2020-10-15 13:55:58 INFO  UDPConnector:161 - UDPConnector starts up 1 sender threads and 1 receiver threads
+2020-10-15 13:55:58 INFO  UDPConnector:187 - UDPConnector listening on 0.0.0.0/0.0.0.0:8072, recv buf = 65507, send buf = 65507, recv packet size = 2048
+2020-10-15 13:55:58 INFO  CoapEndpoint:485 - Started endpoint at coap://0.0.0.0:8072
+2020-10-15 13:55:58 INFO  RandomTokenGenerator:55 - using tokens of 8 bytes in length
+2020-10-15 13:55:58 INFO  CoapEndpoint:423 - CoapEndpoint uses udp plain
+2020-10-15 13:55:58 INFO  BlockwiseLayer:207 - BlockwiseLayer uses MAX_MESSAGE_SIZE=1024, PREFERRED_BLOCK_SIZE=512, BLOCKWISE_STATUS_LIFETIME=300000 and MAX_RESOURCE_BODY_SIZE=8192
+2020-10-15 13:55:58 INFO  ReliabilityLayer:83 - ReliabilityLayer uses ACK_TIMEOUT=2000, ACK_RANDOM_FACTOR=1.5, and ACK_TIMEOUT_SCALE=2.0
+2020-10-15 13:55:58 INFO  CoapServer:207 - Starting server
+2020-10-15 13:55:58 INFO  UDPConnector:161 - UDPConnector starts up 1 sender threads and 1 receiver threads
+2020-10-15 13:55:58 INFO  UDPConnector:187 - UDPConnector listening on 0.0.0.0/0.0.0.0:8071, recv buf = 65507, send buf = 65507, recv packet size = 2048
+2020-10-15 13:55:58 INFO  CoapEndpoint:485 - Started endpoint at coap://0.0.0.0:8071
+2020-10-15 13:55:58 INFO  RandomTokenGenerator:55 - using tokens of 8 bytes in length
+2020-10-15 13:55:58 INFO  CoapEndpoint:423 - CoapEndpoint uses udp plain
+2020-10-15 13:55:58 INFO  BlockwiseLayer:207 - BlockwiseLayer uses MAX_MESSAGE_SIZE=1024, PREFERRED_BLOCK_SIZE=512, BLOCKWISE_STATUS_LIFETIME=300000 and MAX_RESOURCE_BODY_SIZE=8192
+2020-10-15 13:55:58 INFO  ReliabilityLayer:83 - ReliabilityLayer uses ACK_TIMEOUT=2000, ACK_RANDOM_FACTOR=1.5, and ACK_TIMEOUT_SCALE=2.0
+2020-10-15 13:55:58 INFO  CoapServer:207 - Starting server
+2020-10-15 13:55:58 INFO  UDPConnector:161 - UDPConnector starts up 1 sender threads and 1 receiver threads
+2020-10-15 13:55:58 INFO  UDPConnector:187 - UDPConnector listening on 0.0.0.0/0.0.0.0:8070, recv buf = 65507, send buf = 65507, recv packet size = 2048
+2020-10-15 13:55:58 INFO  CoapEndpoint:485 - Started endpoint at coap://0.0.0.0:8070
+2020-10-15 14:06:02 INFO  CoapResource:722 - successfully established observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (Exchange[R20], size 1)
+2020-10-15 14:09:12 INFO  CoapResource:722 - successfully established observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (Exchange[R28], size 2)
+2020-10-15 14:10:26 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R32], size 2)
+2020-10-15 14:10:26 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R33], size 2)
+2020-10-15 14:11:28 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R35], size 2)
+2020-10-15 14:11:28 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R34], size 2)
+2020-10-15 14:12:30 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R36], size 2)
+2020-10-15 14:12:30 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R37], size 2)
+2020-10-15 14:13:32 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R39], size 2)
+2020-10-15 14:13:32 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R38], size 2)
+2020-10-15 14:14:34 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R40], size 2)
+2020-10-15 14:14:34 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R41], size 2)
+2020-10-15 14:15:36 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R42], size 2)
+2020-10-15 14:15:36 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R43], size 2)
+2020-10-15 14:16:38 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R45], size 2)
+2020-10-15 14:16:38 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R44], size 2)
+2020-10-15 14:17:40 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R47], size 2)
+2020-10-15 14:17:40 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R46], size 2)
+2020-10-15 14:18:42 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R48], size 2)
+2020-10-15 14:18:42 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R49], size 2)
+2020-10-15 14:19:44 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R50], size 2)
+2020-10-15 14:19:44 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R51], size 2)
+2020-10-15 14:20:46 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R53], size 2)
+2020-10-15 14:20:46 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R52], size 2)
+2020-10-15 14:21:48 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R55], size 2)
+2020-10-15 14:21:48 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R54], size 2)
+2020-10-15 14:22:50 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R56], size 2)
+2020-10-15 14:22:50 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R57], size 2)
+2020-10-15 14:23:52 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R59], size 2)
+2020-10-15 14:23:52 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R58], size 2)
+2020-10-15 14:24:54 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R60], size 2)
+2020-10-15 14:24:54 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R61], size 2)
+2020-10-15 14:25:56 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R62], size 2)
+2020-10-15 14:25:56 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R63], size 2)
+2020-10-15 14:26:58 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R64], size 2)
+2020-10-15 14:26:58 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R65], size 2)
+2020-10-15 14:28:00 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R67], size 2)
+2020-10-15 14:28:00 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R66], size 2)
+2020-10-15 14:29:02 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R68], size 2)
+2020-10-15 14:29:02 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R69], size 2)
+2020-10-15 14:30:04 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R70], size 2)
+2020-10-15 14:30:04 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R71], size 2)
+2020-10-15 14:31:06 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R72], size 2)
+2020-10-15 14:31:06 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R73], size 2)
+2020-10-15 14:32:08 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R74], size 2)
+2020-10-15 14:32:08 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R75], size 2)
+2020-10-15 14:33:10 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R77], size 2)
+2020-10-15 14:33:10 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R76], size 2)
+2020-10-15 14:34:12 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R79], size 2)
+2020-10-15 14:34:12 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R78], size 2)
+2020-10-15 14:35:14 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R80], size 2)
+2020-10-15 14:35:14 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R81], size 2)
+2020-10-15 14:36:16 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R82], size 2)
+2020-10-15 14:36:16 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R83], size 2)
+2020-10-15 14:37:18 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R85], size 2)
+2020-10-15 14:37:18 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R84], size 2)
+2020-10-15 14:38:20 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R86], size 2)
+2020-10-15 14:38:20 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R87], size 2)
+2020-10-15 14:39:22 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R89], size 2)
+2020-10-15 14:39:22 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R88], size 2)
+2020-10-15 14:40:24 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R91], size 2)
+2020-10-15 14:40:24 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R90], size 2)
+2020-10-15 14:41:26 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R93], size 2)
+2020-10-15 14:41:26 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R92], size 2)
+2020-10-15 14:42:28 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R95], size 2)
+2020-10-15 14:42:28 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R94], size 2)
+2020-10-15 14:43:30 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R97], size 2)
+2020-10-15 14:43:30 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R96], size 2)
+2020-10-15 14:44:32 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R98], size 2)
+2020-10-15 14:44:32 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R99], size 2)
+2020-10-15 14:45:34 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R101], size 2)
+2020-10-15 14:45:34 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R100], size 2)
+2020-10-15 14:46:36 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R102], size 2)
+2020-10-15 14:46:36 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R103], size 2)
+2020-10-15 14:47:38 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R104], size 2)
+2020-10-15 14:47:38 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R105], size 2)
+2020-10-15 14:48:40 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R107], size 2)
+2020-10-15 14:48:40 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R106], size 2)
+2020-10-15 14:49:42 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R108], size 2)
+2020-10-15 14:49:42 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R109], size 2)
+2020-10-15 14:50:44 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R110], size 2)
+2020-10-15 14:50:44 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R111], size 2)
+2020-10-15 14:51:46 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R112], size 2)
+2020-10-15 14:51:46 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R113], size 2)
+2020-10-15 14:52:48 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R114], size 2)
+2020-10-15 14:52:48 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R115], size 2)
+2020-10-15 14:53:51 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R116], size 2)
+2020-10-15 14:53:51 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R117], size 2)
+2020-10-15 14:54:53 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R119], size 2)
+2020-10-15 14:54:53 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R118], size 2)
+2020-10-15 14:55:55 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R121], size 2)
+2020-10-15 14:55:55 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R120], size 2)
+2020-10-15 14:56:57 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R122], size 2)
+2020-10-15 14:56:57 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R123], size 2)
+2020-10-15 14:57:59 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R125], size 2)
+2020-10-15 14:57:59 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R124], size 2)
+2020-10-15 14:59:01 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R126], size 2)
+2020-10-15 14:59:01 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R127], size 2)
+2020-10-15 15:00:03 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R128], size 2)
+2020-10-15 15:00:03 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R129], size 2)
+2020-10-15 15:01:05 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R130], size 2)
+2020-10-15 15:01:05 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R131], size 2)
+2020-10-15 15:02:07 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R132], size 2)
+2020-10-15 15:02:07 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R133], size 2)
+2020-10-15 15:03:09 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R134], size 2)
+2020-10-15 15:03:09 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R135], size 2)
+2020-10-15 15:04:11 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R136], size 2)
+2020-10-15 15:04:11 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R137], size 2)
+2020-10-15 15:05:13 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R138], size 2)
+2020-10-15 15:05:13 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R139], size 2)
+2020-10-15 15:06:15 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R140], size 2)
+2020-10-15 15:06:15 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R141], size 2)
+2020-10-15 15:07:17 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R142], size 2)
+2020-10-15 15:07:17 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R143], size 2)
+2020-10-15 15:08:19 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R144], size 2)
+2020-10-15 15:08:19 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R145], size 2)
+2020-10-15 15:09:21 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R146], size 2)
+2020-10-15 15:09:21 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R147], size 2)
+2020-10-15 15:10:23 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R149], size 2)
+2020-10-15 15:10:23 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R148], size 2)
+2020-10-15 15:11:25 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R151], size 2)
+2020-10-15 15:11:25 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R150], size 2)
+2020-10-15 15:12:27 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R152], size 2)
+2020-10-15 15:12:27 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R153], size 2)
+2020-10-15 15:13:29 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R154], size 2)
+2020-10-15 15:13:29 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R155], size 2)
+2020-10-15 15:14:31 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R156], size 2)
+2020-10-15 15:14:31 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R157], size 2)
+2020-10-15 15:15:33 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R158], size 2)
+2020-10-15 15:15:33 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R159], size 2)
+2020-10-15 15:16:35 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R160], size 2)
+2020-10-15 15:16:35 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R161], size 2)
+2020-10-15 15:17:37 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R162], size 2)
+2020-10-15 15:17:37 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R163], size 2)
+2020-10-15 15:18:39 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R165], size 2)
+2020-10-15 15:18:39 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R164], size 2)
+2020-10-15 15:19:41 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R166], size 2)
+2020-10-15 15:19:41 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R167], size 2)
+2020-10-15 15:20:43 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R168], size 2)
+2020-10-15 15:20:43 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R169], size 2)
+2020-10-15 15:21:45 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R171], size 2)
+2020-10-15 15:21:45 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R170], size 2)
+2020-10-15 15:22:47 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R173], size 2)
+2020-10-15 15:22:47 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R172], size 2)
+2020-10-15 15:23:49 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R174], size 2)
+2020-10-15 15:23:49 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R175], size 2)
+2020-10-15 15:24:51 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R177], size 2)
+2020-10-15 15:24:51 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R176], size 2)
+2020-10-15 15:25:53 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R179], size 2)
+2020-10-15 15:25:53 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R178], size 2)
+2020-10-15 15:26:55 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R181], size 2)
+2020-10-15 15:26:55 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R180], size 2)
+2020-10-15 15:27:57 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R183], size 2)
+2020-10-15 15:27:57 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R182], size 2)
+2020-10-15 15:28:59 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R184], size 2)
+2020-10-15 15:28:59 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R185], size 2)
+2020-10-15 15:30:01 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R188], size 2)
+2020-10-15 15:30:01 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R189], size 2)
+2020-10-15 15:31:03 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[f978c1510b7abb1c] and resource /ctxtearoom/waiter (new Exchange[R191], size 2)
+2020-10-15 15:31:03 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:56467#[d31532c80283a082] and resource /ctxtearoom/waiter (new Exchange[R192], size 2)
+2020-10-15 15:32:13 INFO  NetworkConfig:372 - loading properties from file /Users/lallu/Desktop/Laura/Uni/Magistrale/1A_2C/Ingegneria dei Sistemi Software/EsameIss2020/SPRINTS/tearoom.SPRINT4/Californium.properties
+2020-10-15 15:32:13 INFO  RandomTokenGenerator:55 - using tokens of 8 bytes in length
+2020-10-15 15:32:13 INFO  CoapEndpoint:423 - CoapEndpoint uses udp plain
+2020-10-15 15:32:13 INFO  BlockwiseLayer:207 - BlockwiseLayer uses MAX_MESSAGE_SIZE=1024, PREFERRED_BLOCK_SIZE=512, BLOCKWISE_STATUS_LIFETIME=300000 and MAX_RESOURCE_BODY_SIZE=8192
+2020-10-15 15:32:13 INFO  ReliabilityLayer:83 - ReliabilityLayer uses ACK_TIMEOUT=2000, ACK_RANDOM_FACTOR=1.5, and ACK_TIMEOUT_SCALE=2.0
+2020-10-15 15:32:13 INFO  CoapServer:207 - Starting server
+2020-10-15 15:32:13 INFO  UDPConnector:161 - UDPConnector starts up 1 sender threads and 1 receiver threads
+2020-10-15 15:32:13 INFO  UDPConnector:187 - UDPConnector listening on 0.0.0.0/0.0.0.0:8072, recv buf = 65507, send buf = 65507, recv packet size = 2048
+2020-10-15 15:32:13 INFO  CoapEndpoint:485 - Started endpoint at coap://0.0.0.0:8072
+2020-10-15 15:32:14 INFO  RandomTokenGenerator:55 - using tokens of 8 bytes in length
+2020-10-15 15:32:14 INFO  CoapEndpoint:423 - CoapEndpoint uses udp plain
+2020-10-15 15:32:14 INFO  BlockwiseLayer:207 - BlockwiseLayer uses MAX_MESSAGE_SIZE=1024, PREFERRED_BLOCK_SIZE=512, BLOCKWISE_STATUS_LIFETIME=300000 and MAX_RESOURCE_BODY_SIZE=8192
+2020-10-15 15:32:14 INFO  ReliabilityLayer:83 - ReliabilityLayer uses ACK_TIMEOUT=2000, ACK_RANDOM_FACTOR=1.5, and ACK_TIMEOUT_SCALE=2.0
+2020-10-15 15:32:14 INFO  CoapServer:207 - Starting server
+2020-10-15 15:32:14 INFO  UDPConnector:161 - UDPConnector starts up 1 sender threads and 1 receiver threads
+2020-10-15 15:32:14 INFO  UDPConnector:187 - UDPConnector listening on 0.0.0.0/0.0.0.0:8071, recv buf = 65507, send buf = 65507, recv packet size = 2048
+2020-10-15 15:32:14 INFO  CoapEndpoint:485 - Started endpoint at coap://0.0.0.0:8071
+2020-10-15 15:32:14 INFO  RandomTokenGenerator:55 - using tokens of 8 bytes in length
+2020-10-15 15:32:14 INFO  CoapEndpoint:423 - CoapEndpoint uses udp plain
+2020-10-15 15:32:14 INFO  BlockwiseLayer:207 - BlockwiseLayer uses MAX_MESSAGE_SIZE=1024, PREFERRED_BLOCK_SIZE=512, BLOCKWISE_STATUS_LIFETIME=300000 and MAX_RESOURCE_BODY_SIZE=8192
+2020-10-15 15:32:14 INFO  ReliabilityLayer:83 - ReliabilityLayer uses ACK_TIMEOUT=2000, ACK_RANDOM_FACTOR=1.5, and ACK_TIMEOUT_SCALE=2.0
+2020-10-15 15:32:14 INFO  CoapServer:207 - Starting server
+2020-10-15 15:32:14 INFO  UDPConnector:161 - UDPConnector starts up 1 sender threads and 1 receiver threads
+2020-10-15 15:32:14 INFO  UDPConnector:187 - UDPConnector listening on 0.0.0.0/0.0.0.0:8070, recv buf = 65507, send buf = 65507, recv packet size = 2048
+2020-10-15 15:32:14 INFO  CoapEndpoint:485 - Started endpoint at coap://0.0.0.0:8070
+2020-10-15 15:35:08 INFO  CoapResource:722 - successfully established observe relation between /127.0.0.1:59756#[7528c5c5acb04236] and resource /ctxtearoom/waiter (Exchange[R10], size 1)
+2020-10-15 15:37:33 INFO  CoapResource:722 - successfully established observe relation between /127.0.0.1:59756#[ab3ad9259e324ba5] and resource /ctxtearoom/waiter (Exchange[R11], size 2)
+2020-10-15 15:38:46 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:59756#[7528c5c5acb04236] and resource /ctxtearoom/waiter (new Exchange[R16], size 2)
+2020-10-15 15:38:46 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:59756#[ab3ad9259e324ba5] and resource /ctxtearoom/waiter (new Exchange[R15], size 2)
+2020-10-15 15:39:48 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:59756#[7528c5c5acb04236] and resource /ctxtearoom/waiter (new Exchange[R18], size 2)
+2020-10-15 15:39:48 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:59756#[ab3ad9259e324ba5] and resource /ctxtearoom/waiter (new Exchange[R17], size 2)
+2020-10-15 15:40:50 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:59756#[ab3ad9259e324ba5] and resource /ctxtearoom/waiter (new Exchange[R21], size 2)
+2020-10-15 15:40:50 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:59756#[7528c5c5acb04236] and resource /ctxtearoom/waiter (new Exchange[R22], size 2)
+2020-10-15 15:41:52 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:59756#[ab3ad9259e324ba5] and resource /ctxtearoom/waiter (new Exchange[R25], size 2)
+2020-10-15 15:41:52 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:59756#[7528c5c5acb04236] and resource /ctxtearoom/waiter (new Exchange[R26], size 2)
+2020-10-15 15:42:54 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:59756#[ab3ad9259e324ba5] and resource /ctxtearoom/waiter (new Exchange[R31], size 2)
+2020-10-15 15:42:54 INFO  CoapResource:719 - replacing observe relation between /127.0.0.1:59756#[7528c5c5acb04236] and resource /ctxtearoom/waiter (new Exchange[R32], size 2)
+2020-10-15 15:53:24 INFO  NetworkConfig:372 - loading properties from file /Users/lallu/Desktop/Laura/Uni/Magistrale/1A_2C/Ingegneria dei Sistemi Software/EsameIss2020/SPRINTS/tearoom.SPRINT4/Californium.properties
+2020-10-15 15:53:24 INFO  RandomTokenGenerator:55 - using tokens of 8 bytes in length
+2020-10-15 15:53:24 INFO  CoapEndpoint:423 - CoapEndpoint uses udp plain
+2020-10-15 15:53:24 INFO  BlockwiseLayer:207 - BlockwiseLayer uses MAX_MESSAGE_SIZE=1024, PREFERRED_BLOCK_SIZE=512, BLOCKWISE_STATUS_LIFETIME=300000 and MAX_RESOURCE_BODY_SIZE=8192
+2020-10-15 15:53:24 INFO  ReliabilityLayer:83 - ReliabilityLayer uses ACK_TIMEOUT=2000, ACK_RANDOM_FACTOR=1.5, and ACK_TIMEOUT_SCALE=2.0
+2020-10-15 15:53:24 INFO  CoapServer:207 - Starting server
+2020-10-15 15:53:24 INFO  UDPConnector:161 - UDPConnector starts up 1 sender threads and 1 receiver threads
+2020-10-15 15:53:24 INFO  UDPConnector:187 - UDPConnector listening on 0.0.0.0/0.0.0.0:8072, recv buf = 65507, send buf = 65507, recv packet size = 2048
+2020-10-15 15:53:24 INFO  CoapEndpoint:485 - Started endpoint at coap://0.0.0.0:8072
+2020-10-15 15:53:24 INFO  RandomTokenGenerator:55 - using tokens of 8 bytes in length
+2020-10-15 15:53:24 INFO  CoapEndpoint:423 - CoapEndpoint uses udp plain
+2020-10-15 15:53:24 INFO  BlockwiseLayer:207 - BlockwiseLayer uses MAX_MESSAGE_SIZE=1024, PREFERRED_BLOCK_SIZE=512, BLOCKWISE_STATUS_LIFETIME=300000 and MAX_RESOURCE_BODY_SIZE=8192
+2020-10-15 15:53:24 INFO  ReliabilityLayer:83 - ReliabilityLayer uses ACK_TIMEOUT=2000, ACK_RANDOM_FACTOR=1.5, and ACK_TIMEOUT_SCALE=2.0
+2020-10-15 15:53:24 INFO  CoapServer:207 - Starting server
+2020-10-15 15:53:24 INFO  UDPConnector:161 - UDPConnector starts up 1 sender threads and 1 receiver threads
+2020-10-15 15:53:24 INFO  UDPConnector:187 - UDPConnector listening on 0.0.0.0/0.0.0.0:8071, recv buf = 65507, send buf = 65507, recv packet size = 2048
+2020-10-15 15:53:24 INFO  CoapEndpoint:485 - Started endpoint at coap://0.0.0.0:8071
+2020-10-15 15:53:25 INFO  RandomTokenGenerator:55 - using tokens of 8 bytes in length
+2020-10-15 15:53:25 INFO  CoapEndpoint:423 - CoapEndpoint uses udp plain
+2020-10-15 15:53:25 INFO  BlockwiseLayer:207 - BlockwiseLayer uses MAX_MESSAGE_SIZE=1024, PREFERRED_BLOCK_SIZE=512, BLOCKWISE_STATUS_LIFETIME=300000 and MAX_RESOURCE_BODY_SIZE=8192
+2020-10-15 15:53:25 INFO  ReliabilityLayer:83 - ReliabilityLayer uses ACK_TIMEOUT=2000, ACK_RANDOM_FACTOR=1.5, and ACK_TIMEOUT_SCALE=2.0
+2020-10-15 15:53:25 INFO  CoapServer:207 - Starting server
+2020-10-15 15:53:25 INFO  UDPConnector:161 - UDPConnector starts up 1 sender threads and 1 receiver threads
+2020-10-15 15:53:25 INFO  UDPConnector:187 - UDPConnector listening on 0.0.0.0/0.0.0.0:8070, recv buf = 65507, send buf = 65507, recv packet size = 2048
+2020-10-15 15:53:25 INFO  CoapEndpoint:485 - Started endpoint at coap://0.0.0.0:8070
+2020-10-15 16:07:54 INFO  NetworkConfig:372 - loading properties from file /Users/lallu/Desktop/Laura/Uni/Magistrale/1A_2C/Ingegneria dei Sistemi Software/EsameIss2020/SPRINTS/tearoom.SPRINT4/Californium.properties
+2020-10-15 16:07:55 INFO  RandomTokenGenerator:55 - using tokens of 8 bytes in length
+2020-10-15 16:07:55 INFO  CoapEndpoint:423 - CoapEndpoint uses udp plain
+2020-10-15 16:07:55 INFO  BlockwiseLayer:207 - BlockwiseLayer uses MAX_MESSAGE_SIZE=1024, PREFERRED_BLOCK_SIZE=512, BLOCKWISE_STATUS_LIFETIME=300000 and MAX_RESOURCE_BODY_SIZE=8192
+2020-10-15 16:07:55 INFO  ReliabilityLayer:83 - ReliabilityLayer uses ACK_TIMEOUT=2000, ACK_RANDOM_FACTOR=1.5, and ACK_TIMEOUT_SCALE=2.0
+2020-10-15 16:07:55 INFO  CoapServer:207 - Starting server
+2020-10-15 16:07:55 INFO  UDPConnector:161 - UDPConnector starts up 1 sender threads and 1 receiver threads
+2020-10-15 16:07:55 INFO  UDPConnector:187 - UDPConnector listening on 0.0.0.0/0.0.0.0:8072, recv buf = 65507, send buf = 65507, recv packet size = 2048
+2020-10-15 16:07:55 INFO  CoapEndpoint:485 - Started endpoint at coap://0.0.0.0:8072
+2020-10-15 16:07:55 INFO  RandomTokenGenerator:55 - using tokens of 8 bytes in length
+2020-10-15 16:07:55 INFO  CoapEndpoint:423 - CoapEndpoint uses udp plain
+2020-10-15 16:07:55 INFO  BlockwiseLayer:207 - BlockwiseLayer uses MAX_MESSAGE_SIZE=1024, PREFERRED_BLOCK_SIZE=512, BLOCKWISE_STATUS_LIFETIME=300000 and MAX_RESOURCE_BODY_SIZE=8192
+2020-10-15 16:07:55 INFO  ReliabilityLayer:83 - ReliabilityLayer uses ACK_TIMEOUT=2000, ACK_RANDOM_FACTOR=1.5, and ACK_TIMEOUT_SCALE=2.0
+2020-10-15 16:07:55 INFO  CoapServer:207 - Starting server
+2020-10-15 16:07:55 INFO  UDPConnector:161 - UDPConnector starts up 1 sender threads and 1 receiver threads
+2020-10-15 16:07:55 INFO  UDPConnector:187 - UDPConnector listening on 0.0.0.0/0.0.0.0:8071, recv buf = 65507, send buf = 65507, recv packet size = 2048
+2020-10-15 16:07:55 INFO  CoapEndpoint:485 - Started endpoint at coap://0.0.0.0:8071
+2020-10-15 16:07:55 INFO  RandomTokenGenerator:55 - using tokens of 8 bytes in length
+2020-10-15 16:07:55 INFO  CoapEndpoint:423 - CoapEndpoint uses udp plain
+2020-10-15 16:07:55 INFO  BlockwiseLayer:207 - BlockwiseLayer uses MAX_MESSAGE_SIZE=1024, PREFERRED_BLOCK_SIZE=512, BLOCKWISE_STATUS_LIFETIME=300000 and MAX_RESOURCE_BODY_SIZE=8192
+2020-10-15 16:07:55 INFO  ReliabilityLayer:83 - ReliabilityLayer uses ACK_TIMEOUT=2000, ACK_RANDOM_FACTOR=1.5, and ACK_TIMEOUT_SCALE=2.0
+2020-10-15 16:07:55 INFO  CoapServer:207 - Starting server
+2020-10-15 16:07:55 INFO  UDPConnector:161 - UDPConnector starts up 1 sender threads and 1 receiver threads
+2020-10-15 16:07:55 INFO  UDPConnector:187 - UDPConnector listening on 0.0.0.0/0.0.0.0:8070, recv buf = 65507, send buf = 65507, recv packet size = 2048
+2020-10-15 16:07:55 INFO  CoapEndpoint:485 - Started endpoint at coap://0.0.0.0:8070

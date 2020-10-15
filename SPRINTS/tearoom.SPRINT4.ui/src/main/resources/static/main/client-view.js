@@ -2,6 +2,7 @@
 // CONNECTION
 var stompClient = null;
 
+
 function showMsg(message) {
     console.log(message );
 //    $("#applmsgs").html( "<pre>"+message.replace(/\n/g,"<br/>")+"</pre>" );
@@ -22,7 +23,7 @@ function startTimer(duration, display) {
         display.text(minutes + ":" + seconds);
 
         if (--timer < 0) {
-        	window.location.replace("/badtemp");
+        	window.location.replace(window.location.href + "/badtemp");
         }
     }, 1000);
 }

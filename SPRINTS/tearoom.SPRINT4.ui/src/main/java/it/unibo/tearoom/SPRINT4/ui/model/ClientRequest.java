@@ -5,31 +5,31 @@ public class ClientRequest {
 	private String name;
 	private String payload0;
 	private String payload1;
-	private String payload2;
+	private String clientid;
 
 	public ClientRequest() {
 		super();
 	}
 
-	public ClientRequest(String name, String payload0) {
+	public ClientRequest(String name, String clientid) {
+		super();
+		this.name = name;
+		this.clientid = clientid;
+	}
+
+	public ClientRequest(String name, String payload0, String clientid) {
 		super();
 		this.name = name;
 		this.payload0 = payload0;
+		this.clientid = clientid;
 	}
 
-	public ClientRequest(String name, String payload0, String payload1) {
+	public ClientRequest(String name, String payload0, String payload1, String clientid) {
 		super();
 		this.name = name;
 		this.payload0 = payload0;
 		this.payload1 = payload1;
-	}
-
-	public ClientRequest(String name, String payload0, String payload1, String payload2) {
-		super();
-		this.name = name;
-		this.payload0 = payload0;
-		this.payload1 = payload1;
-		this.payload2 = payload2;
+		this.clientid = clientid;
 	}
 
 	public String getName() {
@@ -56,12 +56,12 @@ public class ClientRequest {
 		this.payload1 = payload1;
 	}
 
-	public String getPayload2() {
-		return payload2;
+	public String getClientid() {
+		return clientid;
 	}
 
-	public void setPayload2(String payload2) {
-		this.payload2 = payload2;
+	public void setClientid(String clientid) {
+		this.clientid = clientid;
 	}
 
 }

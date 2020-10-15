@@ -59,7 +59,7 @@ ExternalQActor basicrobot    context ctxbasicrobot
 	
 	
 	/*
-	 * wait for a request from waiterwalker
+	 * wait for a request from walker
 	 */
 	State waitReq{
 		println("walker | waiting for a doPlan message")	
@@ -97,7 +97,7 @@ ExternalQActor basicrobot    context ctxbasicrobot
 	 */					  
  	State execPlannedMoves{ 
  		[#  CurrentPlannedMove = itunibo.planner.plannerUtil.getNextPlannedMove() #]
- 		//println("waiterwalker | doing move $CurrentPlannedMove")
+ 		//println("walker | doing move $CurrentPlannedMove")
  		delayVar PauseTime
  	}
  	Goto wMove if [# CurrentPlannedMove == "w" #] else otherPlannedMove
@@ -128,21 +128,25 @@ ExternalQActor basicrobot    context ctxbasicrobot
 		
 	State stepFailed{  //has found an obstacle 
 	    [# obstacleFound = true #]
- 		println("waiterwalker | stepFailed")
+ 		println("walker | stepFailed")
 		onMsg(stepfail : stepfail(DURATION, CAUSE) ){
 			[# 
 				val D = payloadArg(0).toLong()  ; 
 				val Dt = Math.abs(StepTime-D); 
 				val BackT = D/2 
 			#] 
-			println("waiterwalker stepFail D= $D, BackTime = ${BackTime}")
+			println("walker stepFail D= $D, DT= $Dt BackTime = $BackT")
+			println("walker stepFail D= $D, BackTime = ${BackTime}")
 			if [# D > BackTime #] {    
 				forward basicrobot -m cmd : cmd( s )
 				delayVar BackT
 				forward basicrobot -m cmd : cmd( h )
 			}	 
  		}
-	    run itunibo.planner.plannerUtil.updateMapObstacleOnCurrentDirection() 			    
+ 		
+		run itunibo.planner.plannerUtil.updateMap( "w" )
+ 		
+	    //run itunibo.planner.plannerUtil.updateMapObstacleOnCurrentDirection() 			    
  	}   
 	Goto sendFailureAnswer
 	
@@ -162,14 +166,14 @@ ExternalQActor basicrobot    context ctxbasicrobot
  * Answers  
  */ 
  	State sendSuccessAnswer{
-	     	println("waiterwalker | POINT ($XT,$YT) REACHED")
+	     	println("walker | POINT ($XT,$YT) REACHED")
 	     	run itunibo.planner.plannerUtil.showCurrentRobotState()
 	     	replyTo doPlan with walkerDone : walkerDone(ok) 					
 	}
 	Goto waitReq  
 
 	State sendFailureAnswer{
-	    println("waiterwalker | FAILS")
+	    println("walker | FAILS")
 	    [# 
 	    	var Curx = itunibo.planner.plannerUtil.getPosX()
 	       	var Cury = itunibo.planner.plannerUtil.getPosY()	

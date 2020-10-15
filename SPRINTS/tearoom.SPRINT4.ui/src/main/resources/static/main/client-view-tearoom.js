@@ -71,7 +71,7 @@ function initialSetup() {
 	reqID = 'deployEntrance';
     $( "#cid" ).text('Client ID: ' + ClientID);
 
-	stompClient.send("/app/waiter", {}, JSON.stringify({'name': reqID, 'payload0': 'entrancedoor', 'payload1': 'table', 'payload2': ClientID}));
+	stompClient.send("/app/waiter", {}, JSON.stringify({'name': reqID, 'payload0': 'entrancedoor', 'payload1': 'table', 'clientid': ClientID}));
 	
 	showWaitMessage();
 }
@@ -116,26 +116,26 @@ function showReadyToLeaveMessage() {
 $(document).on("click", "#btn-waiter", function(event) {
 
 	if(reqID == 'deployExit') {
-		stompClient.send("/app/waiter", {}, JSON.stringify({'name': reqID, 'payload0': Table, 'payload1': 'exitdoor', 'payload2': ClientID}));
+		stompClient.send("/app/waiter", {}, JSON.stringify({'name': reqID, 'payload0': Table, 'payload1': 'exitdoor', 'clientid': ClientID}));
         showDeploymentMessage();
 	}
 	
 	if(reqID == 'pay') {
-		stompClient.send("/app/waiter", {}, JSON.stringify({'name': reqID, 'payload0': $( "#txt-input" ).val()}));
+		stompClient.send("/app/waiter", {}, JSON.stringify({'name': reqID, 'payload0': $( "#txt-input" ).val(), 'clientid': ClientID}));
 		showReadyToLeaveMessage();
 		reqID='deployExit';
 	}
 	if(reqID == 'servicePay') {
-		stompClient.send("/app/waiter", {}, JSON.stringify({'name': reqID, 'payload0': 'pay', 'payload1': Table, 'payload2': ClientID}));
+		stompClient.send("/app/waiter", {}, JSON.stringify({'name': reqID, 'payload0': 'pay', 'payload1': Table, 'clientid': ClientID}));
         showWaitMessage();
 	}
 	if(reqID == 'order') { //this will be a dispatch and the client will have to wait for the event "delivery"
-        stompClient.send("/app/waiter", {}, JSON.stringify({'name': reqID, 'payload0': $( "#txt-input" ).val()}));
+        stompClient.send("/app/waiter", {}, JSON.stringify({'name': reqID, 'payload0': $( "#txt-input" ).val(), 'clientid': ClientID}));
         showWaitMessage();
         reqID='delivery';
 	}
 	if(reqID == 'serviceOrder') {
-		stompClient.send("/app/waiter", {}, JSON.stringify({'name': reqID, 'payload0': 'order', 'payload1': Table, 'payload2': ClientID}));
+		stompClient.send("/app/waiter", {}, JSON.stringify({'name': reqID, 'payload0': 'order', 'payload1': Table, 'clientid': ClientID}));
         showWaitMessage();
 	}
 });

@@ -16,8 +16,8 @@ public static final String brokerDestinationPrefix = "/topic";
 public static final String applDestinationPrefix = "/app";
 public static final String stompEndpointPath = "/it-unibo-iss";
 
-public static final String topicForClientMain = "/user/topic/main";
-public static final String topicForClientInTearoom = "/user/topic/tearoom";
+public static final String topicForClientMain = "topic/main";
+public static final String topicForClientInTearoom = "topic/tearoom";
 public static final String topicForManager = "/topic/manager";
 
 

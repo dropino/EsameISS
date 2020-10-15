@@ -1,4 +1,4 @@
-package it.unibo.tearoom.SPRINT4.ui;
+package it.unibo.tearoom.SPRINT4.ui.model;
 
 public class ServerReply {
 

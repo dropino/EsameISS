@@ -22,8 +22,8 @@ import connQak.connQakCoap;
 import connQak.utils.ApplMessageUtils;
 import it.unibo.kactor.ApplMessage;
 import it.unibo.kactor.MsgUtil;
-import it.unibo.tearoom.SPRINT4.ui.ServerReply;
 import it.unibo.tearoom.SPRINT4.ui.WebSocketConfig;
+import it.unibo.tearoom.SPRINT4.ui.model.ServerReply;
 
 @Controller
 public class ManagerController {
@@ -48,17 +48,17 @@ public class ManagerController {
 		robotHost = configurator.getHostAddr();
 		robotPort = configurator.getPort();
 
-		smartbellConn = new connQakCoap(robotHost, robotPort, "smartbell", configurator.getCtxqadest());
-		smartbellConn.createConnection();
-
-		waiterConn = new connQakCoap(robotHost, robotPort, "waiter", configurator.getCtxqadest());
-		waiterConn.createConnection();
-
-		barmanConn = new connQakCoap(robotHost, robotPort, "barman", configurator.getCtxqadest());
-		barmanConn.createConnection();
+//		smartbellConn = new connQakCoap(robotHost, "7071", "smartbell", "ctxsmartbell");
+//		smartbellConn.createConnection();
+//
+//		waiterConn = new connQakCoap(robotHost, robotPort, "waiter", configurator.getCtxqadest());
+//		waiterConn.createConnection();
+//
+//		barmanConn = new connQakCoap(robotHost, "7070", "barman",  "ctxbarman");
+//		barmanConn.createConnection();
 	}
 
-	@GetMapping("manager/")
+	@GetMapping("/manager")
 	public String entry(Model viewmodel) {
 		preparePageUpdating();
 		return htmlPageMain;
@@ -81,27 +81,27 @@ public class ManagerController {
 
 				if (response.getResponseText().contains("listening")) {
 					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
-					simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForClient,
+					simpMessagingTemplate.convertAndSend("topic/manager",
 							new ServerReply("", "listening"));
 				} else if (response.getResponseText().contains("Client_must_wait")) {
 					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
-					simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForClient,
+					simpMessagingTemplate.convertAndSend("topic/manager",
 							new ServerReply("", "Client_must_wait"));
 				} else if (response.getResponseText().contains("waiter_arrived")) {
 					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
-					simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForClient,
+					simpMessagingTemplate.convertAndSend("topic/manager",
 							new ServerReply("", "waiter_arrived"));
 				} else if (response.getResponseText().contains("waiter_rdy_leave")) {
 					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
-					simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForClient,
+					simpMessagingTemplate.convertAndSend("topic/manager",
 							new ServerReply("", "waiter_rdy_leave"));
 				} else if (response.getResponseText().contains("waiter_rdy_getDrink")) {
 					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
-					simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForClient,
+					simpMessagingTemplate.convertAndSend("topic/manager",
 							new ServerReply("", "waiter_rdy_getDrink"));
 				} else if (response.getResponseText().contains("deliver-tea-$CTABLE")) {
 					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
-					simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForClient,
+					simpMessagingTemplate.convertAndSend("topic/manager",
 							new ServerReply("", "deliver-tea-$CTABLE"));
 				}
 			}
@@ -125,11 +125,11 @@ public class ManagerController {
 				
 				if (response.getResponseText().contains("Discard")) {
 					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
-					simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForClient,
+					simpMessagingTemplate.convertAndSend("topic/manager",
 							new ServerReply("", "Discard"));
 				} else if (response.getResponseText().contains("Accept")) {
 					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
-					simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForClient, new ServerReply("", "Accept"));
+					simpMessagingTemplate.convertAndSend("topic/manager", new ServerReply("", "Accept"));
 				}
 			}
 
@@ -153,7 +153,7 @@ public class ManagerController {
 				// STILL MISSING FROM QAK
 				if (response.getResponseText().contains("making-tea")) {
 					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
-					simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForClient,
+					simpMessagingTemplate.convertAndSend("topic/manager",
 							new ServerReply("", "making-tea"));
 				}
 			}

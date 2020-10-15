@@ -1,29 +1,34 @@
 package it.unibo.tearoom.SPRINT4.ui;
 
+import java.security.Principal;
+
 import org.eclipse.californium.core.CoapHandler;
 import org.eclipse.californium.core.CoapResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import connQak.configurator;
 import connQak.connQakCoap;
 import connQak.utils.ApplMessageUtils;
 import it.unibo.kactor.ApplMessage;
 import it.unibo.kactor.MsgUtil;
+import it.unibo.tearoom.SPRINT4.ui.model.ClientRequest;
+import it.unibo.tearoom.SPRINT4.ui.model.ServerReply;
 
 @Controller
 public class ClientController {
-    String appName     		="tearoomGui";
+    String appName     		="tearoomGui"; 
     String viewModelRep		="startup";
     
     String robotHost = ""; //ConnConfig.hostAddr;		
@@ -40,11 +45,13 @@ public class ClientController {
 	    configurator.configure();
 	    htmlPageMain  = configurator.getPageTemplate();
 	    robotHost =	configurator.getHostAddr();	
-	    robotPort = configurator.getPort();
+	    robotPort = configurator.getPort();  
 	
+	    System.out.println("&&&&&&&&&&& CLIENT CONTROLLER: trying to configure Smartbell connection");
 	    smartbellConn = new connQakCoap(robotHost, "8071", configurator.getQakdest(), "ctxsmartbell"  );  
 	    smartbellConn.createConnection();
  		
+	    System.out.println("&&&&&&&&&&& CLIENT CONTROLLER: trying to configure Waiter connection");
 	    waiterConn = new connQakCoap(robotHost, robotPort, "waiter", configurator.getCtxqadest()  );  
 	    waiterConn.createConnection();
 	      
@@ -68,7 +75,7 @@ public class ClientController {
 	 } 
 	 
 	@ExceptionHandler 
-	public ResponseEntity<String> handle(Exception ex) {
+	public ResponseEntity<String> handle(Exception ex) { 
 		HttpHeaders responseHeaders = new HttpHeaders();
 	    return new ResponseEntity<String>(
 	    		"RobotController ERROR " + ex.getMessage(), responseHeaders, HttpStatus.CREATED);
@@ -88,10 +95,11 @@ public class ClientController {
     	waiterConn.getClient().observe(new CoapHandler() { 
 			@Override
 			public void onLoad(CoapResponse response) {
+				//convertire a Json e prendere CID
 				if(response.getResponseText().contains("deliver-tea")) {
 					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
-					simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForClient, 
-							new ServerReply("", "delivery"));
+					simpMessagingTemplate.convertAndSend("/user/topic/tearoom", 
+							new ServerReply("", "delivery" ));
 				}
 			}
 
@@ -126,9 +134,15 @@ public class ClientController {
 	 * 	If the Client got in or is waiting in the hall, he's now only in contact with the waiter, so the message mapping will follow /waiter.
 	 * */
 	@MessageMapping("/smartbell") 
-	@SendTo("/topic/display")
-	public ServerReply ringSmartbell() throws Exception {
-	 		ApplMessage ringMsg = MsgUtil.buildRequest("web", "ringBell", "ringBell(ok)", "smartbell" );
+	@SendToUser("/topic/main")
+	
+	public ServerReply ringSmartbell(@Header("simpSessionId") String sessionId, Principal principal) throws Exception {
+	 		
+		System.out.println("!!!!!------------------- principal name" + principal.getName()  );
+		System.out.println("!!!!!------------------- header session id" + sessionId  );
+		
+
+		ApplMessage ringMsg = MsgUtil.buildRequest("web", "ringBell", "ringBell(ok)", "smartbell" );
 	 		
 	 		ApplMessage reply = smartbellConn.request( ringMsg );  
 			System.out.println("------------------- Controller appl message reply content p =" + reply.msgContent()  );
@@ -137,7 +151,7 @@ public class ClientController {
 			
 			if (ringRepArgs[0].compareTo("0") == 0)
 			{
-				System.out.println("------------------- Controller: respond with bad temperature redir"  );
+				System.out.println("------------------- Controller: respond with BAD TEMPERATURE REDIR"  );
 				return new  ServerReply("badtemp","0","0");
 			}
 			else {
@@ -148,17 +162,19 @@ public class ClientController {
 		 		
 		 		String ttw = ApplMessageUtils.extractApplMessagePayload(timeToWait, 0); 
 
-				System.out.println("------------------- Controller answer to client =" + ringRepArgs[1] + "," + ttw  );
+				System.out.println("------------------- Controller answer to client = " + ringRepArgs[1] + "," + ttw  );
 
 				return new  ServerReply("tearoom",ringRepArgs[1], ttw);   
 				
 			}	
 	}
 	
-	@MessageMapping("/waiter") 
-	@SendTo("/topic/display") 
-	public ServerReply waiterInteraction(ClientRequest req) throws Exception {
-		
+	@MessageMapping("/waiter")   
+	@SendToUser("/topic/tearoom") 
+	public ServerReply waiterInteraction(@Payload ClientRequest req, @Header("simpSessionId") String sessionId, Principal principal) throws Exception {
+		System.out.println("!!!!!------------------- /app/waiter principal name" + principal.getName()  );
+		System.out.println("!!!!!-------------------  /app/waiter header session id" + sessionId  );
+
 		/*
 		 *  Req ID:
 		 *  	0) waitTime -> waitTime is automatically asked by the smartBell interaction function

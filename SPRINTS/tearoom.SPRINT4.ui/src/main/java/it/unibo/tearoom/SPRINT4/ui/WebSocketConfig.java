@@ -10,7 +10,6 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
-public static final String topicForClient = "/topic/display";
 public static final String brokerDestinationPrefix = "/topic";
 public static final String applDestinationPrefix = "/app";
 public static final String stompEndpointPath = "/it-unibo-iss";
@@ -20,12 +19,14 @@ public static final String stompEndpointPath = "/it-unibo-iss";
 	public void configureMessageBroker(MessageBrokerRegistry config) {
 		config.enableSimpleBroker(brokerDestinationPrefix);
 		config.setApplicationDestinationPrefixes(applDestinationPrefix);
+
 	}
 
+	//register the Endpoints to which Clients can connect to through STOMP
 	@Override
 	public void registerStompEndpoints(StompEndpointRegistry registry) {
-		registry.addEndpoint(stompEndpointPath).withSockJS();
-		registry.addEndpoint("/it-unibo-iss/tearoom").withSockJS(); 
+		registry.addEndpoint(stompEndpointPath).setAllowedOrigins("*").setHandshakeHandler(new CustomHandshakeHandler()).withSockJS();
+		registry.addEndpoint("/it-unibo-iss/tearoom").setAllowedOrigins("*").setHandshakeHandler(new CustomHandshakeHandler()).withSockJS(); 
 	}
 
 }

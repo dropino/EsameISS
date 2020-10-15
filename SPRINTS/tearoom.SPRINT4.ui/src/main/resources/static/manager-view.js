@@ -20,7 +20,7 @@ function connect() {
     
     stompClient.connect({}, function (frame) {
     	try {
-    	stompClient.subscribe('/topic/display/manager', handleWaiterReply);
+    	stompClient.subscribe('/topic/manager', handleWaiterReply);
     	initialSetup();
     	} catch (error) {
     		console.log(error);

@@ -78,6 +78,7 @@ public class ManagerController {
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
+				
 
 				boolean busy = msg.get("busy").asBoolean();
 				String clientID = msg.get("clientID").asText();
@@ -88,7 +89,7 @@ public class ManagerController {
 				String movingTo = msg.get("movingTo").asText();
 				String movingFrom = msg.get("movingFrom").asText();
 				String receivedRequest = msg.get("receivedRequest").asText();
-
+				
 				// listening
 				if (busy == false) {
 					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());

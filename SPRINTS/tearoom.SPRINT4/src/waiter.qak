@@ -255,7 +255,6 @@ QActor waiter context ctxtearoom {
 	
 	
 	State atTableForRequest {
-		
 		solve( clientRequestPayload($KIND, P) )
 		ifSolved {
 			[# PL = getCurSol("P").toString() #]
@@ -278,8 +277,7 @@ QActor waiter context ctxtearoom {
 		[#
  			wJson.setOrder(CDRINK)
 		#]
-		updateResource [# wJson.toJson() #]
-				
+		updateResource [# wJson.toJson() #]		
 	}
 	Goto listening
 	
@@ -330,7 +328,6 @@ QActor waiter context ctxtearoom {
 			wJson.setMovingTo("barman")						
 		#]		
 		updateResource [# wJson.toJson() #]
-		
 	}
 	Transition t0 		whenReply	movementDone -> bringDrinkToClient
 	  					whenReply	walkbreak	 -> error	
@@ -347,6 +344,7 @@ QActor waiter context ctxtearoom {
 	}
 	Transition t0 		whenReply	movementDone -> leaveDrinkAtTable
 	  					whenReply	walkbreak	 -> error	
+	
 			
 	State leaveDrinkAtTable {
 		println("WAITER | giving the simclient the tea")
@@ -507,6 +505,9 @@ QActor smartbell context ctxsmartbell {
 }
 
 
+
+
+
 QActor barman context ctxbarman {
 	[#
 		var CTABLE = 0
@@ -552,6 +553,7 @@ QActor barman context ctxbarman {
 		
 		delay 2000
 		forward waiter -m orderReady : orderReady(tea, $CTABLE)
+			println("  Barman | Tea ready to be served ")
 			[#
 				bJson.setPreparingForTable(-1)
 				bJson.setPreparingOrder("")
@@ -559,7 +561,6 @@ QActor barman context ctxbarman {
 				bJson.setOrderReady(true)
 			#]
 			updateResource [#bJson.toJson()#]
-			println("  Barman | Tea ready to be served ")
 	}
 	Goto waitForNewOrder
 }

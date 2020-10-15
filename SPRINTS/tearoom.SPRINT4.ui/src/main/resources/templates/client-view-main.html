@@ -9,7 +9,7 @@
     <script src="/webjars/jquery/jquery.min.js"></script>
     <script src="/webjars/sockjs-client/sockjs.min.js"></script>
     <script src="/webjars/stomp-websocket/stomp.min.js"></script>
- 	<script src="client-view.js"></script>
+ 	<script src="main/client-view.js"></script>
     
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300&display=swap" rel="stylesheet">
@@ -31,14 +31,23 @@
   </div>
 </section>
 
-  <h3>Ring the Bell!</h3>
-  <p> We will automatically check your temperature and request a table, we will be with you as soon as possible.</p>
+  <h3 id="title">Ring the Bell!</h3>
+  <p id="caption"> We will automatically check your temperature and request a table, we will be with you as soon as possible.</p>
   <div class="d-flex justify-content-center" >
     <button id="btn-smartbell" type="submit" class="btn btn-outline-light btn-lg" style="background-color: #6da177; width: 20%; align-self: center;">
       <i class="fas fa-concierge-bell"></i>
     </button> 
-    <h2 id="h-countdown" hidden=true>Wait here, the Waiter should arrive before the time expires.</h2>
-    <p id="countdown" hidden=true></p>
-  </div>
+   </div>
+    
+    <div class="row">
+    	<div class="col-md-6 order-1 order-md-1 d-flex flex-column">
+            <h2 id="h-countdown">Wait here, the Waiter should arrive before the time expires.</h2>
+        </div>
+        <div class="col-md-6 order-1 order-md-1 d-flex flex-column">
+            <p id="countdown"></p>
+        </div>
+    </div>
 </body>
+
+<script type="text/javascript">intialSetup()</script>
 </html>

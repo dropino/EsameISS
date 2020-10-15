@@ -175,26 +175,13 @@ QActor waiter context ctxtearoom {
 
 
 	State goToEntrance {
-		solve( numavailabletables(N) ) 
-		ifSolved { [# Ntables = getCurSol("N").toString().toInt()  #] 
-			println("WAITER | numavailabletables=$Ntables")
-		}
-	  	if [# WaitingClient && Ntables == 0 #] {
-	  		println("WAITER | ASKING CLIENT TO WAIT SOME MORE")
-	  		
-			replyTo deploy with  arrived : arrived(ko)
-			forward waiter -m listen : listen(ok)
-		}
-		else {
-			[# WaitingClient = false #]
+
 			println("WAITER | GOING to ENTRANCE door ")
 			request waiterwalker -m moveForTask : moveForTask(entrancedoor, 1)
-			solve ( changeWaiterState(moving) )	
-		}		
+			solve ( changeWaiterState(moving) )		
 	} 
 	 Transition t0		whenReply	movementDone -> deployClientEntrance
 	  					whenReply	walkbreak	 -> error
-	  					whenMsg		listen		 -> listening
 	
 	
 	State deployClientEntrance {		
@@ -444,7 +431,7 @@ QActor smartbell context ctxsmartbell {
  	var CID = 0 
  	val sJson = json.smartBellJson()
  	
- 	var id = 1
+ 	var id = 0
  #]
  
  

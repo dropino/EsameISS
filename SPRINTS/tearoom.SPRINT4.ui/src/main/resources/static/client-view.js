@@ -1,6 +1,7 @@
 
 // CONNECTION
 var stompClient = null;
+var time = false;
 
 function showMsg(message) {
     console.log(message );
@@ -10,8 +11,9 @@ function showMsg(message) {
 
 function startTimer(duration, display) {
     console.log("Timer started");
+    time = true;
 
-    var timer = duration, minutes, seconds;
+    var timer = duration, minutes, seconds, ;
     setInterval(function () {
         minutes = parseInt(timer / 60, 10);
         seconds = parseInt(timer % 60, 10);
@@ -24,6 +26,10 @@ function startTimer(duration, display) {
         if (--timer < 0) {
         	window.location.replace("/badtemp");
         }
+
+        if ((seconds % 5) == 0) {
+            stompClient.send("/app/smartbell");
+        }
     }, 1000);
 }
 
@@ -31,8 +37,8 @@ function handleSmartbellReply(msg) {
     var redir = JSON.parse(msg.body).redir;
     var CID = JSON.parse(msg.body).payload0;
     var ttw = JSON.parse(msg.body).payload1;
-    if (ttw == 0)
-    {
+    
+    if (ttw == 0)    {
     	var url = new URL(window.location.href + redir)
     	
     	if (CID != 0) url.searchParams.append('cid', CID);
@@ -43,7 +49,7 @@ function handleSmartbellReply(msg) {
     	
     	window.location.replace(url);
     }
-    else {
+    else if (time == false) {
 	    console.log("Client has to wait");
         $( "#btn-smartbell" ).hide();
         $( "#h-countdown" ).show();

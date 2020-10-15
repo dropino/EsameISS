@@ -40,7 +40,8 @@ function handleWaiterReply(msg) {
       $( "#caption" ).text("When you're ready to pay, call the Waiter by clicking the button below.");
       $( "#txt-input" ).hide();
       $( "#btn-waiter" ).show();
-	    reqID = 'servicePay';
+		reqID = 'servicePay';
+		startTimer(JSON.parse(msg.body).payload0/1000, $("#countdown") );
 	}
 	if(reqID == 'serviceOrder') {
       $( "#title" ).text('What would you like to order?');
@@ -59,6 +60,28 @@ function handleWaiterReply(msg) {
 	    $( "#btn-waiter" ).show();
 	    reqID = 'serviceOrder';
 	}
+}
+
+function startTimer(duration, display) {
+    console.log("Timer started");
+
+    var timer = duration, minutes, seconds, ;
+    setInterval(function () {
+        minutes = parseInt(timer / 60, 10);
+        seconds = parseInt(timer % 60, 10);
+
+        minutes = minutes < 10 ? "0" + minutes : minutes;
+        seconds = seconds < 10 ? "0" + seconds : seconds;
+
+        display.text(minutes + ":" + seconds);
+
+        if (--timer < 0) {
+			maxStayTimeOver();
+			reqID = servicePay;
+			stompClient.send("/app/waiter", {}, JSON.stringify({'name': reqID, 'payload0': 'pay', 'payload1': Table, 'payload2': ClientID}));
+		}
+		
+    }, 1000);
 }
 
 
@@ -111,6 +134,13 @@ function showReadyToLeaveMessage() {
     $( "#caption" ).show();
     $( "#caption" ).text('Call the Waiter by clicking the button below to leave the tearoom.');
     $( "#btn-waiter" ).show();
+}
+
+function maxStayTimeOver() {
+	$( "#title" ).text('Ready to leave?');
+    $( "#caption" ).show();
+    $( "#caption" ).text('Your maxStayTime is over, please pay the amount due once the waiter gets to your table.');
+	$( "#btn-waiter" ).hide();
 }
 
 $(document).on("click", "#btn-waiter", function(event) {

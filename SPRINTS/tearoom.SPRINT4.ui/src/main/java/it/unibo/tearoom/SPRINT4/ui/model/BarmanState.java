@@ -5,11 +5,20 @@ public class BarmanState {
 	int teasPreared;
 	int teasReady;
 
-	public BarmanState() {
+	static BarmanState barmanState = null;
+
+	public static BarmanState getInstance() {
+		if (barmanState == null)
+			barmanState = new BarmanState(0, 0, 0);
+		
+		return barmanState;
+	}
+	
+	private BarmanState() {
 
 	}
 
-	public BarmanState(int ordersReceived, int teasPreared, int teasReady) {
+	private BarmanState(int ordersReceived, int teasPreared, int teasReady) {
 		super();
 		this.ordersReceived = ordersReceived;
 		this.teasPreared = teasPreared;

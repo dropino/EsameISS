@@ -19,13 +19,16 @@ import connQak.utils.ApplMessageUtils;
 import it.unibo.kactor.ApplMessage;
 import it.unibo.kactor.MsgUtil;
 import it.unibo.tearoom.SPRINT4.ui.config.WebSocketConfig;
+import it.unibo.tearoom.SPRINT4.ui.model.BarmanState;
 import it.unibo.tearoom.SPRINT4.ui.model.ClientRequest;
 import it.unibo.tearoom.SPRINT4.ui.model.ServerReply;
+import it.unibo.tearoom.SPRINT4.ui.model.SmartBellState;
+import it.unibo.tearoom.SPRINT4.ui.model.WaiterState;
 
 @Service
 public class WaiterService {
     connQakCoap waiterConn;
-    
+        
 	/*
 	 * ---------------------------------------------------------- Client update on
 	 * resource change to handle events from CoAP resource
@@ -44,7 +47,6 @@ public class WaiterService {
 	      
 	    simpMessagingTemplate = msgTemp;
 	}
-
 	
 	 
 	@ExceptionHandler 
@@ -65,6 +67,78 @@ public class WaiterService {
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
+			
+
+				boolean busy = msg.get("busy").asBoolean();
+				String clientID = msg.get("clientID").asText();
+				int table = msg.get("table").asInt();
+				String order = msg.get("order").asText();
+				int payment = msg.get("payment").asInt();
+				int waitTime = msg.get("waitTime").asInt();
+				String movingTo = msg.get("movingTo").asText();
+				String movingFrom = msg.get("movingFrom").asText();
+				String receivedRequest = msg.get("receivedRequest").asText();
+				
+				// listening
+				if (busy == false && movingTo.equals("")) {
+					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
+					sendUpdate("waiter");
+				}
+				//going home
+				else if (busy == false && movingTo.equals("home")) {
+					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
+					sendUpdate("waiter");
+				}
+				//answer time 
+				else if (busy == true && waitTime != -1) {
+					if(waitTime == 0) {
+						SmartBellState.getInstance().setClientsAdmitted(SmartBellState.getInstance().getClientsAdmitted()+1);
+						WaiterState.getInstance().setFreeTables(WaiterState.getInstance().getFreeTables()-1);
+					}
+					else {
+						SmartBellState.getInstance().setClientsWaiting(SmartBellState.getInstance().getClientsWaiting()+1);
+					}
+					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
+					sendUpdate("smartBell");	
+					sendUpdate("waiter");				
+				}
+				// handleDeploy entrance
+				else if (busy == true && !clientID.equals("") && table != -1 && !movingTo.equals("")
+						&& !receivedRequest.equals("DeployEntrance")) {
+					WaiterState.getInstance().setDeployedToTable(WaiterState.getInstance().getDeployedToTable()+1);
+					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
+					sendUpdate("waiter");
+				}
+				// handleDeploy exit
+				else if (busy == true && !clientID.equals("") && table != -1 && !movingTo.equals("")
+						&& !receivedRequest.equals("DeployExit")) {
+					WaiterState.getInstance().setDeployedToExit(WaiterState.getInstance().getDeployedToExit()+1);
+					WaiterState.getInstance().setDirtyTables(WaiterState.getInstance().getDirtyTables()+1);
+					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
+					sendUpdate("waiter");
+				}
+				// drink arrives to client
+				else if (receivedRequest.equals("drinkReady")) {
+					WaiterState.getInstance().setTeasDelivered(WaiterState.getInstance().getTeasDelivered()+1);
+					BarmanState.getInstance().setTeasReady(BarmanState.getInstance().getTeasReady()-1);
+					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
+					sendUpdate("waiter");
+					sendUpdate("barman");
+				}
+				// pulisci tavolo
+				else if (busy == true && table != -1 && receivedRequest == "tableDirty" && movingTo.equals("")) {
+					WaiterState.getInstance().setDirtyTables(WaiterState.getInstance().getDirtyTables()-1);
+					WaiterState.getInstance().setFreeTables(WaiterState.getInstance().getFreeTables()+1);
+					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
+					sendUpdate("waiter");
+				}
+				//pagamento
+				else if (receivedRequest.equals("Pay") && busy == true && payment > 0) {
+					WaiterState.getInstance().setEarnings(WaiterState.getInstance().getEarnings()+payment);
+					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
+					sendUpdate("waiter");
+				}
+			
 			}
 
 			@Override
@@ -138,6 +212,23 @@ public class WaiterService {
 		return new ServerReply("", repArgs[0]);
 
 	}
-
+	
+	private void sendUpdate(String sender) {		
+		if (sender.equals("waiter")){
+			simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForManager,
+					new ServerReply("", sender, WaiterState.getInstance()));			
+		}
+		else if(sender.equals("smartBell")){
+			simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForManager,
+					new ServerReply("", sender, SmartBellState.getInstance()));			
+		}
+		else if(sender.equals("barman")) {
+			simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForManager,
+					new ServerReply("", sender, BarmanState.getInstance()));			
+		}
+		else {
+			System.out.println("%%%%%%%%%%%%%% managerController - Sender not recognized! %%%%%%%%%%%%%%");
+		}
+	}
     
 }

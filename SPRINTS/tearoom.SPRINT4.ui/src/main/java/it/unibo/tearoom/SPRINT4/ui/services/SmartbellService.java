@@ -1,8 +1,13 @@
 package it.unibo.tearoom.SPRINT4.ui.services;
 
+import org.eclipse.californium.core.CoapHandler;
+import org.eclipse.californium.core.CoapResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import connQak.configurator;
 import connQak.connQakCoap;
@@ -10,7 +15,10 @@ import connQak.utils.ApplMessageUtils;
 import it.unibo.kactor.ApplMessage;
 import it.unibo.kactor.MsgUtil;
 import it.unibo.tearoom.SPRINT4.ui.config.WebSocketConfig;
+import it.unibo.tearoom.SPRINT4.ui.model.BarmanState;
 import it.unibo.tearoom.SPRINT4.ui.model.ServerReply;
+import it.unibo.tearoom.SPRINT4.ui.model.SmartBellState;
+import it.unibo.tearoom.SPRINT4.ui.model.WaiterState;
 
 @Service
 public class SmartbellService {
@@ -107,4 +115,64 @@ public class SmartbellService {
 
 	}
 
+	public void prepareUpdating() {
+		smartbellConn.getClient().observe(new CoapHandler() {
+		@Override
+		public void onLoad(CoapResponse response) {
+			ObjectMapper mapper = new ObjectMapper();
+			JsonNode msg = null;
+			try {
+				msg = mapper.readTree(response.getResponseText());
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+
+			boolean busy = msg.get("busy").asBoolean();
+			boolean ClientArrived = msg.get("ClientArrived").asBoolean();
+			boolean ClientDenied = msg.get("ClientDenied").asBoolean();
+			boolean ClientAccepted = msg.get("ClientAccepted").asBoolean();
+			
+			if (busy == true) {
+				System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
+				sendUpdate("smartBell");
+			} 
+			else if (busy == true && ClientArrived == true && ClientDenied == true) {
+				SmartBellState.getInstance().setClientsProcessed(SmartBellState.getInstance().getClientsProcessed()+1);
+				System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
+				sendUpdate("smartBell");
+				
+			} 
+			else if (ClientArrived == false && ClientAccepted == false) {
+				SmartBellState.getInstance().setClientsProcessed(SmartBellState.getInstance().getClientsProcessed()+1);
+				SmartBellState.getInstance().setClientsAdmitted(SmartBellState.getInstance().getClientsAdmitted()+1);
+				System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
+				sendUpdate("smartBell");
+			}
+		}
+
+		@Override
+		public void onError() {
+			System.out.println("ClientController --> CoapClient error!");
+		}
+	});
+		
+	}
+	
+	private void sendUpdate(String sender) {		
+		if (sender.equals("waiter")){
+			simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForManager,
+					new ServerReply("", sender, WaiterState.getInstance()));			
+		}
+		else if(sender.equals("smartBell")){
+			simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForManager,
+					new ServerReply("", sender, SmartBellState.getInstance()));			
+		}
+		else if(sender.equals("barman")) {
+			simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForManager,
+					new ServerReply("", sender, BarmanState.getInstance()));			
+		}
+		else {
+			System.out.println("%%%%%%%%%%%%%% managerController - Sender not recognized! %%%%%%%%%%%%%%");
+		}
+	}
 }

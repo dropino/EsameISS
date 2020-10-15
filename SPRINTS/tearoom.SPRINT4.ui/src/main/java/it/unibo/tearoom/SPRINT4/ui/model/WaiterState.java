@@ -7,12 +7,22 @@ public class WaiterState {
 	int dirtyTables;
 	int deployedToExit;
 	int earnings;
+	
+	static WaiterState waiterState = null;
 
-	public WaiterState() {
+	public static WaiterState getInstance() {
+		if (waiterState == null)
+			waiterState = new WaiterState(2, 0, 0, 0, 0, 0);
+		
+		return waiterState;
+	}
+
+	
+	private WaiterState() {
 
 	}
 
-	public WaiterState(int freeTables, int deployedToTable, int teasDelivered, int dirtyTables,
+	private WaiterState(int freeTables, int deployedToTable, int teasDelivered, int dirtyTables,
 			int deployedToExit, int earnings) {
 		this.freeTables = freeTables;
 		this.deployedToTable = deployedToTable;

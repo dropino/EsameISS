@@ -504,8 +504,7 @@ QActor smartbell context ctxsmartbell {
 			sJson.setClientArrived(true)
 			sJson.setClientDenied(true)
 		#]
-		updateResource[#sJson.toJson()#]		
-		
+		updateResource[#sJson.toJson()#]				
 	}
 	Goto waitForClient
 	

@@ -14,6 +14,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import connQak.connQakCoap;
+import it.unibo.tearoom.SPRINT4.ui.config.WebSocketConfig;
+import it.unibo.tearoom.SPRINT4.ui.model.ServerReply;
 
 @Service
 public class BarmanService {
@@ -60,6 +62,32 @@ public class BarmanService {
 					ex.printStackTrace();
 				}
 
+				boolean busy = msg.get("busy").asBoolean();
+				String preparingOrder = msg.get("PreparingOrder").asText();
+				boolean orderReady = msg.get("OrderReady").asBoolean();
+				int PreparingForTable = msg.get("PreparingForTable").asInt();
+				int OrderReadyTable = msg.get("OrderReadyTable").asInt();
+				
+				if (busy == false && PreparingForTable == -1
+						&& preparingOrder.equals("") && OrderReadyTable  == -1
+						&& orderReady == false) {
+					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
+					sendUpdate("barman");
+				} 
+				else if (busy == true && PreparingForTable != -1
+						&& !preparingOrder.equals("")) {
+					barmanState.setOrdersReceived(barmanState.getOrdersReceived()+1);
+					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
+					sendUpdate("barman");
+					
+				} 
+				else if (PreparingForTable == -1 && preparingOrder.equals("")
+						&& OrderReadyTable != -1 && orderReady == true) {
+					barmanState.setTeasPreared(barmanState.getTeasPreared()+1);
+					barmanState.setTeasReady(barmanState.getTeasReady()+1);
+					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
+					sendUpdate("barman");
+				}
 			}
 
 			@Override
@@ -68,6 +96,25 @@ public class BarmanService {
 			}
 		});
 	}
+	
+	private void sendUpdate(String sender) {		
+		if (sender.equals("waiter")){
+			simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForManager,
+					new ServerReply("", sender, waiterState));			
+		}
+		else if(sender.equals("smartBell")){
+			simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForManager,
+					new ServerReply("", sender, smartBellState));			
+		}
+		else if(sender.equals("barman")) {
+			simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForManager,
+					new ServerReply("", sender, barmanState));			
+		}
+		else {
+			System.out.println("%%%%%%%%%%%%%% managerController - Sender not recognized! %%%%%%%%%%%%%%");
+		}
+	}
+
 	
 
 }

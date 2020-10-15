@@ -32,7 +32,7 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 				var PL				= ""
 				var Dest			= ""
 		
-				val wJson = json.waiterJson()
+				val wJson = json.WaiterJson()
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State

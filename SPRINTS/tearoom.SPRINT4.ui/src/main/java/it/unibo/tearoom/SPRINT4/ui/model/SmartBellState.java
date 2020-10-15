@@ -7,11 +7,20 @@ public class SmartBellState {
 	int clientsWaiting;
 	int clientsWaitedLong;
 
-	public SmartBellState() {
+	static SmartBellState smartBellState = null;
+
+	public static SmartBellState getInstance() {
+		if (smartBellState == null)
+			smartBellState = new SmartBellState(0, 0, 0, 0);
+		
+		return smartBellState;
+	}
+	
+	private SmartBellState() {
 
 	}
 
-	public SmartBellState(int clientsProcessed, int clientsAdmitted, int clientsWaiting,
+	private SmartBellState(int clientsProcessed, int clientsAdmitted, int clientsWaiting,
 			int clientsWaitedLong) {
 		this.clientsProcessed = clientsProcessed;
 		this.clientsAdmitted = clientsAdmitted;

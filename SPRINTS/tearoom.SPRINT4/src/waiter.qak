@@ -454,6 +454,8 @@ QActor smartbell context ctxsmartbell {
  	var Temp = 0
  	var CID = 0 
  	val sJson = json.smartBellJson()
+ 	
+ 	var id = 1
  #]
  
 	State s0 initial {
@@ -498,7 +500,8 @@ QActor smartbell context ctxsmartbell {
 		println("  SmartBell | Temp is OK  ")
 		println("  SmartBell | Client Accepted  ")
 		[# 	
-			CID = (1..100).random()
+			id++;
+			CID = id; 
 			sJson.setClientArrived(false)
 			sJson.setClientAccepted(CID)
 		#]		

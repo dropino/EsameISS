@@ -46,7 +46,6 @@ class waiterJson : ActorJson {
 		jobj.put("receivedRequest", stat)
 	}
 
-
 	//transforms the jsonObject in a json string string
 	override fun toJson(): String {
 		return jobj.toString()

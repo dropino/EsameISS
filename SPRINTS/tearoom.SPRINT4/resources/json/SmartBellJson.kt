@@ -18,11 +18,11 @@ class smartBellJson : ActorJson {
 		jobj.put("ClientArrived", stat)
 	}
 
-	fun setClientAccepted(stat: Int) {
+	fun setClientAccepted(stat: Boolean) {
 		jobj.put("ClientAccepted", stat)
 	}
 
-	fun setClientDenied(stat: Int) {
+	fun setClientDenied(stat: Boolean) {
 		jobj.put("ClientDenied", stat)
 	}
 
@@ -36,8 +36,8 @@ class smartBellJson : ActorJson {
 	override fun reset() {
 		jobj.put("busy", false)
 		jobj.put("ClientArrived", false)
-		jobj.put("ClientAccepted", -1)
-		jobj.put("ClientDenied", -1)
+		jobj.put("ClientAccepted", true)
+		jobj.put("ClientDenied", true)
 	}
 
 }

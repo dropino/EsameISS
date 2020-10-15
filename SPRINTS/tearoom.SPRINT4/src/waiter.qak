@@ -8,7 +8,6 @@ mqttBroker "localhost" : 1883 eventTopic "unibo/basicrobot"
 Event    waiterwalkerstarted   : waiterwalkerstarted(X)
 Event    walkerstarted   	: walkerstarted(X)
 
-
 Request	 doPlan 			: doPlan(X,Y)
 Reply 	 walkerError 		: walkerError( $XT,$YT )
 Reply	 walkerDone 		: walkerDone(X,Y)
@@ -99,17 +98,26 @@ QActor waiter context ctxtearoom {
   		[#
 			CCID = ""
 			CTABLE = 0
-			wJson.reset()
+
+			wJson.setBusy(true)
+			wJson.setClientID("")
+			wJson.setTable(-1)
+			wJson.setOrder("")
+			wJson.setPayment(false)
+			wJson.setWaitTime(-1)
+			wJson.setMovingTo("")
+			wJson.setMovingFrom("")
+			wJson.ReceivedRequest("")
   		#]
- 		println("WAITER | listening... ")
+  		println("WAITER | listening... ")
  		updateResource [#wJson.toJson()#]
 	}
-	  Transition t0  	whenTime 	15000	 	 		-> goHome
-	  					whenRequest waitTime			-> answerTime
-	  					whenRequest	deploy			 	-> handleDeploy
-						whenRequest	clientRequest 		-> answerClientRequest
-						whenMsg 	orderReady 	 		-> getDrink
-						whenMsg 	tableDirty	 		-> cleanTable
+	Transition t0  	whenTime 	15000	 	 		-> goHome
+	  				whenRequest waitTime			-> answerTime
+	  				whenRequest	deploy			 	-> handleDeploy
+					whenRequest	clientRequest 		-> answerClientRequest
+					whenMsg 	orderReady 	 		-> getDrink
+					whenMsg 	tableDirty	 		-> cleanTable
 						
   	
   	State goHome {
@@ -118,9 +126,14 @@ QActor waiter context ctxtearoom {
 			println("WAITER | current waiter state: $CurST")
 		}
   		
+  		//se non sono a casa ci vado
   		if [# CurST != "athome" #] {  			
  			request waiterwalker -m moveForTask : moveForTask(home, 1)
  			solve ( changeWaiterState(athome) )	
+ 			[#
+ 				wJson.setMovingTo("home")
+ 			#]
+ 			updateResource [#wJson.toJson()#] 
   		} 
 		else{ 
 			forward waiter -m rest : rest(0)
@@ -151,7 +164,8 @@ QActor waiter context ctxtearoom {
 		[#
 			wJson.setBusy(true)
 			wJson.setWaitTime(WaitTime)
-		#]	
+		#]
+ 		updateResource [#wJson.toJson()#] 
   	}
   	Goto listening
 
@@ -167,8 +181,14 @@ QActor waiter context ctxtearoom {
 				wJson.setClientID(CCID)
 				wJson.setTable(CTABLE)
 				wJson.setMovingTo(Dest)
-				wJson.setReceivedRequest("deploy")	  				
+				if (Dest != "table"){
+					wJson.setReceivedRequest("DeployEntrance")	  				
+  				}
+  				else {
+					wJson.setReceivedRequest("DeployExit")		
+  				}
   			#]
+ 			updateResource [#wJson.toJson()#] 
   		}
   	}
   	Goto goToEntrance if [# Dest == "table" #] else deployClientExit
@@ -179,17 +199,24 @@ QActor waiter context ctxtearoom {
 		ifSolved { [# Ntables = getCurSol("N").toString().toInt()  #] 
 			println("WAITER | numavailabletables=$Ntables")
 		}
+		
 	  	if [# WaitingClient && Ntables == 0 #] {
 	  		println("WAITER | ASKING CLIENT TO WAIT SOME MORE")
-	  		
 			replyTo deploy with  arrived : arrived(ko)
 			forward waiter -m listen : listen(ok)
+			
+			[#
+				wJson.setWaitTime(999) //aka long wait	
+			#]
+			
+			updateResource [#wJson.toJson()#] 
+			
 		}
 		else {
 			[# WaitingClient = false #]
 			println("WAITER | GOING to ENTRANCE door ")
 			request waiterwalker -m moveForTask : moveForTask(entrancedoor, 1)
-			solve ( changeWaiterState(moving) )	
+			solve ( changeWaiterState(moving) )
 		}		
 	} 
 	 Transition t0		whenReply	movementDone -> deployClientEntrance
@@ -457,6 +484,11 @@ QActor smartbell context ctxsmartbell {
 	
 	State waitForClient {
 		println("  SmartBell | Wait Client  ")
+		[#
+			sJson.reset()
+		#]
+		updateResource[#sJson.toJson()#]
+	
 	}
 	Transition t0 whenRequest ringBell -> checkTemp
 	 
@@ -481,6 +513,7 @@ QActor smartbell context ctxsmartbell {
 		[#
 			sJson.setBusy(true)
 			sJson.setClientArrived(true)
+			sJson.setClientDenied(true)
 		#]
 		updateResource[#sJson.toJson()#]		
 		
@@ -495,11 +528,12 @@ QActor smartbell context ctxsmartbell {
 			id++;
 			CID = id; 
 			sJson.setClientArrived(false)
-			sJson.setClientAccepted(CID)
+			sJson.setClientAccepted(true)
 		#]		
+		updateResource[#sJson.toJson()#]		
+
 		replyTo ringBell with tempStatus : tempStatus (1, $CID)
 		forward waiter -m clientID : clientID ($CID)
-		updateResource[#sJson.toJson()#]		
 	}
 	Goto waitForClient		
 }

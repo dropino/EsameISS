@@ -48,7 +48,15 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 						
 									CCID = ""
 									CTABLE = 0
-									wJson.reset()
+						
+									wJson.setBusy(true)
+									wJson.setClientID("")
+									wJson.setTable(-1)
+									wJson.setOrder("")
+									wJson.setPayment(false)
+									wJson.setWaitTime(-1)
+									wJson.setMovingTo("")
+									wJson.ReceivedRequest("")
 						println("WAITER | listening... ")
 						updateResourceRep(wJson.toJson() 
 						)
@@ -73,6 +81,10 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 						if(  CurST != "athome"  
 						 ){request("moveForTask", "moveForTask(home,1)" ,"waiterwalker" )  
 						solve("changeWaiterState(athome)","") //set resVar	
+						
+						 				wJson.setMovingTo("home")
+						updateResourceRep(wJson.toJson() 
+						)
 						}
 						else
 						 {forward("rest", "rest(0)" ,"waiter" ) 
@@ -103,6 +115,8 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 						
 									wJson.setBusy(true)
 									wJson.setWaitTime(WaitTime)
+						updateResourceRep(wJson.toJson() 
+						)
 					}
 					 transition( edgeName="goto",targetState="listening", cond=doswitch() )
 				}	 
@@ -119,7 +133,14 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 												wJson.setClientID(CCID)
 												wJson.setTable(CTABLE)
 												wJson.setMovingTo(Dest)
-												wJson.setReceivedRequest("deploy")	  				
+												if (Dest != "table"){
+													wJson.setReceivedRequest("DeployEntrance")	  				
+								  				}
+								  				else {
+													wJson.setReceivedRequest("DeployExit")		
+								  				}
+								updateResourceRep(wJson.toJson() 
+								)
 						}
 					}
 					 transition( edgeName="goto",targetState="goToEntrance", cond=doswitchGuarded({ Dest == "table"  
@@ -139,6 +160,10 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 						 ){println("WAITER | ASKING CLIENT TO WAIT SOME MORE")
 						answer("deploy", "arrived", "arrived(ko)"   )  
 						forward("listen", "listen(ok)" ,"waiter" ) 
+						
+										wJson.setWaitTime(999) //aka long wait	
+						updateResourceRep(wJson.toJson() 
+						)
 						}
 						else
 						 { WaitingClient = false  

@@ -75,34 +75,75 @@ public class ManagerController {
 				JsonNode msg = null;
 				try {
 					msg = mapper.readTree(response.getResponseText());
-				} catch (Exception ex) { 
+				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
 
-				if (response.getResponseText().contains("listening")) {
+				boolean busy = msg.get("busy").asBoolean();
+				String clientID = msg.get("clientID").asText();
+				int table = msg.get("table").asInt();
+				String order = msg.get("order").asText();
+				boolean payment = msg.get("payment").asBoolean();
+				int waitTime = msg.get("waitTime").asInt();
+				String movingTo = msg.get("movingTo").asText();
+				String movingFrom = msg.get("movingFrom").asText();
+				String receivedRequest = msg.get("receivedRequest").asText();
+
+				// listening
+				if (busy == false) {
 					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
 					simpMessagingTemplate.convertAndSend("topic/manager",
 							new ServerReply("", "listening"));
-				} else if (response.getResponseText().contains("Client_must_wait")) {
+				}
+				// client arrives and gets told to wait for waitTime
+				else if (busy == true && waitTime >= 0) {
 					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
-					simpMessagingTemplate.convertAndSend("topic/manager",
-							new ServerReply("", "Client_must_wait"));
-				} else if (response.getResponseText().contains("waiter_arrived")) {
+					simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForClient,
+							new ServerReply("", "wait: " + waitTime));
+				}
+				// handleDeploy
+				else if (busy == true && !clientID.equals("") && table != -1 && !movingTo.equals("")
+						&& !receivedRequest.equals("deploy")) {
 					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
-					simpMessagingTemplate.convertAndSend("topic/manager",
-							new ServerReply("", "waiter_arrived"));
-				} else if (response.getResponseText().contains("waiter_rdy_leave")) {
+					simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForClient, new ServerReply("",
+							"receivedRequest " + receivedRequest + ", table: " + table + ", clientID: " + clientID));
+				}
+				// transfer drink order
+				else if (!order.equals("")) {
 					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
-					simpMessagingTemplate.convertAndSend("topic/manager",
-							new ServerReply("", "waiter_rdy_leave"));
-				} else if (response.getResponseText().contains("waiter_rdy_getDrink")) {
+					simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForClient,
+							new ServerReply("", "order: " + order));
+				}
+				// arriva richiesta pulire tavolo
+				else if (busy == true && table != -1 && receivedRequest == "tableDirty" && !movingTo.equals("")) {
 					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
-					simpMessagingTemplate.convertAndSend("topic/manager",
-							new ServerReply("", "waiter_rdy_getDrink"));
-				} else if (response.getResponseText().contains("deliver-tea-$CTABLE")) {
+					simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForClient,
+							new ServerReply("", "cleaning table: " + table));
+				}
+				// pulisci tavolo
+				else if (busy == true && table != -1 && receivedRequest == "tableDirty" && movingTo.equals("")) {
 					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
-					simpMessagingTemplate.convertAndSend("topic/manager",
-							new ServerReply("", "deliver-tea-$CTABLE"));
+					simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForClient,
+							new ServerReply("", "cleaning table: " + table));
+				}
+				// get drink
+				else if (busy == true && table != -1 && receivedRequest.equals("drinkReady")
+						&& movingTo.equals("barman")) {
+					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
+					simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForClient,
+							new ServerReply("", "drink ready for table: " + table));
+				}
+				// bring drink
+				else if (busy == true && table != -1 && receivedRequest.equals("bringDrink")) {
+					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
+					simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForClient,
+							new ServerReply("", "bringing drink to table: " + table));
+				}
+				// leave drink at table
+				else if (waitTime != -1) {
+					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
+					simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForClient,
+							new ServerReply("", "brought drink at table: " + table + " max wait time: " + waitTime));
 				}
 			}
 
@@ -122,14 +163,22 @@ public class ManagerController {
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
-				
-				if (response.getResponseText().contains("Discard")) {
+
+				if (msg.get("busy").asBoolean() == true) {
 					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
-					simpMessagingTemplate.convertAndSend("topic/manager",
-							new ServerReply("", "Discard"));
-				} else if (response.getResponseText().contains("Accept")) {
+					simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForClient,
+							new ServerReply("", "checkTemp"));
+				} else if (msg.get("busy").asBoolean() == true && msg.get("ClientArrived").asBoolean() == true
+						&& msg.get("ClientDenied").asInt() != -1) {
+					int CID = msg.get("ClientDenied").asInt();
 					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
-					simpMessagingTemplate.convertAndSend("topic/manager", new ServerReply("", "Accept"));
+					simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForClient,
+							new ServerReply("", "TempKO" + CID));
+				} else if (msg.get("ClientArrived").asBoolean() == false && msg.get("ClientAccepted").asInt() != -1) {
+					int CID = msg.get("ClientAccepted").asInt();
+					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
+					simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForClient,
+							new ServerReply("", "TempOK" + CID));
 				}
 			}
 
@@ -150,11 +199,24 @@ public class ManagerController {
 					ex.printStackTrace();
 				}
 				msg.get("order_ready");
-				// STILL MISSING FROM QAK
-				if (response.getResponseText().contains("making-tea")) {
+				if (msg.get("busy").asBoolean() == false && msg.get("PreparingForTable").asInt() == -1
+						&& msg.get("PreparingOrder").asText().equals("") && msg.get("OrderReadyTable").asInt() == -1
+						&& msg.get("OrderReady").asBoolean() == false) {
 					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
-					simpMessagingTemplate.convertAndSend("topic/manager",
-							new ServerReply("", "making-tea"));
+					simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForClient,
+							new ServerReply("", "waitForOrder"));
+				} else if (msg.get("busy").asBoolean() == true && msg.get("PreparingForTable").asInt() != -1
+						&& msg.get("PreparingOrder").asText() != "") {
+					int TABLE = msg.get("PreparingForTable").asInt();
+					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
+					simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForClient,
+							new ServerReply("", "preparingOrder for table: " + TABLE));
+				} else if (msg.get("PreparingForTable").asInt() == -1 && msg.get("PreparingOrder").asText().equals("")
+						&& msg.get("OrderReadyTable").asInt() != -1 && msg.get("OrderReady").asBoolean() == true) {
+					int TABLE = msg.get("OrderReadyTable").asInt();
+					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
+					simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForClient,
+							new ServerReply("", "orderReady for table: " + TABLE));
 				}
 			}
 

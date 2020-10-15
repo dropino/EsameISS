@@ -236,8 +236,8 @@ class testMultiClient {
 //			delay(15000)
 		println("---------------------------	TESTDEPLOYMENT		---------------------------")
 		MsgUtil.sendMsg(
-			MsgUtil.buildRequest("test" + IDC, "deploy", "deploy(entrancedoor, table, $IDC)", "waiter"),
-			waiter!!
+				MsgUtil.buildRequest("test" + IDC, "deploy", "deploy(entrancedoor, table, $IDC)", "waiter"),
+				waiter!!
 		)
 		delay(100)
 

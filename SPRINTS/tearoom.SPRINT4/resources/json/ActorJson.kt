@@ -2,8 +2,8 @@ package json
 
 interface ActorJson {
 
-	fun toJson():String
-	
+	fun toJson(): String
+
 	fun reset()
-	
+
 }

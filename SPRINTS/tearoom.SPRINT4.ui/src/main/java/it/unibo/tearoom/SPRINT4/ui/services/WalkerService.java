@@ -14,12 +14,14 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import connQak.connQakCoap;
+import it.unibo.tearoom.SPRINT4.ui.config.WebSocketConfig;
+import it.unibo.tearoom.SPRINT4.ui.model.ServerReply;
 
 @Service
-public class BarmanService {
+public class WalkerService {
 
 
-    connQakCoap barmanConn;
+    connQakCoap walkerConn;
 
     
 	/*
@@ -30,26 +32,35 @@ public class BarmanService {
 	 */
 	@Autowired
 	SimpMessagingTemplate simpMessagingTemplate;
+    
+//	static SmartbellService service = null;
+//
+//	public static SmartbellService getInstance() {
+//		if (service == null)
+//			service = new SmartbellService();
+//		
+//		return service;
+//
+//	}
 
-	public BarmanService(SimpMessagingTemplate msgTemp) {
+	public WalkerService(SimpMessagingTemplate msgTemp) {
 		
-	    System.out.println("&&&&&&&&&&& BARMAN SERVICE: trying to configure Smartbell connection");
-	    barmanConn = new connQakCoap("localhost", "8070", "barman", "ctxbarman"  );  
-	    barmanConn.createConnection();
+	    System.out.println("&&&&&&&&&&& WALKER SERVICE: trying to configure Smartbell connection");
+	    walkerConn = new connQakCoap("localhost", "8050", "walker", "ctxwalker"  );  
+	    walkerConn.createConnection();
 	    
 	    simpMessagingTemplate = msgTemp;
 	}   
-	
 
 	@ExceptionHandler 
 	public ResponseEntity<String> handle(Exception ex) { 
 		HttpHeaders responseHeaders = new HttpHeaders();
-		return new ResponseEntity<String>("!!!!!!-----BarmanService ERROR " + ex.getMessage(), responseHeaders,
+		return new ResponseEntity<String>("!!!!!!-----WalkerService ERROR " + ex.getMessage(), responseHeaders,
 				HttpStatus.CREATED);
 	}
 
 	public void prepareUpdating() {
-		barmanConn.getClient().observe(new CoapHandler() {
+		walkerConn.getClient().observe(new CoapHandler() {
 			@Override
 			public void onLoad(CoapResponse response) {
 				ObjectMapper mapper = new ObjectMapper(); 
@@ -60,6 +71,11 @@ public class BarmanService {
 					ex.printStackTrace();
 				}
 
+				if(response.getResponseText().contains("deliver-tea")) {
+					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
+					simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForClientInTearoom, 
+							new ServerReply("", "delivery" ));
+				}
 			}
 
 			@Override
@@ -68,6 +84,5 @@ public class BarmanService {
 			}
 		});
 	}
-	
 
 }

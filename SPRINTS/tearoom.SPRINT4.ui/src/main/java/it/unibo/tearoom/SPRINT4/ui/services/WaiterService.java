@@ -1,8 +1,5 @@
 package it.unibo.tearoom.SPRINT4.ui.services;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.eclipse.californium.core.CoapHandler;
 import org.eclipse.californium.core.CoapResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,12 +64,6 @@ public class WaiterService {
 					msg = mapper.readTree(response.getResponseText());
 				} catch (Exception ex) {
 					ex.printStackTrace();
-				}
-
-				if(response.getResponseText().contains("deliver-tea")) {
-					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
-					simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForClientInTearoom, 
-							new ServerReply("", "delivery" ));
 				}
 			}
 

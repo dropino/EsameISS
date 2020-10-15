@@ -468,7 +468,7 @@ QActor smartbell context ctxsmartbell {
 		[#
 			sJson.setBusy(true)
 			sJson.setClientArrived(true)
-			sJson.ClientDenied($CID)
+			sJson.setClientDenied(CID)
 		#]
 		updateResource[#sJson.toJson()#]		
 		

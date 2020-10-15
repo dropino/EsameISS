@@ -1,6 +1,8 @@
-package it.unibo.tearoom.SPRINT4.ui;
+package it.unibo.tearoom.SPRINT4.ui.controller;
 
 import java.security.Principal;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.californium.core.CoapHandler;
 import org.eclipse.californium.core.CoapResponse;
@@ -17,6 +19,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import connQak.configurator;
 import connQak.connQakCoap;
@@ -40,6 +44,18 @@ public class ClientController {
     
     connQakCoap smartbellConn;   
     connQakCoap waiterConn;
+    
+	/*
+	 * ---------------------------------------------------------- Client update on
+	 * resource change to handle events from CoAP resource
+	 * ---------------------------------------------------------- Update the page
+	 * vie socket.io when the application-resource changes. Thanks to Eugenio Cerulo
+	 */
+	@Autowired
+	SimpMessagingTemplate simpMessagingTemplate;
+    
+    /* Map to store ClientIDs-UUIDs correspondencies */
+    private Map<String, String> userNames = new HashMap<>();
      
 	public ClientController() {
 	    configurator.configure();
@@ -57,9 +73,8 @@ public class ClientController {
 	      
 	 }
     
-	 @GetMapping("/") 	 	 
+	 @GetMapping("/main") 	 	 
 	 public String entry(Model viewmodel) {
-		  //viewmodel.addAttribute("arg", "Entry page loaded. Please use the buttons ");
 	 	 return htmlPageMain;
 	 } 
 	   
@@ -81,15 +96,6 @@ public class ClientController {
 				HttpStatus.CREATED);
 	}
 
-	/*
-	 * ---------------------------------------------------------- Client update on
-	 * resource change to handle events from CoAP resource
-	 * ---------------------------------------------------------- Update the page
-	 * vie socket.io when the application-resource changes. Thanks to Eugenio Cerulo
-	 */
-	@Autowired
-	SimpMessagingTemplate simpMessagingTemplate;
-
 	private void preparePageUpdating() {
 		waiterConn.getClient().observe(new CoapHandler() {
 			@Override
@@ -110,8 +116,7 @@ public class ClientController {
 	}
 
 	/*
-	 * ---------------------------------------------------------- Message-handling
-	 * Controller ----------------------------------------------------------
+	 * ------------------ Message-handling Controller ----------------------
 	 */
 
 	/*
@@ -133,21 +138,22 @@ public class ClientController {
 	 * message with ClientID , time to wait and the javascript will handle the view
 	 * to show the countdown.
 	 * 
-	 * 	If the Client got in or is waiting in the hall, he's now only in contact with the waiter, so the message mapping will follow /waiter.
+	 * 	If the Client got in or is waiting in the hall, he's now only in contact with the waiter, 
+	 *  so the message mapping will follow /waiter.
 	 * */
 	@MessageMapping("/smartbell") 
 	@SendToUser("/topic/main")
 	
 	public ServerReply ringSmartbell(@Header("simpSessionId") String sessionId, Principal principal) throws Exception {
 	 		
-		System.out.println("!!!!!------------------- principal name" + principal.getName()  );
-		System.out.println("!!!!!------------------- header session id" + sessionId  );
+		System.out.println("!!!!!------------------- principal name " + principal.getName()  );
+		System.out.println("!!!!!------------------- header session id " + sessionId  );
 		
 
 		ApplMessage ringMsg = MsgUtil.buildRequest("web", "ringBell", "ringBell(ok)", "smartbell" );
 	 		
 	 		ApplMessage reply = smartbellConn.request( ringMsg );  
-			System.out.println("------------------- Controller appl message reply content p =" + reply.msgContent()  );
+			System.out.println("------------------- Controller appl message reply RINGBELL p = " + reply.msgContent()  );
 			
 			String[] ringRepArgs = ApplMessageUtils.extractApplMessagePayloadArgs(reply);
 			
@@ -158,53 +164,72 @@ public class ClientController {
 			}
 			else {
 			  //on tempStatus msg the clientId is the second argument, so idx = 1
-				System.out.println("------------------- Controller appl message content =" + ringRepArgs[1]  );
 		 		ApplMessage askWaitTime = MsgUtil.buildRequest("web", "waitTime", "waitTime(" + ringRepArgs[1] + ")", "waiter" );
-		 		ApplMessage timeToWait = waiterConn.request( askWaitTime );   
+		 		ApplMessage timeToWait = waiterConn.request( askWaitTime ); 
+		 		
+				System.out.println("------------------- Controller appl message reply WAITTIME p = " + reply.msgContent()  );
+
 		 		
 		 		String ttw = ApplMessageUtils.extractApplMessagePayload(timeToWait, 0); 
 
-				System.out.println("------------------- Controller answer to client = " + ringRepArgs[1] + "," + ttw  );
+				System.out.println("------------------- Controller ANSWER TO CLIENT = " + ringRepArgs[1] + ", " + ttw  );
 
-				return new  ServerReply("tearoom",ringRepArgs[1], ttw);   
+				return new  ServerReply("tearoom", ringRepArgs[1], ttw);   
 				
 			}	
 	}
 	
 	@MessageMapping("/waiter")   
-	@SendToUser("/topic/tearoom") 
-	public ServerReply waiterInteraction(@Payload ClientRequest req, @Header("simpSessionId") String sessionId, Principal principal) throws Exception {
-		System.out.println("!!!!!------------------- /app/waiter principal name" + principal.getName()  );
-		System.out.println("!!!!!-------------------  /app/waiter header session id" + sessionId  );
+	//@SendToUser("/topic/tearoom") 
+	public void waiterInteraction(@Payload ClientRequest req, @Header("simpSessionId") String sessionId, Principal principal) throws Exception {
+		System.out.println("!!!!!------------------- /app/waiter principal name " + principal.getName()  );
+		System.out.println("!!!!!-------------------  /app/waiter header session id " + sessionId  );
 
 		/*
 		 * Req ID: 0) waitTime -> waitTime is automatically asked by the smartBell
 		 * interaction function deploy*) deployEntrance, deployExit service*)
 		 * requestOrder, requestPayment order) forwardOrder pay) forwardPayment
 		 */
-
-		if (req.getName().contains("deploy"))
-			return askForDeployment(req);
+		
+		ServerReply result = null;
+		
+		if (req.getName().contains("deploy")) {
+			if (!this.userNames.containsKey(req.getPayload2()))
+				this.userNames.put(req.getPayload2(), principal.getName());
+			result = askForDeployment(req);
+		}
 
 		if (req.getName().contains("service"))
-			return askForService(req);
+			result = askForService(req);
 
 		if (req.getName().compareTo("order") == 0) {
 			ApplMessage msg = MsgUtil.buildDispatch("web", "order", "order(" + req.getPayload0() + ")", "waiter");
 			waiterConn.forward(msg);
-			return new ServerReply("", "success");
+			result = new ServerReply("", "success");
 		}
 
 		if (req.getName().compareTo("pay") == 0) {
 			ApplMessage msg = MsgUtil.buildDispatch("web", "pay", "pay(" + req.getPayload0() + ")", "waiter");
 			waiterConn.forward(msg);
-			return new ServerReply("", "success");
+			result = new ServerReply("", "success");
 		}
-
-		return new ServerReply("", "error");
+		else
+			result = new ServerReply("", "error");
+		
+		 ObjectMapper Obj = new ObjectMapper(); 
+		  
+	        try { 
+	            String jsonStr = Obj.writeValueAsString(result); 
+	  
+	            // Displaying JSON String 
+	            System.out.println(jsonStr); 
+	        } catch (Exception e) { 
+	            e.printStackTrace(); 
+	        } 
 	}
 
 	private ServerReply askForDeployment(ClientRequest req) {
+				
 		ApplMessage msg = MsgUtil.buildRequest("web", "deploy",
 				"deploy(" + req.getPayload0() + "," + req.getPayload1() + "," + req.getPayload2() + ")", "waiter");
 		System.out.println("------------------- Controller sending deployment message msg =" + msg.toString());

@@ -1,10 +1,12 @@
-package it.unibo.tearoom.SPRINT4.ui;
+package it.unibo.tearoom.SPRINT4.ui.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
+
+import it.unibo.tearoom.SPRINT4.ui.handler.CustomHandshakeHandler;
 
 @Configuration
 @EnableWebSocketMessageBroker
@@ -13,6 +15,10 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 public static final String brokerDestinationPrefix = "/topic";
 public static final String applDestinationPrefix = "/app";
 public static final String stompEndpointPath = "/it-unibo-iss";
+
+public static final String topicForClientMain = "/user/topic/main";
+public static final String topicForClientInTearoom = "/user/topic/tearoom";
+public static final String topicForManager = "/topic/manager";
 
 
 	@Override

@@ -31,9 +31,8 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 				var CurST			= ""
 				var PL				= ""
 				var Dest			= ""
-				
+		
 				val wJson = json.waiterJson()
-				
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
@@ -47,9 +46,9 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 				state("listening") { //this:State
 					action { //it:State
 						
-						  				CCID = ""
-						  				CTABLE = 0
-						  				wJson.reset()
+									CCID = ""
+									CTABLE = 0
+									wJson.reset()
 						println("WAITER | listening... ")
 						updateResourceRep(wJson.toJson() 
 						)
@@ -96,11 +95,10 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 						 ){answer("waitTime", "wait", "wait(0)"   )  
 						}
 						else
-						 { WaitTime = MaxWaitTime
-						 				WaitingClient = true  
+						 { 
+						 				WaitTime = MaxWaitTime
+						 				WaitingClient = true 
 						 answer("waitTime", "wait", "wait($WaitTime)"   )  
-						 updateResourceRep("Client_must_wait" 
-						 )
 						 }
 						
 									wJson.setBusy(true)
@@ -116,9 +114,7 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 								
 								  				CTABLE = payloadArg(0).toString().toIntOrNull()
 								  				Dest = payloadArg(1).toString()
-								  				CCID = payloadArg(2).toString()
-								  				
-								  				
+								  				CCID = payloadArg(2).toString()	
 												wJson.setBusy(true)
 												wJson.setClientID(CCID)
 												wJson.setTable(CTABLE)
@@ -247,13 +243,20 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 						
 									wJson.setBusy(true)
 									wJson.setTable(CTABLE)
-									wJson.setMovingTo("table "+CTABLE)						
+									wJson.setMovingTo("table "+CTABLE)
+									wJson.setReceivedRequest("tableDirty")						
+						updateResourceRep( wJson.toJson()  
+						)
 					}
 					 transition(edgeName="t021",targetState="atTableToClean",cond=whenReply("movementDone"))
 					transition(edgeName="t022",targetState="error",cond=whenReply("walkbreak"))
 				}	 
 				state("atTableToClean") { //this:State
 					action { //it:State
+						
+									wJson.setMovingTo("")
+						updateResourceRep( wJson.toJson()  
+						)
 						println("WAITER | cleaning table $CTABLE... ")
 						delay(5000) 
 						solve("cleanTable($CTABLE)","") //set resVar	
@@ -272,6 +275,8 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 						
 									wJson.setBusy(true)
 									wJson.setTable(CTABLE)
+									wJson.setReceivedRequest("drinkReady")
+									wJson.setMovingTo("barman")						
 						updateResourceRep( wJson.toJson()  
 						)
 					}
@@ -282,6 +287,9 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 					action { //it:State
 						println("WAITER | taking tea... ")
 						println("WAITER | GOING TO CLIENT table $CTABLE... ")
+						
+									wJson.setReceivedRequest("bringDrink")
+									wJson.setMovingTo("")	
 						request("moveForTask", "moveForTask(teatable,$CTABLE)" ,"waiterwalker" )  
 					}
 					 transition(edgeName="t025",targetState="leaveDrinkAtTable",cond=whenReply("movementDone"))

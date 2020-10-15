@@ -1,19 +1,19 @@
 package it.unibo.tearoom.SPRINT4.ui.model;
 
 public class WaiterState {
-	String freeTables;
-	String deployedToTable;
-	String teasDelivered;
-	String dirtyTables;
-	String deployedToExit;
-	String earnings;
+	int freeTables;
+	int deployedToTable;
+	int teasDelivered;
+	int dirtyTables;
+	int deployedToExit;
+	int earnings;
 
 	public WaiterState() {
 
 	}
 
-	public WaiterState(String freeTables, String deployedToTable, String teasDelivered, String dirtyTables,
-			String deployedToExit, String earnings) {
+	public WaiterState(int freeTables, int deployedToTable, int teasDelivered, int dirtyTables,
+			int deployedToExit, int earnings) {
 		this.freeTables = freeTables;
 		this.deployedToTable = deployedToTable;
 		this.teasDelivered = teasDelivered;
@@ -22,51 +22,51 @@ public class WaiterState {
 		this.earnings = earnings;
 	}
 
-	public String getFreeTables() {
+	public int getFreeTables() {
 		return freeTables;
 	}
 
-	public void setFreeTables(String freeTables) {
+	public void setFreeTables(int freeTables) {
 		this.freeTables = freeTables;
 	}
 
-	public String getDeployedToTable() {
+	public int getDeployedToTable() {
 		return deployedToTable;
 	}
 
-	public void setDeployedToTable(String deployedToTable) {
+	public void setDeployedToTable(int deployedToTable) {
 		this.deployedToTable = deployedToTable;
 	}
 
-	public String getTeasDelivered() {
+	public int getTeasDelivered() {
 		return teasDelivered;
 	}
 
-	public void setTeasDelivered(String teasDelivered) {
+	public void setTeasDelivered(int teasDelivered) {
 		this.teasDelivered = teasDelivered;
 	}
 
-	public String getDirtyTables() {
+	public int getDirtyTables() {
 		return dirtyTables;
 	}
 
-	public void setDirtyTables(String dirtyTables) {
+	public void setDirtyTables(int dirtyTables) {
 		this.dirtyTables = dirtyTables;
 	}
 
-	public String getDeployedToExit() {
+	public int getDeployedToExit() {
 		return deployedToExit;
 	}
 
-	public void setDeployedToExit(String deployedToExit) {
+	public void setDeployedToExit(int deployedToExit) {
 		this.deployedToExit = deployedToExit;
 	}
 
-	public String getEarnings() {
+	public int getEarnings() {
 		return earnings;
 	}
 
-	public void setEarnings(String earnings) {
+	public void setEarnings(int earnings) {
 		this.earnings = earnings;
 	}
 

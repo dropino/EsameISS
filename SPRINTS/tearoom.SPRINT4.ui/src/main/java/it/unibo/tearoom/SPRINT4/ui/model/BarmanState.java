@@ -1,42 +1,42 @@
 package it.unibo.tearoom.SPRINT4.ui.model;
 
 public class BarmanState {
-	String ordersReceived;
-	String teasPreared;
-	String teasReady;
+	int ordersReceived;
+	int teasPreared;
+	int teasReady;
 
 	public BarmanState() {
 
 	}
 
-	public BarmanState(String ordersReceived, String teasPreared, String teasReady) {
+	public BarmanState(int ordersReceived, int teasPreared, int teasReady) {
 		super();
 		this.ordersReceived = ordersReceived;
 		this.teasPreared = teasPreared;
 		this.teasReady = teasReady;
 	}
 
-	public String getOrdersReceived() {
+	public int getOrdersReceived() {
 		return ordersReceived;
 	}
 
-	public void setOrdersReceived(String ordersReceived) {
+	public void setOrdersReceived(int ordersReceived) {
 		this.ordersReceived = ordersReceived;
 	}
 
-	public String getTeasPreared() {
+	public int getTeasPreared() {
 		return teasPreared;
 	}
 
-	public void setTeasPreared(String teasPreared) {
+	public void setTeasPreared(int teasPreared) {
 		this.teasPreared = teasPreared;
 	}
 
-	public String getTeasReady() {
+	public int getTeasReady() {
 		return teasReady;
 	}
 
-	public void setTeasReady(String teasReady) {
+	public void setTeasReady(int teasReady) {
 		this.teasReady = teasReady;
 	}
 

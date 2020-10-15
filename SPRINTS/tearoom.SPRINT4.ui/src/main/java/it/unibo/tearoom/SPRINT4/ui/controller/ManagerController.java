@@ -46,9 +46,9 @@ public class ManagerController {
 	
 	
 	//DA MODIFICARE
-	BarmanState barmanState = new BarmanState("0", "0", "0");
-	SmartBellState smartBellState = new SmartBellState("0", "0", "0", "0");
-	WaiterState waiterState = new WaiterState("0", "0", "0", "0", "0", "0");
+	BarmanState barmanState = new BarmanState(0, 0, 0);
+	SmartBellState smartBellState = new SmartBellState(0, 0, 0, 0);
+	WaiterState waiterState = new WaiterState(2, 0, 0, 0, 0, 0);
 
 	public ManagerController() {
 		configurator.configure();
@@ -95,7 +95,7 @@ public class ManagerController {
 				String clientID = msg.get("clientID").asText();
 				int table = msg.get("table").asInt();
 				String order = msg.get("order").asText();
-				boolean payment = msg.get("payment").asBoolean();
+				int payment = msg.get("payment").asInt();
 				int waitTime = msg.get("waitTime").asInt();
 				String movingTo = msg.get("movingTo").asText();
 				String movingFrom = msg.get("movingFrom").asText();
@@ -103,10 +103,6 @@ public class ManagerController {
 				
 				// listening
 				if (busy == false && movingTo.equals("")) {
-					//FA COSE PER AGGIORNARE LO STATO
-					//FA COSE PER AGGIORNARE LO STATO
-					//FA COSE PER AGGIORNARE LO STATO
-					//FA COSE PER AGGIORNARE LO STATO
 					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
 					sendUpdate("waiter");
 				}
@@ -115,56 +111,52 @@ public class ManagerController {
 					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
 					sendUpdate("waiter");
 				}
-				//????
+				//answer time 
 				else if (busy == true && waitTime != -1) {
+					if(waitTime == 0) {
+						smartBellState.setClientsAdmitted(smartBellState.getClientsAdmitted()+1);
+						waiterState.setFreeTables(waiterState.getFreeTables()-1);
+					}
+					else {
+						smartBellState.setClientsWaiting(smartBellState.getClientsWaiting()+1);
+					}
 					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
+					sendUpdate("smartBell");	
 					sendUpdate("waiter");				
-				}
-				// client arrives and gets told to wait for waitTime
-				else if (busy == true && waitTime >= 0) {
-					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
-					sendUpdate("waiter");
 				}
 				// handleDeploy entrance
 				else if (busy == true && !clientID.equals("") && table != -1 && !movingTo.equals("")
 						&& !receivedRequest.equals("DeployEntrance")) {
+					waiterState.setDeployedToTable(waiterState.getDeployedToTable()+1);
 					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
 					sendUpdate("waiter");
 				}
 				// handleDeploy exit
 				else if (busy == true && !clientID.equals("") && table != -1 && !movingTo.equals("")
 						&& !receivedRequest.equals("DeployExit")) {
+					waiterState.setDeployedToExit(waiterState.getDeployedToExit()+1);
+					waiterState.setDirtyTables(waiterState.getDirtyTables()+1);
 					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
 					sendUpdate("waiter");
 				}
-				// transfer drink order
-				else if (!order.equals("")) {
+				// drink arrives to client
+				else if (receivedRequest.equals("drinkReady")) {
+					waiterState.setTeasDelivered(waiterState.getTeasDelivered()+1);
+					barmanState.setTeasReady(barmanState.getTeasReady()-1);
 					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
 					sendUpdate("waiter");
-				}
-				// arriva richiesta pulire tavolo
-				else if (busy == true && table != -1 && receivedRequest == "tableDirty" && !movingTo.equals("")) {
-					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
-					sendUpdate("waiter");
+					sendUpdate("barman");
 				}
 				// pulisci tavolo
 				else if (busy == true && table != -1 && receivedRequest == "tableDirty" && movingTo.equals("")) {
+					waiterState.setDirtyTables(waiterState.getDirtyTables()-1);
+					waiterState.setFreeTables(waiterState.getFreeTables()+1);
 					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
 					sendUpdate("waiter");
 				}
-				// get drink
-				else if (busy == true && table != -1 && receivedRequest.equals("drinkReady")
-						&& movingTo.equals("barman")) {
-					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
-					sendUpdate("waiter");
-				}
-				// bring drink
-				else if (busy == true && table != -1 && receivedRequest.equals("bringDrink")) {
-					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
-					sendUpdate("waiter");
-				}
-				// leave drink at table
-				else if (waitTime != -1) {
+				//pagamento
+				else if (receivedRequest.equals("Pay") && busy == true && payment > 0) {
+					waiterState.setEarnings(waiterState.getEarnings()+payment);
 					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
 					sendUpdate("waiter");
 				}
@@ -287,7 +279,9 @@ public class ManagerController {
 			simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForManager,
 					new ServerReply("", sender, barmanState));			
 		}
+		else {
+			System.out.println("%%%%%%%%%%%%%% managerController - Sender not recognized! %%%%%%%%%%%%%%");
+		}
 	}
 
-	
 }

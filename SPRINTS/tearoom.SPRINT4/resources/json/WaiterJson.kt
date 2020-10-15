@@ -26,7 +26,7 @@ class waiterJson : ActorJson {
 		jobj.put("order", stat)
 	}
 
-	fun setPayment(stat: Boolean) {
+	fun setPayment(stat: Int) {
 		jobj.put("payment", stat)
 	}
 

@@ -53,10 +53,11 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 									wJson.setClientID("")
 									wJson.setTable(-1)
 									wJson.setOrder("")
-									wJson.setPayment(false)
+									wJson.setPayment(-1)
 									wJson.setWaitTime(-1)
 									wJson.setMovingTo("")
-									wJson.ReceivedRequest("")
+									wJson.setMovingFrom("")
+									wJson.setReceivedRequest("")
 						println("WAITER | listening... ")
 						updateResourceRep(wJson.toJson() 
 						)
@@ -215,9 +216,10 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 												KIND	= payloadArg(0).toString()
 												CTABLE 	= payloadArg(1).toString().toInt()
 												CCID 	= payloadArg(2).toString()
-												wJson.setBusy(true)
-												wJson.setClientID(CCID)
-												wJson.setTable(CTABLE)
+								//				wJson.setBusy(true)
+								//				wJson.setClientID(CCID)
+								//				wJson.setTable(CTABLE)
+								//				wJson.setRequest(KIND)
 								updateResourceRep(wJson.toJson() 
 								)
 						}
@@ -241,6 +243,21 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 					 transition(edgeName="t019",targetState="transferOrder",cond=whenDispatch("order"))
 					transition(edgeName="t020",targetState="listening",cond=whenDispatch("pay"))
 				}	 
+				state("payment") { //this:State
+					action { //it:State
+						if( checkMsgContent( Term.createTerm("pay(MONEY)"), Term.createTerm("pay(MONEY)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+								  
+												var amount	= payloadArg(0).toString()
+												wJson.setBusy(true)
+												wJson.setPayment(amount.toInt())
+												wJson.setReceivedRequest("Pay")
+								updateResourceRep(wJson.toJson() 
+								)
+						}
+					}
+					 transition( edgeName="goto",targetState="listening", cond=doswitch() )
+				}	 
 				state("transferOrder") { //this:State
 					action { //it:State
 						println("WAITER | sending order to barman... ")
@@ -249,10 +266,6 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 								  CDRINK	= payloadArg(0).toString()  
 						}
 						forward("sendOrder", "sendOrder($CDRINK,$CTABLE)" ,"barman" ) 
-						
-						 			wJson.setOrder(CDRINK)
-						updateResourceRep( wJson.toJson()  
-						)
 					}
 					 transition( edgeName="goto",targetState="listening", cond=doswitch() )
 				}	 
@@ -270,20 +283,16 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 									wJson.setTable(CTABLE)
 									wJson.setMovingTo("table "+CTABLE)
 									wJson.setReceivedRequest("tableDirty")						
-						updateResourceRep( wJson.toJson()  
-						)
 					}
 					 transition(edgeName="t021",targetState="atTableToClean",cond=whenReply("movementDone"))
 					transition(edgeName="t022",targetState="error",cond=whenReply("walkbreak"))
 				}	 
 				state("atTableToClean") { //this:State
 					action { //it:State
-						
-									wJson.setMovingTo("")
-						updateResourceRep( wJson.toJson()  
-						)
 						println("WAITER | cleaning table $CTABLE... ")
 						delay(5000) 
+						updateResourceRep( wJson.toJson()  
+						)
 						solve("cleanTable($CTABLE)","") //set resVar	
 					}
 					 transition( edgeName="goto",targetState="listening", cond=doswitch() )
@@ -300,10 +309,6 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 						
 									wJson.setBusy(true)
 									wJson.setTable(CTABLE)
-									wJson.setReceivedRequest("drinkReady")
-									wJson.setMovingTo("barman")						
-						updateResourceRep( wJson.toJson()  
-						)
 					}
 					 transition(edgeName="t023",targetState="bringDrinkToClient",cond=whenReply("movementDone"))
 					transition(edgeName="t024",targetState="error",cond=whenReply("walkbreak"))
@@ -313,8 +318,9 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 						println("WAITER | taking tea... ")
 						println("WAITER | GOING TO CLIENT table $CTABLE... ")
 						
-									wJson.setReceivedRequest("bringDrink")
-									wJson.setMovingTo("")	
+									wJson.setReceivedRequest("drinkReady")
+						updateResourceRep( wJson.toJson()  
+						)
 						request("moveForTask", "moveForTask(teatable,$CTABLE)" ,"waiterwalker" )  
 					}
 					 transition(edgeName="t025",targetState="leaveDrinkAtTable",cond=whenReply("movementDone"))

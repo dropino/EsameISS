@@ -2,52 +2,52 @@ package it.unibo.tearoom.SPRINT4.ui.model;
 
 public class SmartBellState {
 
-	String clientsProcessed;
-	String clientsAdmitted;
-	String clientsWaiting;
-	String clientsWaitedLong;
+	int clientsProcessed;
+	int clientsAdmitted;
+	int clientsWaiting;
+	int clientsWaitedLong;
 
 	public SmartBellState() {
 
 	}
 
-	public SmartBellState(String clientsProcessed, String clientsAdmitted, String clientsWaiting,
-			String clientsWaitedLong) {
+	public SmartBellState(int clientsProcessed, int clientsAdmitted, int clientsWaiting,
+			int clientsWaitedLong) {
 		this.clientsProcessed = clientsProcessed;
 		this.clientsAdmitted = clientsAdmitted;
 		this.clientsWaiting = clientsWaiting;
 		this.clientsWaitedLong = clientsWaitedLong;
 	}
 
-	public String getClientsProcessed() {
+	public int getClientsProcessed() {
 		return clientsProcessed;
 	}
 
-	public void setClientsProcessed(String clientsProcessed) {
+	public void setClientsProcessed(int clientsProcessed) {
 		this.clientsProcessed = clientsProcessed;
 	}
 
-	public String getClientsAdmitted() {
+	public int getClientsAdmitted() {
 		return clientsAdmitted;
 	}
 
-	public void setClientsAdmitted(String clientsAdmitted) {
+	public void setClientsAdmitted(int clientsAdmitted) {
 		this.clientsAdmitted = clientsAdmitted;
 	}
 
-	public String getClientsWaiting() {
+	public int getClientsWaiting() {
 		return clientsWaiting;
 	}
 
-	public void setClientsWaiting(String clientsWaiting) {
+	public void setClientsWaiting(int clientsWaiting) {
 		this.clientsWaiting = clientsWaiting;
 	}
 
-	public String getClientsWaitedLong() {
+	public int getClientsWaitedLong() {
 		return clientsWaitedLong;
 	}
 
-	public void setClientsWaitedLong(String clientsWaitedLong) {
+	public void setClientsWaitedLong(int clientsWaitedLong) {
 		this.clientsWaitedLong = clientsWaitedLong;
 	}
 

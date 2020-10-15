@@ -14,7 +14,7 @@ function startTimer(duration, display) {
     console.log("Timer started");
     time = true;
 
-    var timer = duration, minutes, seconds, ;
+    var timer = duration, minutes, seconds;
     setInterval(function () {
         minutes = parseInt(timer / 60, 10);
         seconds = parseInt(timer % 60, 10);
@@ -25,7 +25,8 @@ function startTimer(duration, display) {
         display.text(minutes + ":" + seconds);
 
         if (--timer < 0) {
-        	window.location.replace(window.location.href + "/badtemp");
+        	console.log("TIMER EXPIRED " + timer);
+        	window.location.assign(window.location.href + "/badtemp");
         }
 
         if ((seconds % 5) == 0) {
@@ -39,6 +40,8 @@ function handleSmartbellReply(msg) {
     var CID = JSON.parse(msg.body).payload0;
     var ttw = JSON.parse(msg.body).payload1;
     
+    console.log(msg.body);
+    
     if (ttw == 0)    {
     	var url = new URL(window.location.href + redir)
     	
@@ -48,12 +51,15 @@ function handleSmartbellReply(msg) {
     	    console.log("disconnected from stompClient");
     	});
     	
-    	window.location.replace(url);
+    	window.location.assign(url);
     }
     else if (time == false) {
 	    console.log("Client has to wait");
-        $( "#btn-smartbell" ).hide();
+        $( "#title" ).text("The tearoom is currently full :(");
+        $( "#caption" ).text("If a table frees up in the following " + ttw/1000 + " seconds the waiter will come and get you. Otherwiase we hope to see you again another time!");
+	    $( "#btn-smartbell" ).hide();
         $( "#h-countdown" ).show();
+        $( "#h-countdown" ).text("Time before you have to go:");
         $( "#countdown" ).show();
         startTimer(ttw/1000, $( "#countdown" ));
     }
@@ -61,13 +67,18 @@ function handleSmartbellReply(msg) {
 }
 
 function connect() {
+	
     var socket = new SockJS('/it-unibo-iss');
     stompClient = Stomp.over(socket);
     stompClient.connect({}, function (frame) {
-        stompClient.subscribe('/user/topic/main', handleSmartbellReply);
+        stompClient.subscribe('/user/queue/main', handleSmartbellReply);
     });
 }
 
+function intialSetup() {
+	$( "#h-countdown" ).hide();
+	$( "#countdown" ).hide();
+}
 
 $(document).on("click", "#btn-smartbell", function(event) {
 

@@ -1,15 +1,18 @@
 package it.unibo.tearoom.SPRINT4.ui.controller;
 
-import java.security.Principal;
-
-import org.springframework.messaging.handler.annotation.Header;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import it.unibo.tearoom.SPRINT4.ui.config.WebSocketConfig;
 import it.unibo.tearoom.SPRINT4.ui.model.ClientRequest;
+import it.unibo.tearoom.SPRINT4.ui.model.ServerReply;
 import it.unibo.tearoom.SPRINT4.ui.services.SmartbellService;
 import it.unibo.tearoom.SPRINT4.ui.services.WaiterService;
 
@@ -27,6 +30,10 @@ public class ClientController {
     
     private final SmartbellService smartbellService;
     private final WaiterService waiterService;
+    
+    @Autowired
+	SimpMessagingTemplate simpMessagingTemplate;
+
              
 	public ClientController(SmartbellService smartbellService, WaiterService waiterService) {
 		this.smartbellService = smartbellService;
@@ -50,22 +57,20 @@ public class ClientController {
 	 } 
 
 	@MessageMapping("/smartbell") 
-	public void ringSmartbell(@Header("simpSessionId") String sessionId, Principal principal) throws Exception {
+	public void ringSmartbell(SimpMessageHeaderAccessor sha) throws Exception {
 	 		
-		System.out.println("!!!!!------------------- principal name " + principal.getName()  );
-		System.out.println("!!!!!------------------- header session id " + sessionId  );
+		System.out.println("!!!!!------------------- /app/smartbell principal name " + sha.getUser().getName()  );
 		
-		this.smartbellService.executeService(waiterService, principal.getName());
+		this.smartbellService.executeService(waiterService, sha.getUser().getName());
 		
 		
-	}
+	}  
 	
-	@MessageMapping("/waiter")   
-	public void waiterInteraction(@Payload ClientRequest req, @Header("simpSessionId") String sessionId, Principal principal) throws Exception {
-		System.out.println("!!!!!------------------- /app/waiter principal name " + principal.getName()  );
-		System.out.println("!!!!!-------------------  /app/waiter header session id " + sessionId  );
-	
-		this.waiterService.executeClientService(req, principal.getName());
+	@MessageMapping("/waiter")  
+	public  void waiterInteraction(SimpMessageHeaderAccessor sha, @Payload ClientRequest req) throws Exception {
+		System.out.println("!!!!!------------------- /app/waiter principal name " + sha.getUser().getName()  );
+		
+		this.waiterService.executeClientService(req, sha.getUser().getName());
 	}
 		
 

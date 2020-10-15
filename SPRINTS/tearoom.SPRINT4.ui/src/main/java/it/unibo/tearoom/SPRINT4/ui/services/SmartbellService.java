@@ -1,8 +1,5 @@
 package it.unibo.tearoom.SPRINT4.ui.services;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -19,7 +16,6 @@ import it.unibo.tearoom.SPRINT4.ui.model.ServerReply;
 public class SmartbellService {
 
     connQakCoap smartbellConn;
-    private Map<String, String> userNames = new HashMap<>();
 
     
 	/*
@@ -91,11 +87,7 @@ public class SmartbellService {
 				result =  new ServerReply("/badtemp","0","0");
 			}
 			else {
-				
-				if (!this.userNames.containsKey(ringRepArgs[1])) { 
-					this.userNames.put(ringRepArgs[1], UUID);
-				}
-				
+
 			  //on tempStatus msg the clientId is the second argument, so idx = 1
 		 		ApplMessage askWaitTime = MsgUtil.buildRequest("web", "waitTime", "waitTime(" + ringRepArgs[1] + ")", "waiter" );
 		 		ApplMessage timeToWait = waiterService.executeSmartbellMessage( askWaitTime ); 
@@ -108,7 +100,7 @@ public class SmartbellService {
 				System.out.println("------------------- Controller ANSWER TO CLIENT = " + ringRepArgs[1] + ", " + ttw  );
 
 				result = new  ServerReply("/tearoom", ringRepArgs[1], ttw);   
-				
+			
 			}	
 			
 		    simpMessagingTemplate.convertAndSendToUser(UUID, WebSocketConfig.topicForClientMain, result);

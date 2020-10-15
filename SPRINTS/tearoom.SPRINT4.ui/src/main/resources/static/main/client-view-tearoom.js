@@ -65,7 +65,7 @@ function handleWaiterReply(msg) {
 function startTimer(duration, display) {
     console.log("Timer started");
 
-    var timer = duration, minutes, seconds, ;
+    var timer = duration, minutes, seconds;
     setInterval(function () {
         minutes = parseInt(timer / 60, 10);
         seconds = parseInt(timer % 60, 10);
@@ -106,7 +106,7 @@ function connect() {
     
     stompClient.connect({}, function (frame) {
     	try {
-    	stompClient.subscribe('user/topic/tearoom', handleWaiterReply);
+    	stompClient.subscribe('/user/queue/tearoom', handleWaiterReply);
     	initialSetup();
     	} catch (error) {
     		console.log(error);

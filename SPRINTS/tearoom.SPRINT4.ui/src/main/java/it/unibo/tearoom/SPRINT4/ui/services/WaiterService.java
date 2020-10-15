@@ -28,9 +28,6 @@ import it.unibo.tearoom.SPRINT4.ui.model.ServerReply;
 @Service
 public class WaiterService {
     connQakCoap waiterConn;
-    /* Map to store ClientIDs-UUIDs correspondencies */
-    private Map<String, String> userNames = new HashMap<>();
-
     
 	/*
 	 * ---------------------------------------------------------- Client update on
@@ -40,17 +37,6 @@ public class WaiterService {
 	 */
 	@Autowired
 	SimpMessagingTemplate simpMessagingTemplate;
-
-    
-//    static WaiterService service = null;
-//
-//	public static WaiterService getInstance() {
-//		if (service == null)
-//			service = new WaiterService();
-//		
-//		return service;
-//
-//	}
     
 	private WaiterService(SimpMessagingTemplate msgTemp) {
 		super();
@@ -75,7 +61,7 @@ public class WaiterService {
 		waiterConn.getClient().observe(new CoapHandler() {
 			@Override
 			public void onLoad(CoapResponse response) {
-				ObjectMapper mapper = new ObjectMapper();
+				ObjectMapper mapper = new ObjectMapper(); 
 				JsonNode msg = null;
 				try {
 					msg = mapper.readTree(response.getResponseText());
@@ -85,7 +71,7 @@ public class WaiterService {
 
 				if(response.getResponseText().contains("deliver-tea")) {
 					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
-					simpMessagingTemplate.convertAndSend("/user/topic/tearoom", 
+					simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForClientInTearoom, 
 							new ServerReply("", "delivery" ));
 				}
 			}
@@ -101,35 +87,32 @@ public class WaiterService {
 		
 		ServerReply result = null;
 		
-		if (!this.userNames.containsKey(req.getClientid())) {
-			this.userNames.put(req.getClientid(), UUID);
-		}
 		
 		if (req.getName().contains("deploy")) {
 
 			result = askForDeployment(req);
 		}
 
-		if (req.getName().contains("service"))
+		else if (req.getName().contains("service"))
 			result = askForService(req);
 
-		if (req.getName().compareTo("order") == 0) {
+		else if (req.getName().compareTo("order") == 0) {
 			ApplMessage msg = MsgUtil.buildDispatch("web", "order", "order(" + req.getPayload0() + ")", "waiter");
 			waiterConn.forward(msg);
 			result = new ServerReply("", "success");
 		}
 
-		if (req.getName().compareTo("pay") == 0) {
+		else if (req.getName().compareTo("pay") == 0) {
 			ApplMessage msg = MsgUtil.buildDispatch("web", "pay", "pay(" + req.getPayload0() + ")", "waiter");
 			waiterConn.forward(msg);
 			result = new ServerReply("", "success");
 		}
 		else
-			result = new ServerReply("", "error"); 
+			result = new ServerReply("", "error");  
 	
 		System.out.println("------------------- WaiterService ANSWER TO CLIENT = " + result.getPayload0() );
     
-	    simpMessagingTemplate.convertAndSendToUser(this.userNames.get(req.getClientid()), WebSocketConfig.topicForClientInTearoom, result);
+	    simpMessagingTemplate.convertAndSendToUser(UUID, WebSocketConfig.topicForClientInTearoom, result);
 
 	}
 	
@@ -150,7 +133,7 @@ public class WaiterService {
 
 		return new ServerReply("", repArgs[0]);
 	}
-
+ 
 	private ServerReply askForService(ClientRequest req) {
 		ApplMessage msg = MsgUtil.buildRequest("web", "clientRequest",
 				"clientRequest(" + req.getPayload0() + "," + req.getPayload1() + "," + req.getClientid() + ")",

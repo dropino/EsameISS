@@ -21,7 +21,7 @@ class Smartbell ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, 
 		 	var CID = 0 
 		 	val sJson = json.smartBellJson()
 		 	
-		 	var id = 1
+		 	var id = 0
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
@@ -38,7 +38,7 @@ class Smartbell ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, 
 						updateResourceRep(sJson.toJson() 
 						)
 					}
-					 transition(edgeName="t031",targetState="checkTemp",cond=whenRequest("ringBell"))
+					 transition(edgeName="t030",targetState="checkTemp",cond=whenRequest("ringBell"))
 				}	 
 				state("checkTemp") { //this:State
 					action { //it:State

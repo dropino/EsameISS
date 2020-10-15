@@ -2,7 +2,7 @@ package json
 
 import org.json.JSONObject
 
-class waiterWalkerJson : ActorJson {
+class WalkerJson : ActorJson {
 	//JsonObject is similar to a map
 	var jobj = JSONObject()
 

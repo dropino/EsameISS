@@ -29,13 +29,13 @@ class Waiterwalker ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 						println("waiterwalker | STARTS")
 						emit("waiterwalkerstarted", "waiterwalkerstarted(ok)" ) 
 					}
-					 transition(edgeName="t027",targetState="waitCmd",cond=whenEvent("walkerstarted"))
+					 transition(edgeName="t026",targetState="waitCmd",cond=whenEvent("walkerstarted"))
 				}	 
 				state("waitCmd") { //this:State
 					action { //it:State
 						println("waiterwalker | waiting for a moveForTask message")
 					}
-					 transition(edgeName="t028",targetState="locateObjective",cond=whenRequest("moveForTask"))
+					 transition(edgeName="t027",targetState="locateObjective",cond=whenRequest("moveForTask"))
 				}	 
 				state("locateObjective") { //this:State
 					action { //it:State
@@ -57,8 +57,8 @@ class Waiterwalker ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 								request("doPlan", "doPlan($XT,$YT)" ,"walker" )  
 						}
 					}
-					 transition(edgeName="t129",targetState="movementCompleted",cond=whenReply("walkerDone"))
-					transition(edgeName="t130",targetState="movementError",cond=whenReply("walkerError"))
+					 transition(edgeName="t128",targetState="movementCompleted",cond=whenReply("walkerDone"))
+					transition(edgeName="t129",targetState="movementError",cond=whenReply("walkerError"))
 				}	 
 				state("movementCompleted") { //this:State
 					action { //it:State

@@ -115,21 +115,22 @@ class Walker ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 				state("stepFailed") { //this:State
 					action { //it:State
 						 obstacleFound = true  
-						println("waiterwalker | stepFailed")
+						println("walker | stepFailed")
 						if( checkMsgContent( Term.createTerm("stepfail(DURATION,CAUSE)"), Term.createTerm("stepfail(DURATION,CAUSE)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								 
 												val D = payloadArg(0).toLong()  ; 
 												val Dt = Math.abs(StepTime-D); 
 												val BackT = D/2 
-								println("waiterwalker stepFail D= $D, BackTime = ${BackTime}")
+								println("walker stepFail D= $D, DT= $Dt BackTime = $BackT")
+								println("walker stepFail D= $D, BackTime = ${BackTime}")
 								if(  D > BackTime  
 								 ){forward("cmd", "cmd(s)" ,"basicrobot" ) 
 								delay(BackT)
 								forward("cmd", "cmd(h)" ,"basicrobot" ) 
 								}
 						}
-						itunibo.planner.plannerUtil.updateMapObstacleOnCurrentDirection(  )
+						itunibo.planner.plannerUtil.updateMap( "w"  )
 					}
 					 transition( edgeName="goto",targetState="sendFailureAnswer", cond=doswitch() )
 				}	 
@@ -147,7 +148,7 @@ class Walker ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 				}	 
 				state("sendSuccessAnswer") { //this:State
 					action { //it:State
-						println("waiterwalker | POINT ($XT,$YT) REACHED")
+						println("walker | POINT ($XT,$YT) REACHED")
 						itunibo.planner.plannerUtil.showCurrentRobotState(  )
 						answer("doPlan", "walkerDone", "walkerDone(ok)"   )  
 					}
@@ -155,7 +156,7 @@ class Walker ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 				}	 
 				state("sendFailureAnswer") { //this:State
 					action { //it:State
-						println("waiterwalker | FAILS")
+						println("walker | FAILS")
 						 
 							    	var Curx = itunibo.planner.plannerUtil.getPosX()
 							       	var Cury = itunibo.planner.plannerUtil.getPosY()	

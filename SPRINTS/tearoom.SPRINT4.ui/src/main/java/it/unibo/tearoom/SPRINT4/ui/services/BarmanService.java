@@ -16,6 +16,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import connQak.connQakCoap;
 import it.unibo.tearoom.SPRINT4.ui.config.WebSocketConfig;
 import it.unibo.tearoom.SPRINT4.ui.model.states.BarmanState;
+import it.unibo.tearoom.SPRINT4.ui.model.states.SmartbellState;
 
 @Service
 public class BarmanService extends ActorService {
@@ -34,7 +35,7 @@ public class BarmanService extends ActorService {
 
 	public BarmanService(SimpMessagingTemplate msgTemp) {
 		
-	    System.out.println("&&&&&&&&&&& BARMAN SERVICE: trying to configure Smartbell connection");
+	    System.out.println("&&&&&&&&&&& BARMAN SERVICE: trying to configure Barman connection");
 	    barmanConn = new connQakCoap("localhost", "8070", "barman", "ctxbarman"  );  
 	    barmanConn.createConnection();
 	    
@@ -58,32 +59,33 @@ public class BarmanService extends ActorService {
 				ObjectMapper mapper = new ObjectMapper(); 
 				JsonNode msg = null;
 				try {
-					msg = mapper.readTree(response.getResponseText());
+					msg = mapper.readTree(response.getResponseText()); 
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
 
+				System.out.println("Barman Service --> CoapClient changed -> " + response.getResponseText());
+				
 				boolean busy = msg.get("busy").asBoolean();
 				String preparingOrder = msg.get("PreparingOrder").asText();
 				boolean orderReady = msg.get("OrderReady").asBoolean();
 				int PreparingForTable = msg.get("PreparingForTable").asInt();
 				int OrderReadyTable = msg.get("OrderReadyTable").asInt();
 				
-				if (busy == false && PreparingForTable == -1
-						&& preparingOrder.equals("") && OrderReadyTable  == -1
-						&& orderReady == false) {
-					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
+				if (busy == false) {
+					BarmanState.getInstance().setCurrentTask("waiting to get an order");
 				} 
-				else if (busy == true && PreparingForTable != -1
-						&& !preparingOrder.equals("")) {
+				else if (busy == true && PreparingForTable != -1 && !preparingOrder.equals("")) {
+					BarmanState.getInstance().setCurrentTask("Recevied order of " + preparingOrder + " for table " + PreparingForTable + ". Preaparing...");
 					BarmanState.getInstance().increaseOrdersReceived();
-					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());			
+								
 				} 
 				else if (PreparingForTable == -1 && preparingOrder.equals("")
 						&& OrderReadyTable != -1 && orderReady == true) {
+					BarmanState.getInstance().setCurrentTask("Order Ready of " + preparingOrder + " for table " + PreparingForTable);
 					BarmanState.getInstance().increaseTeasPreared();
 					BarmanState.getInstance().increaseTeasReady();
-					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
+					
 				}
 				
 				sendUpdate(simpMessagingTemplate, WebSocketConfig.topicForManager, BarmanState.getInstance());
@@ -91,10 +93,13 @@ public class BarmanService extends ActorService {
 
 			@Override
 			public void onError() {
-				System.out.println("ClientController --> CoapClient error!");
+				System.out.println("Barman Service --> CoapClient error!");
 			}
 		});
 	}
-	
+	@Override
+	public void sendUpdate() {
+		simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForManager, BarmanState.getInstance());
+	}
 
 }

@@ -21,7 +21,7 @@ class Walker ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 				var YT = "0"
 				var CurrentPlannedMove 	= ""
 				var StepTime    	   	= 355L
-				var obstacleFound      	= false  
+				var obstacleFound      	= false
 				
 				val inmapname			= "teaRoomExplored"
 				val PauseTime          	= 250L 

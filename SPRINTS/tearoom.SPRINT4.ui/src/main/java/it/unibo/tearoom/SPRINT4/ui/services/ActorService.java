@@ -11,4 +11,6 @@ public abstract class ActorService {
 		simpMessagingTemplate.convertAndSend(destination, msgPayload);			
 
 	}
+	
+	abstract public void sendUpdate();
 }

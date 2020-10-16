@@ -8,12 +8,13 @@ public class SmartbellState {
 	int clientsWaitedLong;
 	
 	String sender = "smartbell";
+	private String currentTask;
 
 	static SmartbellState smartBellState = null;
 
 	public static SmartbellState getInstance() {
 		if (smartBellState == null)
-			smartBellState = new SmartbellState(0, 0, 0, 0);
+			smartBellState = new SmartbellState(0, 0, 0, 0, "");
 		
 		return smartBellState;
 	}
@@ -23,13 +24,19 @@ public class SmartbellState {
 	}
 
 	private SmartbellState(int clientsProcessed, int clientsAdmitted, int clientsWaiting,
-			int clientsWaitedLong) {
+			int clientsWaitedLong, String currentTask) {
 		this.clientsProcessed = clientsProcessed;
 		this.clientsAdmitted = clientsAdmitted;
 		this.clientsWaiting = clientsWaiting;
 		this.clientsWaitedLong = clientsWaitedLong;
+		this.currentTask = currentTask;
+		
 	}
 
+	public String getSender() { 
+		return sender;
+	}
+	
 	public int getClientsProcessed() {
 		return clientsProcessed;
 	}
@@ -60,6 +67,14 @@ public class SmartbellState {
 
 	public void increaseClientsWaitedLong() {
 		this.clientsWaitedLong++;
+	}
+	
+	public String getCurrentTask() {
+		return currentTask;
+	}
+
+	public void setCurrentTask(String currentTask) {
+		this.currentTask = currentTask;
 	}
 
 }

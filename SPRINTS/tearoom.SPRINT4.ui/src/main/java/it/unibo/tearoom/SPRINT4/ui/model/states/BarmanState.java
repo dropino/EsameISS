@@ -5,12 +5,13 @@ public class BarmanState {
 	int teasPreared;
 	int teasReady;
 	String sender = "barman";
+	private String currentTask;
 
 	static BarmanState barmanState = null;
 
 	public static BarmanState getInstance() {
 		if (barmanState == null)
-			barmanState = new BarmanState(0, 0, 0);
+			barmanState = new BarmanState(0, 0, 0, "");
 		
 		return barmanState;
 	}
@@ -19,14 +20,20 @@ public class BarmanState {
 
 	}
 
-	private BarmanState(int ordersReceived, int teasPreared, int teasReady) {
+	private BarmanState(int ordersReceived, int teasPreared, int teasReady, String currentTask) {
 		super();
 		this.ordersReceived = ordersReceived;
 		this.teasPreared = teasPreared;
 		this.teasReady = teasReady;
+		this.currentTask = currentTask;
+		
 	}
 
-	public int getOrdersReceived() {
+	public String getSender() { 
+		return sender;
+	}
+	
+	public int getOrdersReceived() { 
 		return ordersReceived;
 	}
 
@@ -60,6 +67,14 @@ public class BarmanState {
 	
 	public void decreaseTeasReady() {
 		this.teasReady--;
+	}
+	
+	public String getCurrentTask() {
+		return currentTask;
+	}
+
+	public void setCurrentTask(String currentTask) {
+		this.currentTask = currentTask;
 	}
 
 }

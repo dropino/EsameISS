@@ -2,31 +2,36 @@
 <projectDescription>
 	<name>tearoom.SPRINT4</name>
 	<comment></comment>
-	<projects/>
-	<natures>
-		<nature>org.eclipse.buildship.core.gradleprojectnature</nature>
-		<nature>org.eclipse.jdt.core.javanature</nature>
-		<nature>org.jetbrains.kotlin.core.kotlinNature</nature>
-		<nature>org.eclipse.xtext.ui.shared.xtextNature</nature>
-	</natures>
+	<projects>
+	</projects>
 	<buildSpec>
 		<buildCommand>
-			<name>org.eclipse.xtext.ui.shared.xtextBuilder</name>
-			<arguments/>
+			<name>org.jetbrains.kotlin.ui.kotlinBuilder</name>
+			<arguments>
+			</arguments>
 		</buildCommand>
 		<buildCommand>
-			<name>org.jetbrains.kotlin.ui.kotlinBuilder</name>
-			<arguments/>
+			<name>org.eclipse.xtext.ui.shared.xtextBuilder</name>
+			<arguments>
+			</arguments>
 		</buildCommand>
 		<buildCommand>
 			<name>org.eclipse.buildship.core.gradleprojectbuilder</name>
-			<arguments/>
+			<arguments>
+			</arguments>
 		</buildCommand>
 		<buildCommand>
 			<name>org.eclipse.jdt.core.javabuilder</name>
-			<arguments/>
+			<arguments>
+			</arguments>
 		</buildCommand>
 	</buildSpec>
+	<natures>
+		<nature>org.eclipse.buildship.core.gradleprojectnature</nature>
+		<nature>org.eclipse.jdt.core.javanature</nature>
+		<nature>org.eclipse.xtext.ui.shared.xtextNature</nature>
+		<nature>org.jetbrains.kotlin.core.kotlinNature</nature>
+	</natures>
 	<linkedResources>
 		<link>
 			<name>kotlin_bin</name>
@@ -34,5 +39,4 @@
 			<locationURI>org.jetbrains.kotlin.core.filesystem:/tearoom.SPRINT4/kotlin_bin</locationURI>
 		</link>
 	</linkedResources>
-	<filteredResources/>
 </projectDescription>

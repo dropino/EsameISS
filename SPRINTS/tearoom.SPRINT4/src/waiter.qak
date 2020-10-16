@@ -58,9 +58,9 @@ Dispatch tableDirty 		: tableDirty(N)
 Context ctxtearoom 		ip [host="localhost" 	port=8072] 
 Context ctxsmartbell	ip [host="localhost" 	port=8071] 
 Context ctxbarman 		ip [host="localhost" 	port=8070] 
+Context ctxwalker 		ip [host="localhost" 	port=8050] 
 
-
-CodedQActor walker context ctxtearoom className "it.unibo.walker.Walker" 
+CodedQActor walker context ctxwalker className "it.unibo.walker.Walker"  
 
 QActor waiter context ctxtearoom {
 	
@@ -99,7 +99,7 @@ QActor waiter context ctxtearoom {
 			CCID = ""
 			CTABLE = 0
 
-			wJson.setBusy(true)
+			wJson.setBusy(false)
 			wJson.setClientID("")
 			wJson.setTable(-1)
 			wJson.setOrder("")
@@ -112,7 +112,7 @@ QActor waiter context ctxtearoom {
   		println("WAITER | listening... ")
  		updateResource [#wJson.toJson()#]
 	}
-	Transition t0  	whenTime 	15000	 	 		-> goHome
+	Transition t0  	whenTime 	50000	 	 		-> goHome
 	  				whenRequest waitTime			-> answerTime
 	  				whenRequest	deploy			 	-> handleDeploy
 					whenRequest	clientRequest 		-> answerClientRequest
@@ -171,16 +171,19 @@ QActor waiter context ctxtearoom {
 
   	
   	State handleDeploy {
-  		println("WAITER | handling simclient request... ")  		
+  		println("WAITER | handling deployment request... ")  		
   		onMsg(deploy : deploy(FROM, TO, CID)) {
   			[#
   				CTABLE = payloadArg(0).toString().toIntOrNull()
   				Dest = payloadArg(1).toString()
   				CCID = payloadArg(2).toString()	
 				wJson.setBusy(true)
+  				if(CTABLE != null) {
+					wJson.setTable(CTABLE)
+  				}
 				wJson.setClientID(CCID)
-				wJson.setTable(CTABLE)
 				wJson.setMovingTo(Dest)
+				wJson.setMovingFrom(payloadArg(0).toString())
 				if (Dest != "table"){
 					wJson.setReceivedRequest("DeployEntrance")	  				
   				}
@@ -458,7 +461,7 @@ QActor smartbell context ctxsmartbell {
  [# 
  	var Temp = 0
  	var CID = 0 
- 	val sJson = json.smartBellJson()
+ 	val sJson = json.SmartBellJson()
  	
  	var id = 0
  #]
@@ -509,7 +512,7 @@ QActor smartbell context ctxsmartbell {
 	Goto waitForClient
 	
 	
-	State handleEventTempOK {
+	State handleEventTempOK { 
 		println("  SmartBell | Temp is OK  ")
 		println("  SmartBell | Client Accepted  ")
 		[# 	

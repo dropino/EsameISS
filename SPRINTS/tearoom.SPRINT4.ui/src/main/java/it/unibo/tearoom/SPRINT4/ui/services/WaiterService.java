@@ -59,7 +59,7 @@ public class WaiterService  extends ActorService {
 	@ExceptionHandler 
 	public ResponseEntity<String> handle(Exception ex) { 
 		HttpHeaders responseHeaders = new HttpHeaders();
-		return new ResponseEntity<String>("RobotController ERROR " + ex.getMessage(), responseHeaders,
+		return new ResponseEntity<String>("Waiter Service ERROR " + ex.getMessage(), responseHeaders,
 				HttpStatus.CREATED);
 	}
 
@@ -76,6 +76,7 @@ public class WaiterService  extends ActorService {
 					ex.printStackTrace();
 				}
 			
+				System.out.println("Waiter Service --> CoapClient changed -> " + response.getResponseText());
 
 				boolean busy = msg.get("busy").asBoolean();
 				String clientID = msg.get("clientID").asText();
@@ -85,28 +86,30 @@ public class WaiterService  extends ActorService {
 				int waitTime = msg.get("waitTime").asInt();
 				String movingTo = msg.get("movingTo").asText();
 				String movingFrom = msg.get("movingFrom").asText();
-				String receivedRequest = msg.get("receivedRequest").asText();
+				String receivedRequest = msg.get("receivedRequest").asText(); 
 				
 				// listening
-				if (busy == false && movingTo.equals("")) {
-					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
+				if (busy == false) {
+					WaiterState.getInstance().setCurrentTask("listening");
 					sendUpdate(simpMessagingTemplate, WebSocketConfig.topicForManager, WaiterState.getInstance());
 				}
 				//going home
 				else if (busy == false && movingTo.equals("home")) {
-					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
+					WaiterState.getInstance().setCurrentTask("going home");
 					sendUpdate(simpMessagingTemplate, WebSocketConfig.topicForManager, WaiterState.getInstance());
 				}
 				//answer time 
 				else if (busy == true && waitTime != -1) {
 					if(waitTime == 0) {
+						WaiterState.getInstance().setCurrentTask("Accepted Client " + clientID);
 						SmartbellState.getInstance().increaseClientsAdmitted();
 						WaiterState.getInstance().decreaseFreeTables();
 					}
 					else {
+						WaiterState.getInstance().setCurrentTask("Told Client " + clientID + " they have to wait");
 						SmartbellState.getInstance().increaseClientsWaiting();
 					}
-					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
+					
 					sendUpdate(simpMessagingTemplate, WebSocketConfig.topicForManager, SmartbellState.getInstance());	
 					sendUpdate(simpMessagingTemplate, WebSocketConfig.topicForManager, WaiterState.getInstance());				
 				}
@@ -114,7 +117,7 @@ public class WaiterService  extends ActorService {
 				else if (busy == true && !clientID.equals("") && table != -1 && !movingTo.equals("")
 						&& !receivedRequest.equals("DeployEntrance")) {
 					WaiterState.getInstance().increaseDeployedToTable();
-					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
+					
 					sendUpdate(simpMessagingTemplate, WebSocketConfig.topicForManager, WaiterState.getInstance());
 				}
 				// handleDeploy exit
@@ -122,14 +125,14 @@ public class WaiterService  extends ActorService {
 						&& !receivedRequest.equals("DeployExit")) {
 					WaiterState.getInstance().increaseDeployedToExit();
 					WaiterState.getInstance().increaseDirtyTables();
-					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
+					
 					sendUpdate(simpMessagingTemplate, WebSocketConfig.topicForManager, WaiterState.getInstance());
 				}
 				// drink arrives to client
 				else if (receivedRequest.equals("drinkReady")) {
 					WaiterState.getInstance().increaseTeasDelivered();
 					BarmanState.getInstance().decreaseTeasReady();
-					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
+					
 					sendUpdate(simpMessagingTemplate, WebSocketConfig.topicForManager,  WaiterState.getInstance());
 					sendUpdate(simpMessagingTemplate, WebSocketConfig.topicForManager, BarmanState.getInstance());
 					//send update to client waiting for her drink
@@ -139,13 +142,13 @@ public class WaiterService  extends ActorService {
 				else if (busy == true && table != -1 && receivedRequest == "tableDirty" && movingTo.equals("")) {
 					WaiterState.getInstance().decreaseDirtyTables();
 					WaiterState.getInstance().increaseFreeTables();
-					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
+					
 					sendUpdate(simpMessagingTemplate, WebSocketConfig.topicForManager, WaiterState.getInstance());
 				}
 				//pagamento
 				else if (receivedRequest.equals("Pay") && busy == true && payment > 0) {
 					WaiterState.getInstance().increaseEarnings(payment);
-					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
+					
 					sendUpdate(simpMessagingTemplate, WebSocketConfig.topicForManager,  WaiterState.getInstance());
 				}
 			
@@ -153,7 +156,7 @@ public class WaiterService  extends ActorService {
 
 			@Override
 			public void onError() {
-				System.out.println("ClientController --> CoapClient error!");
+				System.out.println("Waiter Service --> CoapClient error!");
 			}
 		});
 	}
@@ -223,5 +226,10 @@ public class WaiterService  extends ActorService {
 
 		return new ServerReply("", repArgs[0]);
 
+	}
+	
+	@Override
+	public void sendUpdate() {
+		simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForManager, WaiterState.getInstance());
 	}
 }

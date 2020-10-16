@@ -49,7 +49,7 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 									CCID = ""
 									CTABLE = 0
 						
-									wJson.setBusy(true)
+									wJson.setBusy(false)
 									wJson.setClientID("")
 									wJson.setTable(-1)
 									wJson.setOrder("")
@@ -62,7 +62,7 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 						updateResourceRep(wJson.toJson() 
 						)
 						stateTimer = TimerActor("timer_listening", 
-							scope, context!!, "local_tout_waiter_listening", 15000.toLong() )
+							scope, context!!, "local_tout_waiter_listening", 50000.toLong() )
 					}
 					 transition(edgeName="t01",targetState="goHome",cond=whenTimeout("local_tout_waiter_listening"))   
 					transition(edgeName="t02",targetState="answerTime",cond=whenRequest("waitTime"))
@@ -123,7 +123,7 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 				}	 
 				state("handleDeploy") { //this:State
 					action { //it:State
-						println("WAITER | handling simclient request... ")
+						println("WAITER | handling deployment request... ")
 						if( checkMsgContent( Term.createTerm("deploy(FROM,TO,CID)"), Term.createTerm("deploy(FROM,TO,CID)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								
@@ -131,9 +131,12 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 								  				Dest = payloadArg(1).toString()
 								  				CCID = payloadArg(2).toString()	
 												wJson.setBusy(true)
+								  				if(CTABLE != null) {
+													wJson.setTable(CTABLE)
+								  				}
 												wJson.setClientID(CCID)
-												wJson.setTable(CTABLE)
 												wJson.setMovingTo(Dest)
+												wJson.setMovingFrom(payloadArg(0).toString())
 												if (Dest != "table"){
 													wJson.setReceivedRequest("DeployEntrance")	  				
 								  				}

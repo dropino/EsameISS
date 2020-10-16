@@ -10,6 +10,9 @@ public class WaiterState {
 	int positionX;
 	int positionY;
 	
+	String currentTask;
+	String currentMovement;
+	
 	String sender = "waiter";
 
 	
@@ -17,18 +20,17 @@ public class WaiterState {
 
 	public static WaiterState getInstance() {
 		if (waiterState == null)
-			waiterState = new WaiterState(2, 0, 0, 0, 0, 0, 0, 0);
+			waiterState = new WaiterState(2, 0, 0, 0, 0, 0, 0, 0, "", "");
 		
 		return waiterState;
 	}
 
-	
 	private WaiterState() {
 
 	}
 
 	private WaiterState(int freeTables, int deployedToTable, int teasDelivered, int dirtyTables,
-			int deployedToExit, int earnings, int positionX, int positionY) {
+			int deployedToExit, int earnings, int positionX, int positionY, String currentTask, String currentMovement) {
 		this.freeTables = freeTables;
 		this.deployedToTable = deployedToTable;
 		this.teasDelivered = teasDelivered;
@@ -37,7 +39,14 @@ public class WaiterState {
 		this.earnings = earnings;
 		this.positionX = positionX;
 		this.positionY = positionY;
+		this.currentTask = currentTask;
+		this.currentMovement = currentMovement;
 	}
+	
+	public String getSender() { 
+		return sender;
+	}
+	
 
 	public int getFreeTables() {
 		return freeTables;
@@ -107,5 +116,22 @@ public class WaiterState {
 		this.positionX = x;
 		this.positionY = y;
 	}
+
+	public String getCurrentTask() {
+		return currentTask;
+	}
+
+	public void setCurrentTask(String currentTask) {
+		this.currentTask = currentTask;
+	}
+	
+	public String getCurrentMovement() {
+		return currentMovement;
+	}
+	
+	public void setCurrentMovement(String currentMovement) {
+		this.currentMovement = currentMovement;
+	}
+
 
 }

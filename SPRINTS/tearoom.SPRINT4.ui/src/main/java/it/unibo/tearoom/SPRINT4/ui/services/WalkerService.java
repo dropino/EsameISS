@@ -15,6 +15,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import connQak.connQakCoap;
 import it.unibo.tearoom.SPRINT4.ui.config.WebSocketConfig;
+import it.unibo.tearoom.SPRINT4.ui.model.states.SmartbellState;
 import it.unibo.tearoom.SPRINT4.ui.model.states.WaiterState;
 
 @Service
@@ -35,7 +36,7 @@ public class WalkerService extends ActorService {
 
 	public WalkerService(SimpMessagingTemplate msgTemp) {
 		
-	    System.out.println("&&&&&&&&&&& WALKER SERVICE: trying to configure Smartbell connection");
+	    System.out.println("&&&&&&&&&&& WALKER SERVICE: trying to configure Walker connection");
 	    walkerConn = new connQakCoap("localhost", "8050", "walker", "ctxwalker");  
 	    walkerConn.createConnection();
 	    
@@ -75,11 +76,14 @@ public class WalkerService extends ActorService {
 
 			@Override
 			public void onError() {
-				System.out.println("ClientController --> CoapClient error!");
+				System.out.println("WalkerService --> CoapClient error!");
 			}
 		});
 	}
 	
-	
+	@Override
+	public void sendUpdate() {
+		simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForManager, WaiterState.getInstance());
+	}
 
 }

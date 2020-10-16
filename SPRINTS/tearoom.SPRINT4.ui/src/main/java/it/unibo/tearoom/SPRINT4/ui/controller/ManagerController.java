@@ -1,5 +1,6 @@
 package it.unibo.tearoom.SPRINT4.ui.controller;
 
+import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,7 +26,16 @@ public class ManagerController {
     
 	 @GetMapping("/manager") 	 	 
 	 public String entry(Model viewmodel) {
+				 
 	 	 return htmlPageMain;
-	 } 
+	 }
+	 
+	 @MessageMapping("/manager")
+	 public void updateAll() {
+		smartbellService.sendUpdate();
+		waiterService.sendUpdate();
+		barmanService.sendUpdate();
+		
+	} 
 
 }

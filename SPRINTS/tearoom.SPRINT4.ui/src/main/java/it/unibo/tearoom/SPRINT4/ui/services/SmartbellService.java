@@ -3,8 +3,12 @@ package it.unibo.tearoom.SPRINT4.ui.services;
 import org.eclipse.californium.core.CoapHandler;
 import org.eclipse.californium.core.CoapResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -67,7 +71,7 @@ public class SmartbellService extends ActorService {
 	 * message with ClientID , time to wait and the javascript will handle the view
 	 * to show the countdown.
 	 * */
-	public void executeService(WaiterService waiterService, String UUID) {
+	public void executeService(WaiterService waiterService, String UUID) { 
 		
 		ServerReply result = null;
 
@@ -102,6 +106,13 @@ public class SmartbellService extends ActorService {
 			
 		    simpMessagingTemplate.convertAndSendToUser(UUID, WebSocketConfig.topicForClientMain, result);
 
+	}
+	
+	@ExceptionHandler 
+	public ResponseEntity<String> handle(Exception ex) { 
+		HttpHeaders responseHeaders = new HttpHeaders();
+		return new ResponseEntity<String>("!!!!!!-----Smartbell Service ERROR " + ex.getMessage(), responseHeaders, 
+				HttpStatus.CREATED);
 	}
 
 	@Override
@@ -140,10 +151,16 @@ public class SmartbellService extends ActorService {
 		}
 
 		@Override
-		public void onError() {
+		public void onError() { 
 			System.out.println("Smartbell Service --> CoapClient error!");
 		}
 	});
 		
+	}
+
+
+	@Override
+	public void sendUpdate() {
+		simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForManager, SmartbellState.getInstance());
 	}
 }

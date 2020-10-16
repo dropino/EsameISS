@@ -80,7 +80,7 @@ QActor waiter context ctxtearoom {
 		var PL				= ""
 		var Dest			= ""
 
-		val wJson = json.WaiterJson()
+		var wJson = json.WaiterJson()
 	#]
 	
 	State s0 initial {	
@@ -229,9 +229,7 @@ QActor waiter context ctxtearoom {
 	  					whenReply	walkbreak	 -> error	
 	  	
 	  					
-	State confirmClientArrival {
-//		updateResource[# "waiter_rdy_leave" #] // stato usato per deploy simclient exit
-		
+	State confirmClientArrival {		
 		println("WAITER | SENDING CONFIRMATION to simclient $CCID: arrived $Dest $CTABLE")
 		
 		replyTo deploy with  arrived	: arrived($CTABLE)
@@ -245,12 +243,8 @@ QActor waiter context ctxtearoom {
 				KIND	= payloadArg(0).toString()
 				CTABLE 	= payloadArg(1).toString().toInt()
 				CCID 	= payloadArg(2).toString()
-//				wJson.setBusy(true)
-//				wJson.setClientID(CCID)
-//				wJson.setTable(CTABLE)
-//				wJson.setRequest(KIND)
+				wJson.setBusy("true")
 			#]
-			updateResource [#wJson.toJson()#]
 		}
 		
 		println("WAITER | received CLIENTREQUEST $KIND $CTABLE ")
@@ -294,12 +288,6 @@ QActor waiter context ctxtearoom {
 			[#  CDRINK	= payloadArg(0).toString() #]
 		}
 		forward barman -m sendOrder : sendOrder($CDRINK, $CTABLE)
-		
-//		[#
-//			wJson.setBusy(true)
-// 			wJson.setOrder(CDRINK)
-//		#]
-//		updateResource [# wJson.toJson() #]		
 	}
 	Goto listening
 	
@@ -458,7 +446,7 @@ QActor smartbell context ctxsmartbell {
  [# 
  	var Temp = 0
  	var CID = 0 
- 	val sJson = json.smartBellJson()
+ 	var sJson = json.smartBellJson()
  	
  	var id = 0
  #]
@@ -534,7 +522,7 @@ QActor barman context ctxbarman {
 	[#
 		var CTABLE = 0
 		var CTEA = ""
-		val bJson = json.BarmanJson()
+		var bJson = json.BarmanJson()
 	#]
 	
 	

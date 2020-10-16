@@ -32,7 +32,7 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 				var PL				= ""
 				var Dest			= ""
 		
-				val wJson = json.WaiterJson()
+				var wJson = json.WaiterJson()
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
@@ -197,12 +197,7 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 												KIND	= payloadArg(0).toString()
 												CTABLE 	= payloadArg(1).toString().toInt()
 												CCID 	= payloadArg(2).toString()
-								//				wJson.setBusy(true)
-								//				wJson.setClientID(CCID)
-								//				wJson.setTable(CTABLE)
-								//				wJson.setRequest(KIND)
-								updateResourceRep(wJson.toJson() 
-								)
+												wJson.setBusy("true")
 						}
 						println("WAITER | received CLIENTREQUEST $KIND $CTABLE ")
 						request("moveForTask", "moveForTask(teatable,$CTABLE)" ,"waiterwalker" )  

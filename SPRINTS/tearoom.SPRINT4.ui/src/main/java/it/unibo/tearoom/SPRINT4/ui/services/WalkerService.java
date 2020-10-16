@@ -15,10 +15,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import connQak.connQakCoap;
 import it.unibo.tearoom.SPRINT4.ui.config.WebSocketConfig;
-import it.unibo.tearoom.SPRINT4.ui.model.ServerReply;
+import it.unibo.tearoom.SPRINT4.ui.model.states.WaiterState;
 
 @Service
-public class WalkerService {
+public class WalkerService extends ActorService {
 
 
     connQakCoap walkerConn;
@@ -32,24 +32,16 @@ public class WalkerService {
 	 */
 	@Autowired
 	SimpMessagingTemplate simpMessagingTemplate;
-    
-//	static SmartbellService service = null;
-//
-//	public static SmartbellService getInstance() {
-//		if (service == null)
-//			service = new SmartbellService();
-//		
-//		return service;
-//
-//	}
 
 	public WalkerService(SimpMessagingTemplate msgTemp) {
 		
 	    System.out.println("&&&&&&&&&&& WALKER SERVICE: trying to configure Smartbell connection");
-	    walkerConn = new connQakCoap("localhost", "8050", "walker", "ctxwalker"  );  
+	    walkerConn = new connQakCoap("localhost", "8050", "walker", "ctxwalker");  
 	    walkerConn.createConnection();
 	    
 	    simpMessagingTemplate = msgTemp;
+	    
+	    prepareUpdating();
 	}   
 
 	@ExceptionHandler 
@@ -59,7 +51,8 @@ public class WalkerService {
 				HttpStatus.CREATED);
 	}
 
-	public void prepareUpdating() {
+	@Override
+	protected void prepareUpdating() {
 		walkerConn.getClient().observe(new CoapHandler() {
 			@Override
 			public void onLoad(CoapResponse response) {
@@ -70,12 +63,14 @@ public class WalkerService {
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
+				
+				int positionX = msg.get("positionX").asInt();
+				int positionY = msg.get("positionY").asInt();
+				
+				WaiterState.getInstance().setPosition(positionX, positionY);
+				
+				sendUpdate(simpMessagingTemplate, WebSocketConfig.topicForManager, WaiterState.getInstance());
 
-				if(response.getResponseText().contains("deliver-tea")) {
-					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
-					simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForClientInTearoom, 
-							new ServerReply("", "delivery" ));
-				}
 			}
 
 			@Override

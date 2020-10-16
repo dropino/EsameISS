@@ -15,14 +15,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import connQak.connQakCoap;
 import it.unibo.tearoom.SPRINT4.ui.config.WebSocketConfig;
-import it.unibo.tearoom.SPRINT4.ui.model.ServerReply;
+import it.unibo.tearoom.SPRINT4.ui.model.states.BarmanState;
 
 @Service
-public class BarmanService {
+public class BarmanService extends ActorService {
 
 
     connQakCoap barmanConn;
-
     
 	/*
 	 * ---------------------------------------------------------- Client update on
@@ -40,6 +39,7 @@ public class BarmanService {
 	    barmanConn.createConnection();
 	    
 	    simpMessagingTemplate = msgTemp;
+	    prepareUpdating();
 	}   
 	
 
@@ -50,7 +50,8 @@ public class BarmanService {
 				HttpStatus.CREATED);
 	}
 
-	public void prepareUpdating() {
+	@Override
+	protected void prepareUpdating() {
 		barmanConn.getClient().observe(new CoapHandler() {
 			@Override
 			public void onLoad(CoapResponse response) {
@@ -72,22 +73,20 @@ public class BarmanService {
 						&& preparingOrder.equals("") && OrderReadyTable  == -1
 						&& orderReady == false) {
 					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
-					sendUpdate("barman");
 				} 
 				else if (busy == true && PreparingForTable != -1
 						&& !preparingOrder.equals("")) {
-					barmanState.setOrdersReceived(barmanState.getOrdersReceived()+1);
-					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
-					sendUpdate("barman");
-					
+					BarmanState.getInstance().increaseOrdersReceived();
+					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());			
 				} 
 				else if (PreparingForTable == -1 && preparingOrder.equals("")
 						&& OrderReadyTable != -1 && orderReady == true) {
-					barmanState.setTeasPreared(barmanState.getTeasPreared()+1);
-					barmanState.setTeasReady(barmanState.getTeasReady()+1);
+					BarmanState.getInstance().increaseTeasPreared();
+					BarmanState.getInstance().increaseTeasReady();
 					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
-					sendUpdate("barman");
 				}
+				
+				sendUpdate(simpMessagingTemplate, WebSocketConfig.topicForManager, BarmanState.getInstance());
 			}
 
 			@Override
@@ -96,25 +95,6 @@ public class BarmanService {
 			}
 		});
 	}
-	
-	private void sendUpdate(String sender) {		
-		if (sender.equals("waiter")){
-			simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForManager,
-					new ServerReply("", sender, waiterState));			
-		}
-		else if(sender.equals("smartBell")){
-			simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForManager,
-					new ServerReply("", sender, smartBellState));			
-		}
-		else if(sender.equals("barman")) {
-			simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForManager,
-					new ServerReply("", sender, barmanState));			
-		}
-		else {
-			System.out.println("%%%%%%%%%%%%%% managerController - Sender not recognized! %%%%%%%%%%%%%%");
-		}
-	}
-
 	
 
 }

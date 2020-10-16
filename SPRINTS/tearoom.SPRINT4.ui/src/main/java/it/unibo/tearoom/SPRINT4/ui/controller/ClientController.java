@@ -1,18 +1,13 @@
 package it.unibo.tearoom.SPRINT4.ui.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import it.unibo.tearoom.SPRINT4.ui.config.WebSocketConfig;
 import it.unibo.tearoom.SPRINT4.ui.model.ClientRequest;
-import it.unibo.tearoom.SPRINT4.ui.model.ServerReply;
 import it.unibo.tearoom.SPRINT4.ui.services.SmartbellService;
 import it.unibo.tearoom.SPRINT4.ui.services.WaiterService;
 
@@ -26,13 +21,10 @@ public class ClientController {
 
     String htmlPageMain  	= "client-view-main";
     String htmlPageTearoom 	= "client-view-tearoom";
-    String htmlPageBadTemp 	= "client-view-bad-temp";
+    String htmlPageBadReq 	= "client-view-bad-req";
     
     private final SmartbellService smartbellService;
     private final WaiterService waiterService;
-    
-    @Autowired
-	SimpMessagingTemplate simpMessagingTemplate;
 
              
 	public ClientController(SmartbellService smartbellService, WaiterService waiterService) {
@@ -47,13 +39,12 @@ public class ClientController {
 	   
 	 @GetMapping("/main/tearoom")
 	 public String getApplicationModelTearoom(Model viewmodel) { 
-		 waiterService.prepareUpdating();
 		 return htmlPageTearoom; 
 	 } 
 	 
-	 @GetMapping("/main/badtemp")
+	 @GetMapping("/main/badreq")
 	 public String getApplicationModelBadTemperature(Model viewmodel) {
-		 return htmlPageBadTemp;
+		 return htmlPageBadReq;
 	 } 
 
 	@MessageMapping("/smartbell") 

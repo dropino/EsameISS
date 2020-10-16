@@ -1,9 +1,10 @@
-package it.unibo.tearoom.SPRINT4.ui.model;
+package it.unibo.tearoom.SPRINT4.ui.model.states;
 
 public class BarmanState {
 	int ordersReceived;
 	int teasPreared;
 	int teasReady;
+	String sender = "barman";
 
 	static BarmanState barmanState = null;
 
@@ -29,24 +30,36 @@ public class BarmanState {
 		return ordersReceived;
 	}
 
-	public void setOrdersReceived(int ordersReceived) {
-		this.ordersReceived = ordersReceived;
-	}
-
 	public int getTeasPreared() {
 		return teasPreared;
-	}
-
-	public void setTeasPreared(int teasPreared) {
-		this.teasPreared = teasPreared;
 	}
 
 	public int getTeasReady() {
 		return teasReady;
 	}
 
-	public void setTeasReady(int teasReady) {
-		this.teasReady = teasReady;
+	public void increaseOrdersReceived() {
+		this.ordersReceived++;
+	}
+	
+	public void decreaseOrdersReceived() {
+		this.ordersReceived--;
+	}
+	
+	public void increaseTeasPreared() {
+		this.teasPreared++;
+	}
+	
+	public void decreaseTeasPreared() {
+		this.teasPreared--;
+	}
+	
+	public void increaseTeasReady() {
+		this.teasReady++;
+	}
+	
+	public void decreaseTeasReady() {
+		this.teasReady--;
 	}
 
 }

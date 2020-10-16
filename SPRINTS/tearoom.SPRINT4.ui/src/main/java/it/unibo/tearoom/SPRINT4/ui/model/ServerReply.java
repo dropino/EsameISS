@@ -9,11 +9,6 @@ public class ServerReply {
 	private String payload3;
 	private String payload4;
 	
-	private String sender;
-	private WaiterState waiterState;
-	private BarmanState barmanState;
-	private SmartBellState smartBellState;
-
 	public ServerReply(String redir) {
 		super();
 		this.redir = redir;
@@ -58,24 +53,6 @@ public class ServerReply {
 		this.payload3 = payload3;
 		this.payload4 = payload4;
 		this.payload0 = payload0;
-	}
-
-	public ServerReply(String redir, String sender, WaiterState waiterState) {
-		this.redir = redir;
-		this.sender = sender;
-		this.waiterState = waiterState;
-	}
-
-	public ServerReply(String redir, String sender, SmartBellState smartBellState) {
-		this.redir = redir;
-		this.sender = sender;
-		this.smartBellState = smartBellState;
-	}
-
-	public ServerReply(String redir, String sender, BarmanState barmanState) {
-		this.redir = redir;
-		this.sender = sender;
-		this.barmanState = barmanState;
 	}
 
 	public String getRedir() {

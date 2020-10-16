@@ -15,17 +15,14 @@ import connQak.utils.ApplMessageUtils;
 import it.unibo.kactor.ApplMessage;
 import it.unibo.kactor.MsgUtil;
 import it.unibo.tearoom.SPRINT4.ui.config.WebSocketConfig;
-import it.unibo.tearoom.SPRINT4.ui.model.BarmanState;
 import it.unibo.tearoom.SPRINT4.ui.model.ServerReply;
-import it.unibo.tearoom.SPRINT4.ui.model.SmartBellState;
-import it.unibo.tearoom.SPRINT4.ui.model.WaiterState;
+import it.unibo.tearoom.SPRINT4.ui.model.states.SmartbellState;
 
 @Service
-public class SmartbellService {
+public class SmartbellService extends ActorService {
 
     connQakCoap smartbellConn;
 
-    
 	/*
 	 * ---------------------------------------------------------- Client update on
 	 * resource change to handle events from CoAP resource
@@ -34,16 +31,6 @@ public class SmartbellService {
 	 */
 	@Autowired
 	SimpMessagingTemplate simpMessagingTemplate;
-    
-//	static SmartbellService service = null;
-//
-//	public static SmartbellService getInstance() {
-//		if (service == null)
-//			service = new SmartbellService();
-//		
-//		return service;
-//
-//	}
 
 	public SmartbellService(SimpMessagingTemplate msgTemp) {
 		
@@ -52,11 +39,13 @@ public class SmartbellService {
 	    smartbellConn.createConnection();
 	    
 	    simpMessagingTemplate = msgTemp;
+	    
+	    prepareUpdating();
 	}   
 	
 
 	/*
-	 * ------------------ Message-handling Controller ----------------------
+	 * ------------------ Message-handling Smartbell Service ----------------------
 	 */
 
 	/*
@@ -85,14 +74,14 @@ public class SmartbellService {
 		ApplMessage ringMsg = MsgUtil.buildRequest("web", "ringBell", "ringBell(ok)", "smartbell" );
 	 		
 	 		ApplMessage reply = smartbellConn.request( ringMsg );  
-			System.out.println("------------------- Controller appl message reply RINGBELL p = " + reply.msgContent()  );
+			System.out.println("------------------- Smartbell Service appl message reply RINGBELL p = " + reply.msgContent()  );
 			
 			String[] ringRepArgs = ApplMessageUtils.extractApplMessagePayloadArgs(reply);
 			
 			if (ringRepArgs[0].compareTo("0") == 0)
 			{
-				System.out.println("------------------- Controller: respond with BAD TEMPERATURE REDIR"  );
-				result =  new ServerReply("/badtemp","0","0");
+				System.out.println("------------------- Smartbell Service: respond with BAD TEMPERATURE REDIR"  );
+				result =  new ServerReply("/badreq","0","0");
 			}
 			else {
 
@@ -100,12 +89,12 @@ public class SmartbellService {
 		 		ApplMessage askWaitTime = MsgUtil.buildRequest("web", "waitTime", "waitTime(" + ringRepArgs[1] + ")", "waiter" );
 		 		ApplMessage timeToWait = waiterService.executeSmartbellMessage( askWaitTime ); 
 		 		
-				System.out.println("------------------- Controller appl message reply WAITTIME p = " + reply.msgContent()  );
+				System.out.println("------------------- Smartbell Service appl message reply WAITTIME p = " + reply.msgContent()  );
 
 		 		
 		 		String ttw = ApplMessageUtils.extractApplMessagePayload(timeToWait, 0); 
 
-				System.out.println("------------------- Controller ANSWER TO CLIENT = " + ringRepArgs[1] + ", " + ttw  );
+				System.out.println("------------------- Smartbell Service ANSWER TO CLIENT = " + ringRepArgs[1] + ", " + ttw  );
 
 				result = new  ServerReply("/tearoom", ringRepArgs[1], ttw);   
 			
@@ -115,7 +104,8 @@ public class SmartbellService {
 
 	}
 
-	public void prepareUpdating() {
+	@Override
+	protected void prepareUpdating() {
 		smartbellConn.getClient().observe(new CoapHandler() {
 		@Override
 		public void onLoad(CoapResponse response) {
@@ -133,46 +123,27 @@ public class SmartbellService {
 			boolean ClientAccepted = msg.get("ClientAccepted").asBoolean();
 			
 			if (busy == true) {
-				System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
-				sendUpdate("smartBell");
+				System.out.println("Smartbell Service --> CoapClient changed -> " + response.getResponseText());
 			} 
 			else if (busy == true && ClientArrived == true && ClientDenied == true) {
-				SmartBellState.getInstance().setClientsProcessed(SmartBellState.getInstance().getClientsProcessed()+1);
-				System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
-				sendUpdate("smartBell");
+				SmartbellState.getInstance().increaseClientsProcessed();
+				System.out.println("Smartbell Service --> CoapClient changed -> " + response.getResponseText());
 				
 			} 
 			else if (ClientArrived == false && ClientAccepted == false) {
-				SmartBellState.getInstance().setClientsProcessed(SmartBellState.getInstance().getClientsProcessed()+1);
-				SmartBellState.getInstance().setClientsAdmitted(SmartBellState.getInstance().getClientsAdmitted()+1);
-				System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
-				sendUpdate("smartBell");
+				SmartbellState.getInstance().increaseClientsProcessed();
+				SmartbellState.getInstance().increaseClientsAdmitted();
+				System.out.println("Smartbell Service --> CoapClient changed -> " + response.getResponseText());
 			}
+			sendUpdate(simpMessagingTemplate, WebSocketConfig.topicForManager, SmartbellState.getInstance());
+
 		}
 
 		@Override
 		public void onError() {
-			System.out.println("ClientController --> CoapClient error!");
+			System.out.println("Smartbell Service --> CoapClient error!");
 		}
 	});
 		
-	}
-	
-	private void sendUpdate(String sender) {		
-		if (sender.equals("waiter")){
-			simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForManager,
-					new ServerReply("", sender, WaiterState.getInstance()));			
-		}
-		else if(sender.equals("smartBell")){
-			simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForManager,
-					new ServerReply("", sender, SmartBellState.getInstance()));			
-		}
-		else if(sender.equals("barman")) {
-			simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForManager,
-					new ServerReply("", sender, BarmanState.getInstance()));			
-		}
-		else {
-			System.out.println("%%%%%%%%%%%%%% managerController - Sender not recognized! %%%%%%%%%%%%%%");
-		}
 	}
 }

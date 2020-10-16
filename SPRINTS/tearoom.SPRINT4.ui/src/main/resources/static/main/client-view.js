@@ -26,7 +26,10 @@ function startTimer(duration, display) {
 
         if (--timer < 0) {
         	console.log("TIMER EXPIRED " + timer);
-        	window.location.assign(window.location.href + "/badtemp");
+        	var url = new URL(window.location.href + "/badreq");
+        	url.searchParams.append('timer', true);
+        	url.searchParams.append('badtemp', false);
+        	window.location.assign(url);
         }
 
         if ((seconds % 5) == 0) {
@@ -43,9 +46,15 @@ function handleSmartbellReply(msg) {
     console.log(msg.body);
     
     if (ttw == 0)    {
-    	var url = new URL(window.location.href + redir)
+    	var url = new URL(window.location.href + redir);
     	
-    	if (CID != 0) url.searchParams.append('cid', CID);
+    	if (CID != 0) {
+    		url.searchParams.append('cid', CID);
+    	}
+    	else {
+    		url.searchParams.append('timer', false);
+        	url.searchParams.append('badtemp', true);
+    	}
     	
     	stompClient.disconnect(function(){
     	    console.log("disconnected from stompClient");

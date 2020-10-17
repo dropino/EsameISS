@@ -12,30 +12,31 @@ import it.unibo.tearoom.SPRINT4.ui.handler.CustomHandshakeHandler;
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
-public static final String brokerDestinationPrefixForBroker = "/topic";
-public static final String brokerDestinationPrefixForQueue = "/queue";
-public static final String userDestinationPrefixForQueue = "/user";
-public static final String applDestinationPrefix = "/app";
-public static final String stompEndpointPath = "/it-unibo-iss";
+	public static final String brokerDestinationPrefixForBroker = "/topic";
+	public static final String brokerDestinationPrefixForQueue = "/queue";
+	public static final String userDestinationPrefixForQueue = "/user";
+	public static final String applDestinationPrefix = "/app";
+	public static final String stompEndpointPath = "/it-unibo-iss";
 
-public static final String topicForClientMain = "/queue/main";
-public static final String topicForClientInTearoom = "/queue/tearoom";
-public static final String topicForManager = "/topic/manager";
-
+	public static final String topicForClientMain = "/queue/main";
+	public static final String topicForClientInTearoom = "/queue/tearoom";
+	public static final String topicForManager = "/topic/manager";
 
 	@Override
 	public void configureMessageBroker(MessageBrokerRegistry config) {
-		config.enableSimpleBroker(brokerDestinationPrefixForBroker, brokerDestinationPrefixForQueue,userDestinationPrefixForQueue);
+		config.enableSimpleBroker(brokerDestinationPrefixForBroker, brokerDestinationPrefixForQueue,
+				userDestinationPrefixForQueue);
 		config.setApplicationDestinationPrefixes(applDestinationPrefix);
-		config.setUserDestinationPrefix(userDestinationPrefixForQueue); 
+		config.setUserDestinationPrefix(userDestinationPrefixForQueue);
 
 	}
 
-	//register the Endpoints to which Clients can connect to through STOMP
+	// register the Endpoints to which Clients can connect to through STOMP
 	@Override
-	public void registerStompEndpoints(StompEndpointRegistry registry) {  
-		registry.addEndpoint(stompEndpointPath).setAllowedOrigins("*").setHandshakeHandler(new CustomHandshakeHandler()).withSockJS();
-		registry.addEndpoint("/it-unibo-iss/tearoom").setAllowedOrigins("*").withSockJS(); 
+	public void registerStompEndpoints(StompEndpointRegistry registry) {
+		registry.addEndpoint(stompEndpointPath).setAllowedOrigins("*").setHandshakeHandler(new CustomHandshakeHandler())
+				.withSockJS();
+		registry.addEndpoint("/it-unibo-iss/tearoom").setAllowedOrigins("*").withSockJS();
 	}
 
 }

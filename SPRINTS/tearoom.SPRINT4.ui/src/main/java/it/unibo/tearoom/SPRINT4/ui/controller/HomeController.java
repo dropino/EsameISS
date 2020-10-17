@@ -7,17 +7,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 public class HomeController {
-	
+
 	String htmlPageMain = "home-view-main";
 
-    
 	public HomeController() {
 
-	 }
-    
-	 @GetMapping("/") 	 	 
-	 public String entry(Model viewmodel) {
-	 	 return htmlPageMain;
-	 } 
+	}
+
+	@GetMapping("/")
+	public String entry(Model viewmodel) {
+		return htmlPageMain;
+	}
 
 }

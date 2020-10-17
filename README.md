@@ -13,13 +13,13 @@ SPRINT | GOAL
 
 ### Sprint1 
 *To test the Sprint1:*
-1. Open Eclipse and import the following file  
+1. Open Eclipse and import the following project  
   a. **GitHub\EsameIss2020\SPRINTS\tearoom.SPRINT1**  
 2. In the workspace SPRINT1/test you can find 3 *junit classes* which test waiter position
 
 ### Sprint2  
 *To test the Sprint2:*
-1. Open Eclipse and import the following file  
+1. Open Eclipse and import the following project
   a. **GitHub\EsameIss2020\SPRINTS\tearoom.SPRINT2**  
 2. In the workspace SPRINT2/test you can find 3 *junit classes* which test waiter behaviour and waiter position
 

@@ -53,6 +53,9 @@ class WaiterJson : ActorJson {
 	fun setReceivedRequest(stat: String) {
 		jobj.put("receivedRequest", stat)
 	}
+	fun setAcceptedWaiting(stat: Boolean){
+		jobj.put("acceptedWaiting", stat)
+	}
 
 	//transforms the jsonObject in a json string string
 	override fun toJson(): String {
@@ -71,5 +74,6 @@ class WaiterJson : ActorJson {
 		jobj.put("movingFrom", "")
 		jobj.put("receivedRequest", "")
 		jobj.put("arrival", "")
+		jobj.put("acceptedWaiting", false)
 	}
 }

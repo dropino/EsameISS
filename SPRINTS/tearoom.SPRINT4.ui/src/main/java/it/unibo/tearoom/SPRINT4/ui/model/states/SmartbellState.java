@@ -61,6 +61,10 @@ public class SmartbellState {
 		
 	}
 
+	public void decreaseClientsWaiting() {
+		this.clientsWaiting--;
+	}
+
 	public int getClientsWaitedLong() {
 		return clientsWaitedLong;
 	}

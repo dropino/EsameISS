@@ -15,7 +15,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import connQak.connQakCoap;
 import it.unibo.tearoom.SPRINT4.ui.config.WebSocketConfig;
-import it.unibo.tearoom.SPRINT4.ui.model.states.SmartbellState;
 import it.unibo.tearoom.SPRINT4.ui.model.states.WaiterState;
 
 @Service

@@ -19,7 +19,7 @@ class Barman ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 		
 				var CTABLE = 0
 				var CTEA = ""
-				val bJson = json.BarmanJson()
+				var bJson = json.BarmanJson()
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State

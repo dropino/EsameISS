@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Client UI: Bad Temperature</title>
+    <title>Client UI: Bad Request</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -11,13 +11,6 @@
     <link  rel="stylesheet" href="../tearoom-theme.css">
 
     <script src="https://kit.fontawesome.com/a076d05399.js"></script>
-    <!--
-      <script src="/webjars/jquery/jquery.min.js"></script>
-      <script src="/webjars/sockjs-client/sockjs.min.js"></script>
-      <script src="/webjars/stomp-websocket/stomp.min.js"></script>
-   -->
-    
-    <!-- <script>connect()</script> -->
     
 </head>
 <body>
@@ -40,14 +33,23 @@
         <div class="col-md-6 order-2 order-md-2 d-flex flex-column">
               <!-- title row -->
               <div class="row align-items-center justify-content-center" style="padding-top: 2rem;">
-                  <h2 >Sorry for the incovenience. Your temperature is too high.</h2>
-                  <h2 >Come back when you're feeling better!</h2>
+                  <h1>Sorry for the incovenience.</h1> <br>
+                  <h2 id="caption">Your temperature is too high. Come back when you're feeling better!</h2>
           </div>
             <!-- content row -->
        </div>
       </div>
   </section>
 </body>
-
+    <script>
+	const urlParams = new URLSearchParams(window.location.search);
+    var timer = urlParams.get('timer');
+    var badtemp = urlParams.get('badtemp');
+    
+    if (timer == 'true')
+    	$("#caption").text("Your temperature is too high. Come back when you're feeling better!");
+    if (badtemp == 'true')
+    	$("#caption").text("Your timeout expired! We need to ask you to leave. Hope you will come back on a less busy day!");
+    </script>
 </html>
 <!-- <div>Icons made by <a href="https://www.flaticon.com/authors/xnimrodx" title="xnimrodx">xnimrodx</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div> -->

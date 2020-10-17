@@ -1,8 +1,17 @@
 package it.unibo.tearoom.SPRINT4.ui.services;
 
+import org.eclipse.californium.core.CoapHandler;
+import org.eclipse.californium.core.CoapResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import connQak.configurator;
 import connQak.connQakCoap;
@@ -11,13 +20,13 @@ import it.unibo.kactor.ApplMessage;
 import it.unibo.kactor.MsgUtil;
 import it.unibo.tearoom.SPRINT4.ui.config.WebSocketConfig;
 import it.unibo.tearoom.SPRINT4.ui.model.ServerReply;
+import it.unibo.tearoom.SPRINT4.ui.model.states.SmartbellState;
 
 @Service
-public class SmartbellService {
+public class SmartbellService extends ActorService {
 
     connQakCoap smartbellConn;
 
-    
 	/*
 	 * ---------------------------------------------------------- Client update on
 	 * resource change to handle events from CoAP resource
@@ -26,16 +35,6 @@ public class SmartbellService {
 	 */
 	@Autowired
 	SimpMessagingTemplate simpMessagingTemplate;
-    
-//	static SmartbellService service = null;
-//
-//	public static SmartbellService getInstance() {
-//		if (service == null)
-//			service = new SmartbellService();
-//		
-//		return service;
-//
-//	}
 
 	public SmartbellService(SimpMessagingTemplate msgTemp) {
 		
@@ -44,11 +43,13 @@ public class SmartbellService {
 	    smartbellConn.createConnection();
 	    
 	    simpMessagingTemplate = msgTemp;
+	    
+	    prepareUpdating();
 	}   
 	
 
 	/*
-	 * ------------------ Message-handling Controller ----------------------
+	 * ------------------ Message-handling Smartbell Service ----------------------
 	 */
 
 	/*
@@ -70,21 +71,21 @@ public class SmartbellService {
 	 * message with ClientID , time to wait and the javascript will handle the view
 	 * to show the countdown.
 	 * */
-	public void executeService(WaiterService waiterService, String UUID) {
+	public void executeService(WaiterService waiterService, String UUID) { 
 		
 		ServerReply result = null;
 
 		ApplMessage ringMsg = MsgUtil.buildRequest("web", "ringBell", "ringBell(ok)", "smartbell" );
 	 		
 	 		ApplMessage reply = smartbellConn.request( ringMsg );  
-			System.out.println("------------------- Controller appl message reply RINGBELL p = " + reply.msgContent()  );
+			System.out.println("------------------- Smartbell Service appl message reply RINGBELL p = " + reply.msgContent()  );
 			
 			String[] ringRepArgs = ApplMessageUtils.extractApplMessagePayloadArgs(reply);
 			
 			if (ringRepArgs[0].compareTo("0") == 0)
 			{
-				System.out.println("------------------- Controller: respond with BAD TEMPERATURE REDIR"  );
-				result =  new ServerReply("/badtemp","0","0");
+				System.out.println("------------------- Smartbell Service: respond with BAD TEMPERATURE REDIR"  );
+				result =  new ServerReply("/badreq","0","0");
 			}
 			else {
 
@@ -92,12 +93,12 @@ public class SmartbellService {
 		 		ApplMessage askWaitTime = MsgUtil.buildRequest("web", "waitTime", "waitTime(" + ringRepArgs[1] + ")", "waiter" );
 		 		ApplMessage timeToWait = waiterService.executeSmartbellMessage( askWaitTime ); 
 		 		
-				System.out.println("------------------- Controller appl message reply WAITTIME p = " + reply.msgContent()  );
+				System.out.println("------------------- Smartbell Service appl message reply WAITTIME p = " + reply.msgContent()  );
 
 		 		
 		 		String ttw = ApplMessageUtils.extractApplMessagePayload(timeToWait, 0); 
 
-				System.out.println("------------------- Controller ANSWER TO CLIENT = " + ringRepArgs[1] + ", " + ttw  );
+				System.out.println("------------------- Smartbell Service ANSWER TO CLIENT = " + ringRepArgs[1] + ", " + ttw  );
 
 				result = new  ServerReply("/tearoom", ringRepArgs[1], ttw);   
 			
@@ -106,5 +107,60 @@ public class SmartbellService {
 		    simpMessagingTemplate.convertAndSendToUser(UUID, WebSocketConfig.topicForClientMain, result);
 
 	}
+	
+	@ExceptionHandler 
+	public ResponseEntity<String> handle(Exception ex) { 
+		HttpHeaders responseHeaders = new HttpHeaders();
+		return new ResponseEntity<String>("!!!!!!-----Smartbell Service ERROR " + ex.getMessage(), responseHeaders, 
+				HttpStatus.CREATED);
+	}
 
+	@Override
+	protected void prepareUpdating() {
+		smartbellConn.getClient().observe(new CoapHandler() {
+		@Override
+		public void onLoad(CoapResponse response) {
+			ObjectMapper mapper = new ObjectMapper();
+			JsonNode msg = null;
+			try {
+				msg = mapper.readTree(response.getResponseText());
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+
+			boolean busy = msg.get("busy").asBoolean();
+			boolean ClientArrived = msg.get("ClientArrived").asBoolean();
+			boolean ClientDenied = msg.get("ClientDenied").asBoolean();
+			boolean ClientAccepted = msg.get("ClientAccepted").asBoolean();
+			
+			if (busy == true) {
+				System.out.println("Smartbell Service --> CoapClient changed -> " + response.getResponseText());
+			} 
+			else if (busy == true && ClientArrived == true && ClientDenied == true) {
+				SmartbellState.getInstance().increaseClientsProcessed();
+				System.out.println("Smartbell Service --> CoapClient changed -> " + response.getResponseText());
+				
+			} 
+			else if (ClientArrived == false && ClientAccepted == false) {
+				SmartbellState.getInstance().increaseClientsProcessed();
+				SmartbellState.getInstance().increaseClientsAdmitted();
+				System.out.println("Smartbell Service --> CoapClient changed -> " + response.getResponseText());
+			}
+			sendUpdate(simpMessagingTemplate, WebSocketConfig.topicForManager, SmartbellState.getInstance());
+
+		}
+
+		@Override
+		public void onError() { 
+			System.out.println("Smartbell Service --> CoapClient error!");
+		}
+	});
+		
+	}
+
+
+	@Override
+	public void sendUpdate() {
+		simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForManager, SmartbellState.getInstance());
+	}
 }

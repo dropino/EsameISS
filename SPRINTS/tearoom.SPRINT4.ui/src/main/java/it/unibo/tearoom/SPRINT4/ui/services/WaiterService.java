@@ -24,11 +24,16 @@ import it.unibo.kactor.MsgUtil;
 import it.unibo.tearoom.SPRINT4.ui.config.WebSocketConfig;
 import it.unibo.tearoom.SPRINT4.ui.model.ClientRequest;
 import it.unibo.tearoom.SPRINT4.ui.model.ServerReply;
+import it.unibo.tearoom.SPRINT4.ui.model.states.BarmanState;
+import it.unibo.tearoom.SPRINT4.ui.model.states.SmartbellState;
+import it.unibo.tearoom.SPRINT4.ui.model.states.WaiterState;
 
 @Service
-public class WaiterService {
+public class WaiterService  extends ActorService {
     connQakCoap waiterConn;
     
+    Map<String, String> users = new HashMap<String, String>();
+        
 	/*
 	 * ---------------------------------------------------------- Client update on
 	 * resource change to handle events from CoAP resource
@@ -46,18 +51,20 @@ public class WaiterService {
 	    waiterConn.createConnection();
 	      
 	    simpMessagingTemplate = msgTemp;
+	    
+	    prepareUpdating();
 	}
-
 	
 	 
 	@ExceptionHandler 
 	public ResponseEntity<String> handle(Exception ex) { 
 		HttpHeaders responseHeaders = new HttpHeaders();
-		return new ResponseEntity<String>("RobotController ERROR " + ex.getMessage(), responseHeaders,
+		return new ResponseEntity<String>("Waiter Service ERROR " + ex.getMessage(), responseHeaders,
 				HttpStatus.CREATED);
 	}
 
-	public void prepareUpdating() {
+	@Override
+	protected void prepareUpdating() {
 		waiterConn.getClient().observe(new CoapHandler() {
 			@Override
 			public void onLoad(CoapResponse response) {
@@ -68,17 +75,88 @@ public class WaiterService {
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
+			
+				System.out.println("Waiter Service --> CoapClient changed -> " + response.getResponseText());
 
-				if(response.getResponseText().contains("deliver-tea")) {
-					System.out.println("ClientController --> CoapClient changed -> " + response.getResponseText());
-					simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForClientInTearoom, 
-							new ServerReply("", "delivery" ));
+				boolean busy = msg.get("busy").asBoolean();
+				String clientID = msg.get("clientID").asText();
+				int table = msg.get("table").asInt();
+				String order = msg.get("order").asText();
+				int payment = msg.get("payment").asInt();
+				int waitTime = msg.get("waitTime").asInt();
+				String movingTo = msg.get("movingTo").asText();
+				String movingFrom = msg.get("movingFrom").asText();
+				String receivedRequest = msg.get("receivedRequest").asText(); 
+				
+				// listening
+				if (busy == false) {
+					WaiterState.getInstance().setCurrentTask("listening");
+					sendUpdate(simpMessagingTemplate, WebSocketConfig.topicForManager, WaiterState.getInstance());
 				}
+				//going home
+				else if (busy == false && movingTo.equals("home")) {
+					WaiterState.getInstance().setCurrentTask("going home");
+					sendUpdate(simpMessagingTemplate, WebSocketConfig.topicForManager, WaiterState.getInstance());
+				}
+				//answer time 
+				else if (busy == true && waitTime != -1) {
+					if(waitTime == 0) {
+						WaiterState.getInstance().setCurrentTask("Accepted Client " + clientID);
+						SmartbellState.getInstance().increaseClientsAdmitted();
+						WaiterState.getInstance().decreaseFreeTables();
+					}
+					else {
+						WaiterState.getInstance().setCurrentTask("Told Client " + clientID + " they have to wait");
+						SmartbellState.getInstance().increaseClientsWaiting();
+					}
+					
+					sendUpdate(simpMessagingTemplate, WebSocketConfig.topicForManager, SmartbellState.getInstance());	
+					sendUpdate(simpMessagingTemplate, WebSocketConfig.topicForManager, WaiterState.getInstance());				
+				}
+				// handleDeploy entrance
+				else if (busy == true && !clientID.equals("") && table != -1 && !movingTo.equals("")
+						&& !receivedRequest.equals("DeployEntrance")) {
+					WaiterState.getInstance().increaseDeployedToTable();
+					
+					sendUpdate(simpMessagingTemplate, WebSocketConfig.topicForManager, WaiterState.getInstance());
+				}
+				// handleDeploy exit
+				else if (busy == true && !clientID.equals("") && table != -1 && !movingTo.equals("")
+						&& !receivedRequest.equals("DeployExit")) {
+					WaiterState.getInstance().increaseDeployedToExit();
+					WaiterState.getInstance().increaseDirtyTables();
+					
+					sendUpdate(simpMessagingTemplate, WebSocketConfig.topicForManager, WaiterState.getInstance());
+				}
+				// drink arrives to client
+				else if (receivedRequest.equals("drinkReady")) {
+					WaiterState.getInstance().increaseTeasDelivered();
+					BarmanState.getInstance().decreaseTeasReady();
+					
+					sendUpdate(simpMessagingTemplate, WebSocketConfig.topicForManager,  WaiterState.getInstance());
+					sendUpdate(simpMessagingTemplate, WebSocketConfig.topicForManager, BarmanState.getInstance());
+					//send update to client waiting for her drink
+					simpMessagingTemplate.convertAndSendToUser(users.get(clientID), WebSocketConfig.topicForClientInTearoom, new ServerReply("", "delivery"));
+				}
+				// pulisci tavolo
+				else if (busy == true && table != -1 && receivedRequest == "tableDirty" && movingTo.equals("")) {
+					WaiterState.getInstance().decreaseDirtyTables();
+					WaiterState.getInstance().increaseFreeTables();
+					
+					sendUpdate(simpMessagingTemplate, WebSocketConfig.topicForManager, WaiterState.getInstance());
+				}
+				//pagamento
+				else if (receivedRequest.equals("Pay") && busy == true && payment > 0) {
+					WaiterState.getInstance().increaseEarnings(payment);
+					
+					sendUpdate(simpMessagingTemplate, WebSocketConfig.topicForManager,  WaiterState.getInstance());
+				}
+			
 			}
 
 			@Override
 			public void onError() {
-				System.out.println("ClientController --> CoapClient error!");
+				System.out.println("Waiter Service --> CoapClient error!");
 			}
 		});
 	}
@@ -86,6 +164,8 @@ public class WaiterService {
 	public void executeClientService(ClientRequest req, String UUID) {
 		
 		ServerReply result = null;
+		
+		this.users.put(req.getClientid(), UUID);
 		
 		
 		if (req.getName().contains("deploy")) {
@@ -147,6 +227,9 @@ public class WaiterService {
 		return new ServerReply("", repArgs[0]);
 
 	}
-
-    
+	
+	@Override
+	public void sendUpdate() {
+		simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForManager, WaiterState.getInstance());
+	}
 }

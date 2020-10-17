@@ -2,7 +2,7 @@ package json
 
 import org.json.JSONObject
 
-class waiterJson : ActorJson {
+class WaiterJson : ActorJson {
 	//JsonObject is similar to a map
 	var jobj = JSONObject()
 
@@ -26,7 +26,7 @@ class waiterJson : ActorJson {
 		jobj.put("order", stat)
 	}
 
-	fun setPayment(stat: Boolean) {
+	fun setPayment(stat: Int) {
 		jobj.put("payment", stat)
 	}
 
@@ -45,7 +45,6 @@ class waiterJson : ActorJson {
 	fun setReceivedRequest(stat: String) {
 		jobj.put("receivedRequest", stat)
 	}
-
 
 	//transforms the jsonObject in a json string string
 	override fun toJson(): String {

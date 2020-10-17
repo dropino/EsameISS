@@ -19,7 +19,7 @@ class Smartbell ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, 
 		 
 		 	var Temp = 0
 		 	var CID = 0 
-		 	val sJson = json.smartBellJson()
+		 	val sJson = json.SmartBellJson()
 		 	
 		 	var id = 0
 		return { //this:ActionBasciFsm
@@ -33,6 +33,10 @@ class Smartbell ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, 
 				state("waitForClient") { //this:State
 					action { //it:State
 						println("  SmartBell | Wait Client  ")
+						
+									sJson.reset()
+						updateResourceRep(sJson.toJson() 
+						)
 					}
 					 transition(edgeName="t030",targetState="checkTemp",cond=whenRequest("ringBell"))
 				}	 
@@ -61,7 +65,7 @@ class Smartbell ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, 
 						
 									sJson.setBusy(true)
 									sJson.setClientArrived(true)
-									sJson.setClientDenied(CID)
+									sJson.setClientDenied(true)
 						updateResourceRep(sJson.toJson() 
 						)
 					}
@@ -75,11 +79,11 @@ class Smartbell ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, 
 									id++;
 									CID = id; 
 									sJson.setClientArrived(false)
-									sJson.setClientAccepted(CID)
-						answer("ringBell", "tempStatus", "tempStatus(1,$CID)"   )  
-						forward("clientID", "clientID($CID)" ,"waiter" ) 
+									sJson.setClientAccepted(true)
 						updateResourceRep(sJson.toJson() 
 						)
+						answer("ringBell", "tempStatus", "tempStatus(1,$CID)"   )  
+						forward("clientID", "clientID($CID)" ,"waiter" ) 
 					}
 					 transition( edgeName="goto",targetState="waitForClient", cond=doswitch() )
 				}	 

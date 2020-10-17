@@ -12,10 +12,10 @@ public class BarmanState {
 	public static BarmanState getInstance() {
 		if (barmanState == null)
 			barmanState = new BarmanState(0, 0, 0, "");
-		
+
 		return barmanState;
 	}
-	
+
 	private BarmanState() {
 
 	}
@@ -26,14 +26,14 @@ public class BarmanState {
 		this.teasPreared = teasPreared;
 		this.teasReady = teasReady;
 		this.currentTask = currentTask;
-		
+
 	}
 
-	public String getSender() { 
+	public String getSender() {
 		return sender;
 	}
-	
-	public int getOrdersReceived() { 
+
+	public int getOrdersReceived() {
 		return ordersReceived;
 	}
 
@@ -48,27 +48,27 @@ public class BarmanState {
 	public void increaseOrdersReceived() {
 		this.ordersReceived++;
 	}
-	
+
 	public void decreaseOrdersReceived() {
 		this.ordersReceived--;
 	}
-	
+
 	public void increaseTeasPreared() {
 		this.teasPreared++;
 	}
-	
+
 	public void decreaseTeasPreared() {
 		this.teasPreared--;
 	}
-	
+
 	public void increaseTeasReady() {
 		this.teasReady++;
 	}
-	
+
 	public void decreaseTeasReady() {
 		this.teasReady--;
 	}
-	
+
 	public String getCurrentTask() {
 		return currentTask;
 	}

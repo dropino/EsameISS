@@ -20,10 +20,8 @@ import it.unibo.tearoom.SPRINT4.ui.model.states.WaiterState;
 @Service
 public class WalkerService extends ActorService {
 
+	connQakCoap walkerConn;
 
-    connQakCoap walkerConn;
-
-    
 	/*
 	 * ---------------------------------------------------------- Client update on
 	 * resource change to handle events from CoAP resource
@@ -34,18 +32,18 @@ public class WalkerService extends ActorService {
 	SimpMessagingTemplate simpMessagingTemplate;
 
 	public WalkerService(SimpMessagingTemplate msgTemp) {
-		
-	    System.out.println("&&&&&&&&&&& WALKER SERVICE: trying to configure Walker connection");
-	    walkerConn = new connQakCoap("localhost", "8050", "walker", "ctxwalker");  
-	    walkerConn.createConnection();
-	    
-	    simpMessagingTemplate = msgTemp;
-	    
-	    prepareUpdating();
-	}   
 
-	@ExceptionHandler 
-	public ResponseEntity<String> handle(Exception ex) { 
+		System.out.println("&&&&&&&&&&& WALKER SERVICE: trying to configure Walker connection");
+		walkerConn = new connQakCoap("localhost", "8050", "walker", "ctxwalker");
+		walkerConn.createConnection();
+
+		simpMessagingTemplate = msgTemp;
+
+		prepareUpdating();
+	}
+
+	@ExceptionHandler
+	public ResponseEntity<String> handle(Exception ex) {
 		HttpHeaders responseHeaders = new HttpHeaders();
 		return new ResponseEntity<String>("!!!!!!-----WalkerService ERROR " + ex.getMessage(), responseHeaders,
 				HttpStatus.CREATED);
@@ -56,19 +54,19 @@ public class WalkerService extends ActorService {
 		walkerConn.getClient().observe(new CoapHandler() {
 			@Override
 			public void onLoad(CoapResponse response) {
-				ObjectMapper mapper = new ObjectMapper(); 
+				ObjectMapper mapper = new ObjectMapper();
 				JsonNode msg = null;
 				try {
 					msg = mapper.readTree(response.getResponseText());
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
-				
+
 				int positionX = msg.get("positionX").asInt();
 				int positionY = msg.get("positionY").asInt();
-				
+
 				WaiterState.getInstance().setPosition(positionX, positionY);
-				
+
 				sendUpdate(simpMessagingTemplate, WebSocketConfig.topicForManager, WaiterState.getInstance());
 
 			}
@@ -79,7 +77,7 @@ public class WalkerService extends ActorService {
 			}
 		});
 	}
-	
+
 	@Override
 	public void sendUpdate() {
 		simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForManager, WaiterState.getInstance());

@@ -12,9 +12,11 @@ import org.springframework.core.env.Environment;
 //import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
-/*@EnableScheduling		--> The @EnableScheduling annotation is used to enable the scheduler for your application. 
- * 							This annotation should be added into the main Spring Boot application class file.
- * 							The @Scheduled annotation is used to trigger the scheduler for a specific time period.
+/*
+ * @EnableScheduling --> The @EnableScheduling annotation is used to enable the
+ * scheduler for your application. This annotation should be added into the main
+ * Spring Boot application class file. The @Scheduled annotation is used to
+ * trigger the scheduler for a specific time period.
  * 
  */
 public class Application implements ApplicationListener<ApplicationReadyEvent> {

@@ -125,7 +125,8 @@ public class WaiterService extends ActorService {
 				// handleDeploy entrance
 				else if (receivedRequest.equals("deployEntrance")) {
 					if (movingTo.equals("entrancedoor")) {
-						WaiterState.getInstance().setCurrentTask("Received request to deploy client " + clientID + " to table");
+						WaiterState.getInstance()
+								.setCurrentTask("Received request to deploy client " + clientID + " to table");
 						WaiterState.getInstance().setCurrentMovement("Moving to entrance door");
 					} else if (movingTo.contains("table")) {
 						WaiterState.getInstance().setCurrentTask(
@@ -137,45 +138,43 @@ public class WaiterService extends ActorService {
 				// handleDeploy exit
 				else if (receivedRequest.equals("deployExit")) {
 					if (!arrival.equals("exitdoor")) {
-						WaiterState.getInstance().setCurrentTask("Deploying client "+clientID+" to exit door");
-						WaiterState.getInstance().setCurrentMovement("Moving from table " + table + " to " + " exit door");
+						WaiterState.getInstance().setCurrentTask("Deploying client " + clientID + " to exit door");
+						WaiterState.getInstance()
+								.setCurrentMovement("Moving from table " + table + " to " + " exit door");
 						WaiterState.getInstance().increaseDirtyTables();
 					} else if (arrival.equals("exitdoor")) {
-						WaiterState.getInstance().setCurrentTask("Deployed client "+clientID+" to exit door");
+						WaiterState.getInstance().setCurrentTask("Deployed client " + clientID + " to exit door");
 						WaiterState.getInstance().setCurrentMovement("Arrived at exit door");
 						WaiterState.getInstance().increaseDeployedToExit();
 					}
 					sendUpdate(simpMessagingTemplate, WebSocketConfig.topicForManager, WaiterState.getInstance());
 				}
-				//receives request to order
-				else if(receivedRequest.equals("order")) {
-					if(movingTo.contains("table")) {
-						WaiterState.getInstance().setCurrentTask("Received order request from client "+clientID);
-						WaiterState.getInstance().setCurrentMovement("Going to table "+table);
-					}
-					else if(arrival.contains("table")) {
-						WaiterState.getInstance().setCurrentTask("Taking order from client "+clientID);
-						WaiterState.getInstance().setCurrentMovement("Arrived at table "+table);
-					}
-					else {
-						WaiterState.getInstance().setCurrentTask("Client "+clientID+" ordered "+ order +". Sending order to barman");
-						WaiterState.getInstance().setCurrentMovement("Arrived at table "+table);
+				// receives request to order
+				else if (receivedRequest.equals("order")) {
+					if (movingTo.contains("table")) {
+						WaiterState.getInstance().setCurrentTask("Received order request from client " + clientID);
+						WaiterState.getInstance().setCurrentMovement("Going to table " + table);
+					} else if (arrival.contains("table")) {
+						WaiterState.getInstance().setCurrentTask("Taking order from client " + clientID);
+						WaiterState.getInstance().setCurrentMovement("Arrived at table " + table);
+					} else {
+						WaiterState.getInstance().setCurrentTask(
+								"Client " + clientID + " ordered " + order + ". Sending order to barman");
+						WaiterState.getInstance().setCurrentMovement("Arrived at table " + table);
 					}
 					sendUpdate(simpMessagingTemplate, WebSocketConfig.topicForManager, WaiterState.getInstance());
 				}
-				//receives request to pay
-				else if(receivedRequest.equals("pay")) {
-					if(movingTo.contains("table")) {
-						WaiterState.getInstance().setCurrentTask("Received payment request from client "+clientID);
-						WaiterState.getInstance().setCurrentMovement("Going to table "+table);
-					}
-					else if(arrival.contains("table")) {
-						WaiterState.getInstance().setCurrentTask("Taking payment from client "+clientID);
-						WaiterState.getInstance().setCurrentMovement("Arrived at table "+table);
-					}
-					else {
-						WaiterState.getInstance().setCurrentTask("Client "+clientID+" paid "+ payment);
-						WaiterState.getInstance().setCurrentMovement("Arrived at table "+table);
+				// receives request to pay
+				else if (receivedRequest.equals("pay")) {
+					if (movingTo.contains("table")) {
+						WaiterState.getInstance().setCurrentTask("Received payment request from client " + clientID);
+						WaiterState.getInstance().setCurrentMovement("Going to table " + table);
+					} else if (arrival.contains("table")) {
+						WaiterState.getInstance().setCurrentTask("Taking payment from client " + clientID);
+						WaiterState.getInstance().setCurrentMovement("Arrived at table " + table);
+					} else {
+						WaiterState.getInstance().setCurrentTask("Client " + clientID + " paid " + payment);
+						WaiterState.getInstance().setCurrentMovement("Arrived at table " + table);
 						WaiterState.getInstance().increaseEarnings(payment);
 					}
 					sendUpdate(simpMessagingTemplate, WebSocketConfig.topicForManager, WaiterState.getInstance());
@@ -194,18 +193,17 @@ public class WaiterService extends ActorService {
 						WaiterState.getInstance().setCurrentTask("Finished cleaning table "+table);
 						WaiterState.getInstance().setCurrentMovement("Arrived at table "+table);
 						WaiterState.getInstance().decreaseDirtyTables();
-						WaiterState.getInstance().increaseFreeTables();						
+						WaiterState.getInstance().increaseFreeTables();
 					}
 					sendUpdate(simpMessagingTemplate, WebSocketConfig.topicForManager, WaiterState.getInstance());
-				}	
+				}
 				// drink arrives to client
 				else if (receivedRequest.equals("drinkReady")) {
 					System.out.println("Waiter Service: DrinkReady arrival value: " + arrival);
 					if(movingTo.equals("barman")) {
 						WaiterState.getInstance().setCurrentTask("Received drink ready alert from barman");
 						WaiterState.getInstance().setCurrentMovement("Going to barman");
-					}
-					else if(movingFrom.equals("barman")) {
+					} else if (movingFrom.equals("barman")) {
 						WaiterState.getInstance().setCurrentTask("Got drink from barman");
 						WaiterState.getInstance().setCurrentMovement("Going to table " + table);
 						BarmanState.getInstance().decreaseTeasReady();

@@ -9,19 +9,18 @@ public class WaiterState {
 	int earnings;
 	int positionX;
 	int positionY;
-	
+
 	String currentTask;
 	String currentMovement;
-	
+
 	String sender = "waiter";
 
-	
 	static WaiterState waiterState = null;
 
 	public static WaiterState getInstance() {
 		if (waiterState == null)
 			waiterState = new WaiterState(2, 0, 0, 0, 0, 0, 0, 0, "", "");
-		
+
 		return waiterState;
 	}
 
@@ -29,8 +28,8 @@ public class WaiterState {
 
 	}
 
-	private WaiterState(int freeTables, int deployedToTable, int teasDelivered, int dirtyTables,
-			int deployedToExit, int earnings, int positionX, int positionY, String currentTask, String currentMovement) {
+	private WaiterState(int freeTables, int deployedToTable, int teasDelivered, int dirtyTables, int deployedToExit,
+			int earnings, int positionX, int positionY, String currentTask, String currentMovement) {
 		this.freeTables = freeTables;
 		this.deployedToTable = deployedToTable;
 		this.teasDelivered = teasDelivered;
@@ -42,20 +41,19 @@ public class WaiterState {
 		this.currentTask = currentTask;
 		this.currentMovement = currentMovement;
 	}
-	
-	public String getSender() { 
+
+	public String getSender() {
 		return sender;
 	}
-	
 
 	public int getFreeTables() {
 		return freeTables;
 	}
-	
+
 	public void increaseFreeTables() {
 		this.freeTables++;
 	}
-	
+
 	public void decreaseFreeTables() {
 		this.freeTables--;
 	}
@@ -63,7 +61,7 @@ public class WaiterState {
 	public int getDeployedToTable() {
 		return deployedToTable;
 	}
-	
+
 	public void increaseDeployedToTable() {
 		this.deployedToTable++;
 	}
@@ -83,7 +81,7 @@ public class WaiterState {
 	public void increaseDirtyTables() {
 		this.dirtyTables++;
 	}
-	
+
 	public void decreaseDirtyTables() {
 		this.dirtyTables--;
 	}
@@ -101,13 +99,13 @@ public class WaiterState {
 	}
 
 	public void increaseEarnings(int payment) {
-		this.earnings+=payment;
+		this.earnings += payment;
 	}
-	
+
 	public int getPositionX() {
 		return positionX;
 	}
-	
+
 	public int getPositionY() {
 		return positionY;
 	}
@@ -124,14 +122,13 @@ public class WaiterState {
 	public void setCurrentTask(String currentTask) {
 		this.currentTask = currentTask;
 	}
-	
+
 	public String getCurrentMovement() {
 		return currentMovement;
 	}
-	
+
 	public void setCurrentMovement(String currentMovement) {
 		this.currentMovement = currentMovement;
 	}
-
 
 }

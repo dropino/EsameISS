@@ -206,7 +206,7 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 								
 									wJson.setMovingFrom("")
 									wJson.setMovingTo("")
-									wJson.setArrival($Dest)
+									wJson.setArrival(Dest)
 						updateResourceRep(wJson.toJson() 
 						)
 					}
@@ -222,7 +222,7 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 												CCID 	= payloadArg(2).toString()
 												wJson.setBusy(true)
 												wJson.setMovingTo("table " + CTABLE)
-												wJson.setRecivedRequest(KIND)
+												wJson.setReceivedRequest(KIND)
 												wJson.setClientID(CCID)
 												wJson.setTable(CTABLE)
 						}
@@ -245,7 +245,7 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 						println("WAITER | CLIENT $CCID requested $KIND")
 										
 									wJson.setMovingTo("")
-									wJson.setArrived("table " + CTABLE)
+									wJson.setArrival("table " + CTABLE)
 						updateResourceRep(wJson.toJson() 
 						)
 						answer("clientRequest", "atTable", "atTable($PL)"   )  
@@ -318,7 +318,7 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 									wJson.setTable(CTABLE)
 									wJson.setMovingTo("")
 									wJson.setTableDirty(true)
-									wJson.setArrived("table " + CTABLE)
+									wJson.setArrival("table " + CTABLE)
 									wJson.setReceivedRequest("tableDirty")						
 						updateResourceRep( wJson.toJson()  
 						)
@@ -339,7 +339,7 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 						if( checkMsgContent( Term.createTerm("orderReady(TEA,TABLE,CID)"), Term.createTerm("orderReady(TEA,TABLE,CID)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								 
-												CDRINK = payloadArg(0).toString().toInt()
+												CDRINK = payloadArg(0).toString()
 												CTABLE = payloadArg(1).toString().toInt()
 												CCID =  payloadArg(2).toString()
 						}
@@ -379,7 +379,7 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 						
 									wJson.setMovingFrom("")	
 									wJson.setMovingTo("")
-									wJson.setArrived("table " + CTABLE)					
+									wJson.setArrival("table " + CTABLE)					
 									wJson.setWaitTime(MaxStayTime)
 						updateResourceRep( wJson.toJson()  
 						)

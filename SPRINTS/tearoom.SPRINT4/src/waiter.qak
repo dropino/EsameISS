@@ -268,7 +268,7 @@ QActor waiter context ctxtearoom {
 		[#		
 			wJson.setMovingFrom("")
 			wJson.setMovingTo("")
-			wJson.setArrival($Dest)
+			wJson.setArrival(Dest)
 		#]
 		 updateResource [#wJson.toJson()#] 
 	} 
@@ -283,7 +283,7 @@ QActor waiter context ctxtearoom {
 				CCID 	= payloadArg(2).toString()
 				wJson.setBusy(true)
 				wJson.setMovingTo("table " + CTABLE)
-				wJson.setRecivedRequest(KIND)
+				wJson.setReceivedRequest(KIND)
 				wJson.setClientID(CCID)
 				wJson.setTable(CTABLE)
 			#]
@@ -309,7 +309,7 @@ QActor waiter context ctxtearoom {
 		
 		[#				
 			wJson.setMovingTo("")
-			wJson.setArrived("table " + CTABLE)
+			wJson.setArrival("table " + CTABLE)
 		#]
 		updateResource [#wJson.toJson()#]
 		
@@ -381,7 +381,7 @@ QActor waiter context ctxtearoom {
 			wJson.setTable(CTABLE)
 			wJson.setMovingTo("")
 			wJson.setTableDirty(true)
-			wJson.setArrived("table " + CTABLE)
+			wJson.setArrival("table " + CTABLE)
 			wJson.setReceivedRequest("tableDirty")						
 		#]
 		updateResource [# wJson.toJson() #]
@@ -401,7 +401,7 @@ QActor waiter context ctxtearoom {
 	State getDrink {
 		onMsg(orderReady : orderReady(TEA, TABLE, CID)) {
 			[# 
-				CDRINK = payloadArg(0).toString().toInt()
+				CDRINK = payloadArg(0).toString()
 				CTABLE = payloadArg(1).toString().toInt()
 				CCID =  payloadArg(2).toString()
 			#]
@@ -444,7 +444,7 @@ QActor waiter context ctxtearoom {
 		[#
 			wJson.setMovingFrom("")	
 			wJson.setMovingTo("")
-			wJson.setArrived("table " + CTABLE)					
+			wJson.setArrival("table " + CTABLE)					
 			wJson.setWaitTime(MaxStayTime)
 		#]
 		updateResource [# wJson.toJson() #]

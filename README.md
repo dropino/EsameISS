@@ -51,4 +51,4 @@ SPRINT | GOAL
 8. Open your browser and go to **localhost:8080** and choose *manager view* or *client view* 
 9. Enjoy our *Tearoom* 
 
-## Image
+![MainMenuPage](https://github.com/lauramazzuca21/EsameIss2020/blob/sprint4/SPRINTS/tools/interfaccia.png)

@@ -45,6 +45,7 @@ function waiter (msg) {
 	$( "#earnings" ).text(JSON.parse(msg.body).earnings);
 	$( "#waiterCurrentTask" ).text(JSON.parse(msg.body).currentTask);
 	$( "#waiterCurrentPosition" ).text(JSON.parse(msg.body).currentMovement);
+	$( "#waiterCurrentMovement" ).text(JSON.parse(msg.body).positionX + ", " + JSON.parse(msg.body).positionY);
 }
 
 function barman (msg) {

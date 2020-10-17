@@ -134,7 +134,7 @@ public class SmartbellService extends ActorService {
 			boolean ClientAccepted = msg.get("ClientAccepted").asBoolean();
 			
 			if (busy == false) {
-				SmartbellState.getInstance().setCurrentTask("waiting for a client to arrive...");
+				SmartbellState.getInstance().setCurrentTask("Waiting for a client to arrive...");
 				System.out.println("Smartbell Service --> CoapClient changed -> " + response.getResponseText());
 			}
 			else if (ClientArrived == true) {

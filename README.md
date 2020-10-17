@@ -29,13 +29,13 @@ SPRINT | GOAL
 2. Run the project *Virtual Robot* (**GitHub\EsameIss2020\SPRINTS\tools\it.unibo.virtualRobot2020\node\WEnv\server\src**) with the command line **node main 8999**  
 3. Open your browser and go to **localhost:8090**  
 4. Run *.bat* file **"it.unibo.qak20.basicrobot.bat"** in the following folder **GitHub\EsameIss2020\SPRINTS\tools\it.unibo.qak20.basicrobot\build\distributions\it.unibo.qak20.basicrobot-1.0\bin**  
-5. Open Eclipse and import the following file  
+5. Open Eclipse and import the following projects  
   a. **GitHub\EsameIss2020\SPRINTS\tearoom.SPRINT3**  
   b. **GitHub\EsameIss2020\SPRINTS\tearoom.SPRINT3.ui**  
 6. In the workspace SPRINT3/src run "*ctxtearoom*" as *kotlin application*
 7. In the workspace SPRINT3.ui/src run "*Application.java*" as *java application*
 8. Open your browser and go to **localhost:8080** and choose *client view* 
-8.1 You can also do some tests, without *client view*, to verify waiter behaviour with CoAP message
+8.1 You can also run some tests, without *client view*, to verify waiter behaviour with CoAP message
 
 ### Sprint4  
 *To test the final system you have to:*
@@ -43,7 +43,7 @@ SPRINT | GOAL
 2. Run the project *Virtual Robot* (**GitHub\EsameIss2020\SPRINTS\tools\it.unibo.virtualRobot2020\node\WEnv\server\src**) with the command line **node main 8999**  
 3. Open your browser and go to **localhost:8090**  
 4. Run *.bat* file **"it.unibo.qak20.basicrobot.bat"** in the following folder **GitHub\EsameIss2020\SPRINTS\tools\it.unibo.qak20.basicrobot\build\distributions\it.unibo.qak20.basicrobot-1.0\bin**  
-5. Open Eclipse and import the following file  
+5. Open Eclipse and import the following projects  
   a. **GitHub\EsameIss2020\SPRINTS\tearoom.SPRINT4**  
   b. **GitHub\EsameIss2020\SPRINTS\tearoom.SPRINT4.ui**  
 6. In the workspace SPRINT4/src run "*ctxtearoom*" as *kotlin application*

@@ -133,15 +133,22 @@ public class SmartbellService extends ActorService {
 			boolean ClientDenied = msg.get("ClientDenied").asBoolean();
 			boolean ClientAccepted = msg.get("ClientAccepted").asBoolean();
 			
-			if (busy == true) {
+			if (busy == false) {
+				SmartbellState.getInstance().setCurrentTask("waiting for a client to arrive...");
 				System.out.println("Smartbell Service --> CoapClient changed -> " + response.getResponseText());
-			} 
-			else if (busy == true && ClientArrived == true && ClientDenied == true) {
+			}
+			else if (ClientArrived == true) {
+				SmartbellState.getInstance().setCurrentTask("A Client has arrived, measure temperature");
+				System.out.println("Smartbell Service --> CoapClient changed -> " + response.getResponseText());
+			}
+			else if (ClientDenied == true) {
+				SmartbellState.getInstance().setCurrentTask("A Client has been denied, his temperature is too high");
 				SmartbellState.getInstance().increaseClientsProcessed();
 				System.out.println("Smartbell Service --> CoapClient changed -> " + response.getResponseText());
 				
 			} 
-			else if (ClientArrived == false && ClientAccepted == false) {
+			else if (ClientAccepted == false) {
+				SmartbellState.getInstance().setCurrentTask("A Client has been accepted, his temperature is below 37.5 Celsius");
 				SmartbellState.getInstance().increaseClientsProcessed();
 				SmartbellState.getInstance().increaseClientsAdmitted();
 				System.out.println("Smartbell Service --> CoapClient changed -> " + response.getResponseText());

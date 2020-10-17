@@ -16,7 +16,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import connQak.connQakCoap;
 import it.unibo.tearoom.SPRINT4.ui.config.WebSocketConfig;
 import it.unibo.tearoom.SPRINT4.ui.model.states.BarmanState;
-import it.unibo.tearoom.SPRINT4.ui.model.states.SmartbellState;
 
 @Service
 public class BarmanService extends ActorService {
@@ -75,17 +74,18 @@ public class BarmanService extends ActorService {
 				if (busy == false) {
 					BarmanState.getInstance().setCurrentTask("waiting to get an order");
 				} 
-				else if (busy == true && PreparingForTable != -1 && !preparingOrder.equals("")) {
+				else if (PreparingForTable != -1 && !preparingOrder.equals("")) {
 					BarmanState.getInstance().setCurrentTask("Recevied order of " + preparingOrder + " for table " + PreparingForTable + ". Preaparing...");
 					BarmanState.getInstance().increaseOrdersReceived();
-								
-				} 
+				}
 				else if (PreparingForTable == -1 && preparingOrder.equals("")
 						&& OrderReadyTable != -1 && orderReady == true) {
 					BarmanState.getInstance().setCurrentTask("Order Ready of " + preparingOrder + " for table " + PreparingForTable);
 					BarmanState.getInstance().increaseTeasPreared();
-					BarmanState.getInstance().increaseTeasReady();
-					
+					BarmanState.getInstance().increaseTeasReady();	
+				}
+				else {
+					System.out.println("%%%%%%%%%% Wrong state has arrived! %%%%%%%%%%");
 				}
 				
 				sendUpdate(simpMessagingTemplate, WebSocketConfig.topicForManager, BarmanState.getInstance());

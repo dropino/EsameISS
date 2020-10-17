@@ -89,9 +89,6 @@ ExternalQActor basicrobot    context ctxbasicrobot
 	}
 	Goto waitReq
 	
-	
-	
-	
 	/*
 	 * Execute the plan
 	 */					  

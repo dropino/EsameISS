@@ -41,11 +41,11 @@ class Barman ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 						updateResourceRep(bJson.toJson() 
 						)
 					}
-					 transition(edgeName="t031",targetState="prepare",cond=whenDispatch("sendOrder"))
+					 transition(edgeName="t032",targetState="prepare",cond=whenDispatch("sendOrder"))
 				}	 
 				state("prepare") { //this:State
 					action { //it:State
-						if( checkMsgContent( Term.createTerm("sendOrder(TEA,TABLE)"), Term.createTerm("sendOrder(TEA,TABLE)"), 
+						if( checkMsgContent( Term.createTerm("sendOrder(TEA,TABLE,CID)"), Term.createTerm("sendOrder(TEA,TABLE)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								println("  Barman | Making tea ")
 								

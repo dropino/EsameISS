@@ -38,7 +38,7 @@ class Smartbell ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, 
 						updateResourceRep(sJson.toJson() 
 						)
 					}
-					 transition(edgeName="t030",targetState="checkTemp",cond=whenRequest("ringBell"))
+					 transition(edgeName="t031",targetState="checkTemp",cond=whenRequest("ringBell"))
 				}	 
 				state("checkTemp") { //this:State
 					action { //it:State
@@ -47,6 +47,8 @@ class Smartbell ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, 
 								
 												Temp = (36..38).random()
 												sJson.setBusy(true)
+												sJson.setClientArrived(true)
+												
 								updateResourceRep(sJson.toJson() 
 								)
 								println("  SmartBell | Check Temp $Temp ")
@@ -64,7 +66,7 @@ class Smartbell ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, 
 						answer("ringBell", "tempStatus", "tempStatus(0,$CID)"   )  
 						
 									sJson.setBusy(true)
-									sJson.setClientArrived(true)
+									sJson.setClientArrived(false)
 									sJson.setClientDenied(true)
 						updateResourceRep(sJson.toJson() 
 						)

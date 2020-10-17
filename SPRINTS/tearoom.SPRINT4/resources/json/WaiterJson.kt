@@ -41,6 +41,14 @@ class WaiterJson : ActorJson {
 	fun setMovingFrom(stat: String) {
 		jobj.put("movingFrom", stat)
 	}
+	
+	fun setArrival(stat: String) {
+		jobj.put("arrival", stat)
+	}
+
+	fun setTableDirty(stat: Boolean) {
+		jobj.put("tableDirty", stat)
+	}
 
 	fun setReceivedRequest(stat: String) {
 		jobj.put("receivedRequest", stat)
@@ -62,5 +70,6 @@ class WaiterJson : ActorJson {
 		jobj.put("movingTo", "")
 		jobj.put("movingFrom", "")
 		jobj.put("receivedRequest", "")
+		jobj.put("arrival", "")
 	}
 }

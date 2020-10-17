@@ -8,7 +8,7 @@ public class ServerReply {
 	private String payload2;
 	private String payload3;
 	private String payload4;
-	
+
 	public ServerReply(String redir) {
 		super();
 		this.redir = redir;

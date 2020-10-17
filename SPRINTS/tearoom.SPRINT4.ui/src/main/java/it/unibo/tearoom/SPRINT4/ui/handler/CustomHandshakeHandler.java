@@ -11,11 +11,10 @@ import org.springframework.web.socket.server.support.DefaultHandshakeHandler;
 import it.unibo.tearoom.SPRINT4.ui.model.StompPrincipal;
 
 public class CustomHandshakeHandler extends DefaultHandshakeHandler {
-    @Override
-    protected Principal determineUser(ServerHttpRequest request,
-                                      WebSocketHandler wsHandler,
-                                      Map<String, Object> attributes) {
-        // generate user name by UUID
-        return new StompPrincipal(UUID.randomUUID().toString());
-    }
+	@Override
+	protected Principal determineUser(ServerHttpRequest request, WebSocketHandler wsHandler,
+			Map<String, Object> attributes) {
+		// generate user name by UUID
+		return new StompPrincipal(UUID.randomUUID().toString());
+	}
 }

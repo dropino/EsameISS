@@ -41,9 +41,20 @@ class WaiterJson : ActorJson {
 	fun setMovingFrom(stat: String) {
 		jobj.put("movingFrom", stat)
 	}
+	
+	fun setArrival(stat: String) {
+		jobj.put("arrival", stat)
+	}
+
+	fun setTableDirty(stat: Boolean) {
+		jobj.put("tableDirty", stat)
+	}
 
 	fun setReceivedRequest(stat: String) {
 		jobj.put("receivedRequest", stat)
+	}
+	fun setAcceptedWaiting(stat: Boolean){
+		jobj.put("acceptedWaiting", stat)
 	}
 
 	//transforms the jsonObject in a json string string
@@ -62,5 +73,7 @@ class WaiterJson : ActorJson {
 		jobj.put("movingTo", "")
 		jobj.put("movingFrom", "")
 		jobj.put("receivedRequest", "")
+		jobj.put("arrival", "")
+		jobj.put("acceptedWaiting", false)
 	}
 }

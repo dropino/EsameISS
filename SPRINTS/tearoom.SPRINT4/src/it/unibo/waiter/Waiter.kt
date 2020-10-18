@@ -34,6 +34,10 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 				var Dest			= ""
 		
 				var wJson = json.WaiterJson()
+				
+				var timeCleaned 	= 0
+				var cleaningInrement = 500
+				var maxCleaning 	= 5000
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
@@ -344,12 +348,22 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 									wJson.setReceivedRequest("tableDirty")						
 						updateResourceRep( wJson.toJson()  
 						)
-						delay(5000) 
 						
-									wJson.setArrival("")
-									wJson.setTableDirty(false)
+									if (timeCleaned < 5000){
+										timeCleaned = timeCleaned + cleaningInrement
+									
+						delay(500) 
+						forward("tableDirty", "tableDirty($CTABLE)" ,"waiter" ) 
+							
+									}		
+									else {
+										wJson.setArrival("")
+										wJson.setTableDirty(false)				
+									
 						updateResourceRep( wJson.toJson()  
 						)
+						
+									}
 						solve("cleanTable($CTABLE)","") //set resVar	
 					}
 					 transition( edgeName="goto",targetState="listening", cond=doswitch() )

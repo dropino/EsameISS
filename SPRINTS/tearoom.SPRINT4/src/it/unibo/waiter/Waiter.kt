@@ -7,8 +7,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import java.util.Queue
-import java.util.LinkedList
 	
 class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, scope ){
 
@@ -119,22 +117,30 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 				state("answerTime") { //this:State
 					action { //it:State
 						 var WaitTime = 0L  
+						if( checkMsgContent( Term.createTerm("waitTime(CID)"), Term.createTerm("waitTime(CID)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+								CCID = payloadArg(0).toString() 
+						}
 						solve("numavailabletables(N)","") //set resVar	
 						if( currentSolution.isSuccess() ) { Ntables = getCurSol("N").toString().toInt()   
 						println("WAITER | numavailabletables=$Ntables")
 						}
 						else
 						{}
-						if( checkMsgContent( Term.createTerm("waitTime(CID)"), Term.createTerm("waitTime(CID)"), 
-						                        currentMsg.msgContent()) ) { //set msgArgList
-								CCID = payloadArg(0).toString() 
-						}
 						if(  Ntables != 0  
 						 ){ 
 										if (WaitingClient) {
 											WaitingClient = false
 											wJson.setAcceptedWaiting(true)
 										} 
+						solve("tableavailable(N)","") //set resVar	
+						if( currentSolution.isSuccess() ) { CTABLE = getCurSol("N").toString().toInt()   
+						println("WAITER | tableavailable=$CTABLE")
+						solve("engageTable($CTABLE,$CCID)","") //set resVar	
+						println("WAITER | Going to DEPLOY Client $CCID to table $CTABLE")
+						}
+						else
+						{}
 						answer("waitTime", "wait", "wait(0)"   )  
 						}
 						else
@@ -188,11 +194,8 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 				}	 
 				state("deployClientEntrance") { //this:State
 					action { //it:State
-						solve("tableavailable(N)","") //set resVar	
-						if( currentSolution.isSuccess() ) { CTABLE = getCurSol("N").toString().toInt()   
-						println("WAITER | tableavailable=$CTABLE")
-						solve("engageTable($CTABLE,$CCID)","") //set resVar	
-						println("WAITER | DEPLOYING simclient $CCID to table $CTABLE")
+						solve("teatable(T,$CCID)","") //set resVar	
+						if( currentSolution.isSuccess() ) { CTABLE = getCurSol("T").toString().toInt()  
 						}
 						else
 						{}

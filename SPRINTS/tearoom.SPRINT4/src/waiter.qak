@@ -166,14 +166,14 @@ QActor waiter context ctxtearoom {
   	State answerTime {
   		[# var WaitTime = 0L #]
   		
-  		solve( numavailabletables(N) ) 
+		onMsg(waitTime : waitTime(CID)) {
+			[#CCID = payloadArg(0).toString()#]
+		}
+		
+		solve( numavailabletables(N) ) 
 		ifSolved { 
 			[# Ntables = getCurSol("N").toString().toInt()  #] 
 			println("WAITER | numavailabletables=$Ntables")
-		}
-		
-		onMsg(waitTime : waitTime(CID)) {
-			[#CCID = payloadArg(0).toString()#]
 		}
 		
 		if [# Ntables != 0 #] {
@@ -184,6 +184,13 @@ QActor waiter context ctxtearoom {
 					wJson.setAcceptedWaiting(true)
 				} 
 			#]
+			
+			solve( tableavailable(N) ) 
+			ifSolved { [# CTABLE = getCurSol("N").toString().toInt()  #] 
+				println("WAITER | tableavailable=$CTABLE")					 
+				solve( engageTable($CTABLE, $CCID ) ) 
+				println("WAITER | Going to DEPLOY Client $CCID to table $CTABLE")	
+		 	}
 			
 			replyTo waitTime with wait : wait(0)
 		} else {
@@ -238,11 +245,9 @@ QActor waiter context ctxtearoom {
 	
 	
 	State deployClientEntrance {		
-		solve( tableavailable(N) ) 
-		ifSolved { [# CTABLE = getCurSol("N").toString().toInt()  #] 
-			println("WAITER | tableavailable=$CTABLE")					 
-			solve( engageTable($CTABLE, $CCID ) ) 
-			println("WAITER | DEPLOYING simclient $CCID to table $CTABLE")	
+	 	solve( teatable(T, $CCID ) ) 
+	 	ifSolved {
+	 		[# CTABLE = getCurSol("T").toString().toInt() #]
 	 	}
 	 	
 	 	[#		

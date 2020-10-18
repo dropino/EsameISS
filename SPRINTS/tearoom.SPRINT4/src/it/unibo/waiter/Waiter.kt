@@ -164,13 +164,13 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 				}	 
 				state("handleDeploy") { //this:State
 					action { //it:State
-						println("WAITER | handling deployment request... ")
 						if( checkMsgContent( Term.createTerm("deploy(FROM,TO,CID)"), Term.createTerm("deploy(FROM,TO,CID)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								
 								  				CTABLE = payloadArg(0).toString().toIntOrNull()
 								  				Dest = payloadArg(1).toString()
 								  				CCID = payloadArg(2).toString()	
+								println("WAITER | handling deployment request for client $CCID... ")
 						}
 					}
 					 transition( edgeName="goto",targetState="goToEntrance", cond=doswitchGuarded({ Dest == "table"  
@@ -196,11 +196,12 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 				}	 
 				state("deployClientEntrance") { //this:State
 					action { //it:State
-						solve("teatable(T,$CCID)","") //set resVar	
+						solve("teatable(T,busy($CCID))","") //set resVar	
 						if( currentSolution.isSuccess() ) { CTABLE = getCurSol("T").toString().toInt()  
 						}
 						else
 						{}
+						println("WAITER | DEPLOYING Client $CCID to table $CTABLE")
 								
 									wJson.setBusy(true)
 									wJson.setClientID(CCID)

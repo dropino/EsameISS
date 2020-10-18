@@ -115,8 +115,12 @@ function connect() {
     	} catch (error) {
     		console.log(error);
     	}
-    });
+    }, onConnectionError);
     
+}
+
+function onConnectionError(msg) {
+	$("#connection-error").show();
 }
 
 function hideAll() {
@@ -125,6 +129,7 @@ function hideAll() {
     $( "#txt-input" ).hide();
     $( "#btn-waiter" ).hide();
     $( "#countdown" ).hide();
+    $("#connection-error").hide();
 }
 
 function showWaitMessage() {
@@ -155,7 +160,7 @@ function maxStayTimeOver() {
 	$( "#title" ).text('Your maxStayTime is over');
     $( "#caption" ).show();
     $( "#caption" ).text('Please, pay the amount due once the waiter gets to your table.');
-	$( "#btn-waiter" ).show();
+	$( "#btn-waiter" ).hide();
 	 $("#countdown").hide();
 }
 

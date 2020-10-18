@@ -31,10 +31,6 @@ function startTimer(duration, display) {
         	url.searchParams.append('badtemp', false);
         	window.location.assign(url);
         }
-
-        if ((seconds % 5) == 0) {
-            stompClient.send("/app/smartbell");
-        }
     }, 1000);
 }
 
@@ -81,12 +77,17 @@ function connect() {
     stompClient = Stomp.over(socket);
     stompClient.connect({}, function (frame) {
         stompClient.subscribe('/user/queue/main', handleSmartbellReply);
-    });
+    }, onConnectionError);
+}
+
+function onConnectionError(msg) {
+	$("#connection-error").show();
 }
 
 function intialSetup() {
 	$( "#h-countdown" ).hide();
 	$( "#countdown" ).hide();
+	$( "#connection-error").hide();
 }
 
 $(document).on("click", "#btn-smartbell", function(event) {

@@ -1,6 +1,6 @@
 System -msglog tearoomsys 
 //mqttBroker "localhost" : 1883 eventTopic "unibo/waiter"   
- 
+  
 //MESSAGES
 mqttBroker "localhost" : 1883 eventTopic "unibo/basicrobot"   
 
@@ -76,6 +76,7 @@ QActor waiter context ctxtearoom {
 		var TimeToGoHome	= 15000L
 		
 		var Ntables			= 0
+		val clientQueue : Queue<String> = LinkedList<String>()
 		
 		var CurST			= ""
 		var PL				= ""
@@ -83,9 +84,9 @@ QActor waiter context ctxtearoom {
 
 		var wJson = json.WaiterJson()
 		
-		var timeCleaned 	= 0
-		var cleaningInrement = 500
-		var maxCleaning 	= 5000
+		var TimeCleaned 	= 0
+		var CleaningInrement = 500
+		var MaxCleaning 	= 5000
 	#]
 	
 	State s0 initial {	
@@ -165,14 +166,14 @@ QActor waiter context ctxtearoom {
   	State answerTime {
   		[# var WaitTime = 0L #]
   		
-  		solve( numavailabletables(N) ) 
+		onMsg(waitTime : waitTime(CID)) {
+			[#CCID = payloadArg(0).toString()#]
+		}
+		
+		solve( numavailabletables(N) ) 
 		ifSolved { 
 			[# Ntables = getCurSol("N").toString().toInt()  #] 
 			println("WAITER | numavailabletables=$Ntables")
-		}
-		
-		onMsg(waitTime : waitTime(CID)) {
-			[#CCID = payloadArg(0).toString()#]
 		}
 		
 		if [# Ntables != 0 #] {
@@ -184,11 +185,19 @@ QActor waiter context ctxtearoom {
 				} 
 			#]
 			
+			solve( tableavailable(N) ) 
+			ifSolved { [# CTABLE = getCurSol("N").toString().toInt()  #] 
+				println("WAITER | tableavailable=$CTABLE")					 
+				solve( engageTable($CTABLE, $CCID ) ) 
+				println("WAITER | Going to DEPLOY Client $CCID to table $CTABLE")	
+		 	}
+			
 			replyTo waitTime with wait : wait(0)
 		} else {
 			[# 
 				WaitTime = MaxWaitTime
-				WaitingClient = true 
+				WaitingClient = true
+				clientQueue.add(CCID) 
 			#]
 			replyTo waitTime with wait : wait($WaitTime)
 		}
@@ -236,11 +245,9 @@ QActor waiter context ctxtearoom {
 	
 	
 	State deployClientEntrance {		
-		solve( tableavailable(N) ) 
-		ifSolved { [# CTABLE = getCurSol("N").toString().toInt()  #] 
-			println("WAITER | tableavailable=$CTABLE")					 
-			solve( engageTable($CTABLE, $CCID ) ) 
-			println("WAITER | DEPLOYING simclient $CCID to table $CTABLE")	
+	 	solve( teatable(T, $CCID ) ) 
+	 	ifSolved {
+	 		[# CTABLE = getCurSol("T").toString().toInt() #]
 	 	}
 	 	
 	 	[#		
@@ -412,8 +419,8 @@ QActor waiter context ctxtearoom {
 
 
 		[#
-			if (timeCleaned < 5000){
-				timeCleaned = timeCleaned + cleaningInrement
+			if (TimeCleaned < MaxCleaning){
+				TimeCleaned = TimeCleaned + CleaningInrement
 			
 		#]
 				delay 500
@@ -422,8 +429,9 @@ QActor waiter context ctxtearoom {
 			}		
 			else {
 				wJson.setArrival("")
-				wJson.setTableDirty(false)				
-			
+				wJson.setTableDirty(false)	
+				//We use to return null if there are no more clients waiting
+				wJson.setClientID(clientQueue.poll())	
 		#]
 				updateResource [# wJson.toJson() #]
 		[#

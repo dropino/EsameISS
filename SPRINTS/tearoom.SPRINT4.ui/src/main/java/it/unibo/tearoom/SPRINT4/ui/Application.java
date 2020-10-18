@@ -27,9 +27,9 @@ public class Application implements ApplicationListener<ApplicationReadyEvent> {
 		SpringApplication.run(Application.class, args);
 	}
 
-	@Autowired
+	@Autowired 
 	private ApplicationContext applicationContext;
-
+ 
 	@Override
 	public void onApplicationEvent(ApplicationReadyEvent event) {
 		try {
@@ -41,8 +41,8 @@ public class Application implements ApplicationListener<ApplicationReadyEvent> {
 			myport = "" + port;
 			System.out.println("\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
 		} catch (Exception e) {
-			e.printStackTrace();
-		}
+			e.printStackTrace(); 
+		} 
 	}
 
-}
+}  

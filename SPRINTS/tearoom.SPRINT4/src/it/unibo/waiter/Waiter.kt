@@ -28,6 +28,7 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 				var TimeToGoHome	= 15000L
 				
 				var Ntables			= 0
+				val clientQueue : Queue<String> = LinkedList<String>()
 				
 				var CurST			= ""
 				var PL				= ""
@@ -35,9 +36,9 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 		
 				var wJson = json.WaiterJson()
 				
-				var timeCleaned 	= 0
-				var cleaningInrement = 500
-				var maxCleaning 	= 5000
+				var TimeCleaned 	= 0
+				var CleaningInrement = 500
+				var MaxCleaning 	= 5000
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
@@ -116,28 +117,37 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 				state("answerTime") { //this:State
 					action { //it:State
 						 var WaitTime = 0L  
+						if( checkMsgContent( Term.createTerm("waitTime(CID)"), Term.createTerm("waitTime(CID)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+								CCID = payloadArg(0).toString() 
+						}
 						solve("numavailabletables(N)","") //set resVar	
 						if( currentSolution.isSuccess() ) { Ntables = getCurSol("N").toString().toInt()   
 						println("WAITER | numavailabletables=$Ntables")
 						}
 						else
 						{}
-						if( checkMsgContent( Term.createTerm("waitTime(CID)"), Term.createTerm("waitTime(CID)"), 
-						                        currentMsg.msgContent()) ) { //set msgArgList
-								CCID = payloadArg(0).toString() 
-						}
 						if(  Ntables != 0  
 						 ){ 
 										if (WaitingClient) {
 											WaitingClient = false
 											wJson.setAcceptedWaiting(true)
 										} 
+						solve("tableavailable(N)","") //set resVar	
+						if( currentSolution.isSuccess() ) { CTABLE = getCurSol("N").toString().toInt()   
+						println("WAITER | tableavailable=$CTABLE")
+						solve("engageTable($CTABLE,$CCID)","") //set resVar	
+						println("WAITER | Going to DEPLOY Client $CCID to table $CTABLE")
+						}
+						else
+						{}
 						answer("waitTime", "wait", "wait(0)"   )  
 						}
 						else
 						 { 
 						 				WaitTime = MaxWaitTime
-						 				WaitingClient = true 
+						 				WaitingClient = true
+						 				clientQueue.add(CCID) 
 						 answer("waitTime", "wait", "wait($WaitTime)"   )  
 						 }
 						
@@ -184,11 +194,8 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 				}	 
 				state("deployClientEntrance") { //this:State
 					action { //it:State
-						solve("tableavailable(N)","") //set resVar	
-						if( currentSolution.isSuccess() ) { CTABLE = getCurSol("N").toString().toInt()   
-						println("WAITER | tableavailable=$CTABLE")
-						solve("engageTable($CTABLE,$CCID)","") //set resVar	
-						println("WAITER | DEPLOYING simclient $CCID to table $CTABLE")
+						solve("teatable(T,$CCID)","") //set resVar	
+						if( currentSolution.isSuccess() ) { CTABLE = getCurSol("T").toString().toInt()  
 						}
 						else
 						{}
@@ -349,8 +356,8 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 						updateResourceRep( wJson.toJson()  
 						)
 						
-									if (timeCleaned < 5000){
-										timeCleaned = timeCleaned + cleaningInrement
+									if (TimeCleaned < MaxCleaning){
+										TimeCleaned = TimeCleaned + CleaningInrement
 									
 						delay(500) 
 						forward("tableDirty", "tableDirty($CTABLE)" ,"waiter" ) 
@@ -358,8 +365,9 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 									}		
 									else {
 										wJson.setArrival("")
-										wJson.setTableDirty(false)				
-									
+										wJson.setTableDirty(false)	
+										//We use to return null if there are no more clients waiting
+										wJson.setClientID(clientQueue.poll())	
 						updateResourceRep( wJson.toJson()  
 						)
 						

@@ -142,9 +142,11 @@ QActor waiter context ctxtearoom {
  			println("WAITER | Changing movement state")
  			
  			solve ( changeWaiterState(athome) )	
- 			[#
+ 			ifSolved {
+ 				 			[#
  				wJson.setMovingTo("home")
  			#]
+ 			}
  			updateResource [#wJson.toJson()#] 
   		} 
 		else{ 
@@ -205,7 +207,7 @@ QActor waiter context ctxtearoom {
   				Dest = payloadArg(1).toString()
   				CCID = payloadArg(2).toString()	
   			#]
-  		}
+  		}		
   	}
   	Goto goToEntrance if [# Dest == "table" #] else deployClientExit
 
@@ -354,7 +356,7 @@ QActor waiter context ctxtearoom {
 	Transition t0 whenRequest deploy -> handleDeploy
 	
 	State transferOrder {
-		println("WAITER | sending order to barman... ")
+		println("WAITER | sending order to barman $CCID $CDRINK $CTABLE... ")
 		onMsg(order : order(DRINK)) {
 			[#  CDRINK	= payloadArg(0).toString() #]
 		}
@@ -405,10 +407,8 @@ QActor waiter context ctxtearoom {
 		updateResource [# wJson.toJson() #]
 		delay 5000
 		[#
-			wJson.setBusy(true)
-			wJson.setTable(CTABLE)
+			wJson.setArrival("")
 			wJson.setTableDirty(false)
-			wJson.setReceivedRequest("tableDirty")						
 		#]
 		updateResource [# wJson.toJson() #]
 		solve( cleanTable($CTABLE) )
@@ -443,8 +443,8 @@ QActor waiter context ctxtearoom {
 	
 	
 	State bringDrinkToClient {
-		println("WAITER | taking tea... ")
-		println("WAITER | GOING TO CLIENT table $CTABLE... ")
+		println("WAITER | taking $CDRINK... ")
+		println("WAITER | GOING TO CLIENT $CCID table $CTABLE... ")
 		[#
 			wJson.setMovingFrom("barman")	
 			wJson.setMovingTo("table " + CTABLE)					
@@ -667,7 +667,6 @@ QActor barman context ctxbarman {
 	
 	State prepare {
 		onMsg( sendOrder : sendOrder(TEA, TABLE, CID) ){
-			println("  Barman | Making tea ")
 			[#
 				CTEA = payloadArg(0).toString()
 				CTABLE = payloadArg(1).toString().toInt()
@@ -678,6 +677,8 @@ QActor barman context ctxbarman {
 				bJson.setPreparingOrder(CTEA)
 			#]
 			updateResource [#bJson.toJson()#]
+			println("  Barman | Making $CTEA for client $CCID sit at table $CTABLE")
+			
 		}
 		
 		delay 5000

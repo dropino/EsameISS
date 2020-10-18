@@ -48,7 +48,6 @@ class Barman ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 					action { //it:State
 						if( checkMsgContent( Term.createTerm("sendOrder(TEA,TABLE,CID)"), Term.createTerm("sendOrder(TEA,TABLE,CID)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
-								println("  Barman | Making tea ")
 								
 												CTEA = payloadArg(0).toString()
 												CTABLE = payloadArg(1).toString().toInt()
@@ -59,6 +58,7 @@ class Barman ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 												bJson.setPreparingOrder(CTEA)
 								updateResourceRep(bJson.toJson() 
 								)
+								println("  Barman | Making $CTEA for client $CCID sit at table $CTABLE")
 						}
 						delay(5000) 
 						forward("orderReady", "orderReady($CTEA,$CTABLE,$CCID)" ,"waiter" ) 

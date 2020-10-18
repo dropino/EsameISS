@@ -93,8 +93,11 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 						 ){request("moveForTask", "moveForTask(home,1)" ,"waiterwalker" )  
 						println("WAITER | Changing movement state")
 						solve("changeWaiterState(athome)","") //set resVar	
-						
+						if( currentSolution.isSuccess() ) {
 						 				wJson.setMovingTo("home")
+						}
+						else
+						{}
 						updateResourceRep(wJson.toJson() 
 						)
 						}
@@ -292,7 +295,7 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 				}	 
 				state("transferOrder") { //this:State
 					action { //it:State
-						println("WAITER | sending order to barman... ")
+						println("WAITER | sending order to barman $CCID $CDRINK $CTABLE... ")
 						if( checkMsgContent( Term.createTerm("order(TEA)"), Term.createTerm("order(DRINK)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								  CDRINK	= payloadArg(0).toString()  
@@ -343,10 +346,8 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 						)
 						delay(5000) 
 						
-									wJson.setBusy(true)
-									wJson.setTable(CTABLE)
+									wJson.setArrival("")
 									wJson.setTableDirty(false)
-									wJson.setReceivedRequest("tableDirty")						
 						updateResourceRep( wJson.toJson()  
 						)
 						solve("cleanTable($CTABLE)","") //set resVar	
@@ -380,8 +381,8 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 				}	 
 				state("bringDrinkToClient") { //this:State
 					action { //it:State
-						println("WAITER | taking tea... ")
-						println("WAITER | GOING TO CLIENT table $CTABLE... ")
+						println("WAITER | taking $CDRINK... ")
+						println("WAITER | GOING TO CLIENT $CCID table $CTABLE... ")
 						
 									wJson.setMovingFrom("barman")	
 									wJson.setMovingTo("table " + CTABLE)					

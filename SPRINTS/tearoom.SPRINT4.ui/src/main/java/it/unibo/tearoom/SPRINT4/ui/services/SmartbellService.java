@@ -1,8 +1,5 @@
 package it.unibo.tearoom.SPRINT4.ui.services;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.eclipse.californium.core.CoapHandler;
 import org.eclipse.californium.core.CoapResponse;
 import org.springframework.beans.factory.annotation.Autowired;

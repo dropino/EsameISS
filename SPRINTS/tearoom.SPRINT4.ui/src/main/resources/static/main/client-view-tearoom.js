@@ -155,7 +155,7 @@ function maxStayTimeOver() {
 	$( "#title" ).text('Your maxStayTime is over');
     $( "#caption" ).show();
     $( "#caption" ).text('Please, pay the amount due once the waiter gets to your table.');
-	$( "#btn-waiter" ).show();
+	$( "#btn-waiter" ).hide();
 	 $("#countdown").hide();
 }
 

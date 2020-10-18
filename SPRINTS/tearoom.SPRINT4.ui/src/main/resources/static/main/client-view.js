@@ -77,12 +77,17 @@ function connect() {
     stompClient = Stomp.over(socket);
     stompClient.connect({}, function (frame) {
         stompClient.subscribe('/user/queue/main', handleSmartbellReply);
-    });
+    }, onConnectionError);
+}
+
+function onConnectionError(msg) {
+	$("#connection-error").show();
 }
 
 function intialSetup() {
 	$( "#h-countdown" ).hide();
 	$( "#countdown" ).hide();
+	$( "#connection-error").hide();
 }
 
 $(document).on("click", "#btn-smartbell", function(event) {

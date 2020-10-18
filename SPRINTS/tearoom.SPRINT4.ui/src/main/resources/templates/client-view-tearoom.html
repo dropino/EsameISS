@@ -22,8 +22,11 @@
     Javascript and reload this page!
     </div>
   </noscript>
+  
+    <div id="connection-error" class="alert alert-danger" role="alert"> Ooops! Your connection was lost. Please, reload the page.
+    </div>
 
-    <section class="container-fluid px-1">
+    <section class="container-fluid px-0">
       <!-- entire row -->
       <div class="row">
           <!-- image column -->
@@ -32,7 +35,7 @@
             <img class="img-fluid d-md-none" src="../imgs/cropped-horizontal-black-tea.jpg" alt="">
         </div>
         <!-- text column -->
-        <div class="col-md-6 order-2 order-md-2 d-flex flex-column">
+        <div class="col-md-6 order-2 order-md-2 d-flex flex-column px-3">
               <!-- title row -->
               <div class="row" style="padding-top: 2rem;">
                 <div class="col-sm">
@@ -47,14 +50,14 @@
               <div id="headingGroup" class="text-center w-100"> 
                   <h1 id="title" >Ready to order?</h1>
                   
-                  <p id="caption"  ><b>Call the Waiter</b> by clicking the button below.</p>
-                  <p id="countdown"  ></p>
+                  <p id="caption"><b>Call the Waiter</b> by clicking the button below.</p>
+                  <p id="countdown"></p>
                  
-                    <div>
-                      <input id="txt-input" class="form-control" pattern="[a-zA-Z0-9]"  type="text" placeholder="Insert your choice here" required>
+                    <div style="text-align:center;">
+                       <input id="txt-input" class="form-control w-50 mb-2" pattern="[a-zA-Z0-9]"  type="text" placeholder="Insert your choice here" required>
                     </div>
                     <div>
-                      <button id="btn-waiter"   type="submit" class="btn btn-outline-light btn-lg" style="background-color: #6da177; width: 25%;"><i class="fas fa-robot"></i></button> 
+                      <button id="btn-waiter" type="submit" class="btn btn-outline-light btn-lg" style="background-color: #6da177; width: 25%;"><i class="fas fa-robot"></i></button> 
                     </div>
               </div>
           </div>  

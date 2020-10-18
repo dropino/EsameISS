@@ -22,7 +22,7 @@ function initialSetup() {
 }
 
 function connect() {
-
+	$("#connection-error").hide();
     var socket = new SockJS( '/it-unibo-iss');
     stompClient = Stomp.over(socket);
     
@@ -33,7 +33,11 @@ function connect() {
     	} catch (error) {
     		console.log(error);
     	}
-    });
+    }, onConnectionError);
+}
+
+function onConnectionError(msg) {
+	$("#connection-error").show();
 }
 
 function waiter (msg) {

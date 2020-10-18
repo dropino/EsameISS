@@ -42,6 +42,7 @@ function handleWaiterReply(msg) {
       $( "#caption" ).text("When you're ready to pay, call the Waiter by clicking the button below.");
       $( "#txt-input" ).hide();
       $( "#btn-waiter" ).show();
+      $("#countdown").show();
 		reqID = 'servicePay';
 		startTimer(JSON.parse(msg.body).payload0/1000, $("#countdown") );
 	}
@@ -133,6 +134,7 @@ function showWaitMessage() {
     $( "#caption" ).text('The waiter will arrive as soon as possible.');
     $( "#txt-input" ).hide();
     $( "#btn-waiter" ).hide();
+    $("#countdown").hide();
 }
 
 function showDeploymentMessage() {
@@ -170,6 +172,7 @@ $(document).on("click", "#btn-waiter", function(event) {
 		reqID='deployExit';
 	}
 	if(reqID == 'servicePay') {
+		clearInterval(timeout);
 		stompClient.send("/app/waiter", {}, JSON.stringify({'name': reqID, 'payload0': 'pay', 'payload1': Table, 'clientid': ClientID}));
         showWaitMessage();
 	}

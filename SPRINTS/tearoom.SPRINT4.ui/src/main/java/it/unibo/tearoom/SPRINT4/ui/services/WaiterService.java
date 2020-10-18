@@ -59,7 +59,7 @@ public class WaiterService extends ActorService {
 	public ResponseEntity<String> handle(Exception ex) {
 		HttpHeaders responseHeaders = new HttpHeaders();
 		return new ResponseEntity<String>("Waiter Service ERROR " + ex.getMessage(), responseHeaders,
-				HttpStatus.CREATED);
+				HttpStatus.CREATED); 
 	}
 
 	@Override
@@ -114,7 +114,6 @@ public class WaiterService extends ActorService {
 						}
 						WaiterState.getInstance().setCurrentTask("Accepted Client " + clientID);
 						SmartbellState.getInstance().increaseClientsAdmitted();
-						WaiterState.getInstance().decreaseFreeTables();
 					} else { // client told to wait outside
 						WaiterState.getInstance().setCurrentTask("Told Client " + clientID + " they have to wait");
 						SmartbellState.getInstance().increaseClientsWaiting();
@@ -132,6 +131,7 @@ public class WaiterService extends ActorService {
 						WaiterState.getInstance().setCurrentTask(
 								"Deploying client " + clientID + " from entrance door to table " + table);
 						WaiterState.getInstance().increaseDeployedToTable();
+						WaiterState.getInstance().decreaseFreeTables();
 					}
 					sendUpdate(simpMessagingTemplate, WebSocketConfig.topicForManager, WaiterState.getInstance());
 				}

@@ -19,6 +19,7 @@ function updateView(msg) {
 //as soon as we load the page, we send a request to the Server to load the information gathered up until now
 function initialSetup() {
     stompClient.send("/app/manager", {}, JSON.stringify({'name': 'update'}));
+	$( "#connection-error").hide();
 }
 
 function connect() {

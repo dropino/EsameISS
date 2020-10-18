@@ -83,6 +83,10 @@ QActor waiter context ctxtearoom {
 		var Dest			= ""
 
 		var wJson = json.WaiterJson()
+		
+		var TimeCleaned 	= 0
+		var CleaningInrement = 500
+		var MaxCleaning 	= 5000
 	#]
 	
 	State s0 initial {	
@@ -407,14 +411,27 @@ QActor waiter context ctxtearoom {
 			wJson.setReceivedRequest("tableDirty")						
 		#]
 		updateResource [# wJson.toJson() #]
-		delay 5000
+
+
 		[#
-			wJson.setArrival("")
-			wJson.setTableDirty(false)
-		//We use to return null if there are no more clients waiting
-			wJson.setClientID(clientQueue.poll())
+			if (TimeCleaned < MaxCleaning){
+				TimeCleaned = TimeCleaned + CleaningInrement
+			
 		#]
-		updateResource [# wJson.toJson() #]
+				delay 500
+				forward waiter -m tableDirty : tableDirty ($CTABLE)
+		[#	
+			}		
+			else {
+				wJson.setArrival("")
+				wJson.setTableDirty(false)	
+				//We use to return null if there are no more clients waiting
+				wJson.setClientID(clientQueue.poll())	
+		#]
+				updateResource [# wJson.toJson() #]
+		[#
+			}
+		#]
 		solve( cleanTable($CTABLE) )
 	}
 	Goto listening

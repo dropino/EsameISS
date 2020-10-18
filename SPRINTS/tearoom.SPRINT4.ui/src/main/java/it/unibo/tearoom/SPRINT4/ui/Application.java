@@ -24,7 +24,7 @@ public class Application implements ApplicationListener<ApplicationReadyEvent> {
 	public static String myport = "0";
 
 	public static void main(String[] args) {
-		SpringApplication.run(Application.class, args);
+		SpringApplication.run(Application.class, args); 
 	}
 
 	@Autowired 
@@ -41,8 +41,8 @@ public class Application implements ApplicationListener<ApplicationReadyEvent> {
 			myport = "" + port;
 			System.out.println("\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
 		} catch (Exception e) {
-			e.printStackTrace(); 
-		} 
+			e.printStackTrace();
+		}
 	}
 
 }  

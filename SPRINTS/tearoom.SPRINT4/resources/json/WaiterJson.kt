@@ -30,7 +30,7 @@ class WaiterJson : ActorJson {
 		jobj.put("payment", stat)
 	}
 
-	fun setWaitTime(stat: Int) {
+	fun setWaitTime(stat: Long) {
 		jobj.put("waitTime", stat)
 	}
 
@@ -75,5 +75,6 @@ class WaiterJson : ActorJson {
 		jobj.put("receivedRequest", "")
 		jobj.put("arrival", "")
 		jobj.put("acceptedWaiting", false)
+		jobj.put("tableDirty", false)
 	}
 }

@@ -19,6 +19,7 @@ class Barman ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 		
 				var CTABLE = 0
 				var CTEA = ""
+				var CCID = ""
 				var bJson = json.BarmanJson()
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
@@ -45,21 +46,23 @@ class Barman ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 				}	 
 				state("prepare") { //this:State
 					action { //it:State
-						if( checkMsgContent( Term.createTerm("sendOrder(TEA,TABLE,CID)"), Term.createTerm("sendOrder(TEA,TABLE)"), 
+						if( checkMsgContent( Term.createTerm("sendOrder(TEA,TABLE,CID)"), Term.createTerm("sendOrder(TEA,TABLE,CID)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								println("  Barman | Making tea ")
 								
-												CTABLE = payloadArg(1).toString().toInt()
 												CTEA = payloadArg(0).toString()
+												CTABLE = payloadArg(1).toString().toInt()
+												CCID = payloadArg(2).toString()
+												
 												bJson.setBusy(true)
 												bJson.setPreparingForTable(CTABLE)
 												bJson.setPreparingOrder(CTEA)
 								updateResourceRep(bJson.toJson() 
 								)
 						}
-						delay(2000) 
-						forward("orderReady", "orderReady(tea,$CTABLE)" ,"waiter" ) 
-						println("  Barman | Tea ready to be served ")
+						delay(5000) 
+						forward("orderReady", "orderReady($CTEA,$CTABLE,$CCID)" ,"waiter" ) 
+						println("  Barman | $CTEA READY to be served to client $CCID at table $CTABLE")
 						
 										bJson.setPreparingForTable(-1)
 										bJson.setPreparingOrder("")

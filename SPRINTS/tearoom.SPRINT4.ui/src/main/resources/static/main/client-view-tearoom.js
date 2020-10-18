@@ -9,6 +9,8 @@ var ClientID = -1;
 var Bill	 = -1;
 var reqID ;
 
+var timeout;
+
 //when the waiter replies, the handling will be done by this function, previously bound to the subscribe /topic/display
 //	deployEntrance->the waiter has brought the client from the entrance door to the table
 //	serviceOrder->the waiter is at the table, ready to receive the order
@@ -66,7 +68,7 @@ function startTimer(duration, display) {
     console.log("Timer started");
 
     var timer = duration, minutes, seconds;
-    setInterval(function () {
+    timeout = setInterval(function () {
         minutes = parseInt(timer / 60, 10);
         seconds = parseInt(timer % 60, 10);
 
@@ -77,9 +79,10 @@ function startTimer(duration, display) {
 
         if (--timer < 0) {
 			maxStayTimeOver();
-			reqID = servicePay;
+			reqID = 'servicePay';
 			stompClient.send("/app/waiter", {}, JSON.stringify({'name': reqID, 'payload0': 'pay', 'payload1': Table, 'payload2': ClientID}));
-		}
+        	clearInterval(timeout);
+        }
 		
     }, 1000);
 }
@@ -115,13 +118,23 @@ function connect() {
     
 }
 
+function hideAll() {
+	$( "#title" ).hide();
+    $( "#caption" ).hide();
+    $( "#txt-input" ).hide();
+    $( "#btn-waiter" ).hide();
+    $( "#countdown" ).hide();
+}
+
 function showWaitMessage() {
+	$( "#title" ).show();
 	$( "#title" ).text('Please, wait...');
     $( "#caption" ).show();
     $( "#caption" ).text('The waiter will arrive as soon as possible.');
     $( "#txt-input" ).hide();
     $( "#btn-waiter" ).hide();
 }
+
 function showDeploymentMessage() {
 	$( "#title" ).text('Please, let the waiter escort you.');
     $( "#caption" ).hide();
@@ -137,10 +150,11 @@ function showReadyToLeaveMessage() {
 }
 
 function maxStayTimeOver() {
-	$( "#title" ).text('Ready to leave?');
+	$( "#title" ).text('Your maxStayTime is over');
     $( "#caption" ).show();
-    $( "#caption" ).text('Your maxStayTime is over, please pay the amount due once the waiter gets to your table.');
-	$( "#btn-waiter" ).hide();
+    $( "#caption" ).text('Please, pay the amount due once the waiter gets to your table.');
+	$( "#btn-waiter" ).show();
+	 $("#countdown").hide();
 }
 
 $(document).on("click", "#btn-waiter", function(event) {
@@ -151,7 +165,7 @@ $(document).on("click", "#btn-waiter", function(event) {
 	}
 	
 	if(reqID == 'pay') {
-		stompClient.send("/app/waiter", {}, JSON.stringify({'name': reqID, 'payload0': $( "#txt-input" ).val(), 'clientid': ClientID}));
+		stompClient.send("/app/waiter", {}, JSON.stringify({'name': reqID, 'payload0': Bill, 'clientid': ClientID}));
 		showReadyToLeaveMessage();
 		reqID='deployExit';
 	}

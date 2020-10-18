@@ -70,15 +70,14 @@ public class BarmanService extends ActorService {
 				int OrderReadyTable = msg.get("OrderReadyTable").asInt();
 
 				if (busy == false) {
-					BarmanState.getInstance().setCurrentTask("waiting to get an order");
-				} else if (PreparingForTable != -1 && !preparingOrder.equals("")) {
-					BarmanState.getInstance().setCurrentTask("Recevied order of " + preparingOrder + " for table "
-							+ PreparingForTable + ". Preaparing...");
+					BarmanState.getInstance().setCurrentTask("Waiting to get an order...");
+				} 
+				else if (PreparingForTable != -1 && !preparingOrder.equals("")) {
+					BarmanState.getInstance().setCurrentTask("Recevied order of " + preparingOrder + " for table " + PreparingForTable + ". Preaparing...");
 					BarmanState.getInstance().increaseOrdersReceived();
-				} else if (PreparingForTable == -1 && preparingOrder.equals("") && OrderReadyTable != -1
-						&& orderReady == true) {
-					BarmanState.getInstance()
-							.setCurrentTask("Order Ready of " + preparingOrder + " for table " + PreparingForTable);
+				}
+				else if (OrderReadyTable != -1 && orderReady == true) {
+					BarmanState.getInstance().setCurrentTask("Order Ready of " + preparingOrder + " for table " + PreparingForTable);
 					BarmanState.getInstance().increaseTeasPreared();
 					BarmanState.getInstance().increaseTeasReady();
 				} else {

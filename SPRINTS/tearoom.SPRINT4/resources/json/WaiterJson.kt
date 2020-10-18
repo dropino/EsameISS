@@ -14,7 +14,7 @@ class WaiterJson : ActorJson {
 		jobj.put("busy", stat)
 	}
 
-	fun setClientID(stat: String) {
+	fun setClientID(stat: String?) {
 		jobj.put("clientID", stat)
 	}
 

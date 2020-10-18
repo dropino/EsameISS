@@ -28,12 +28,17 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 				var TimeToGoHome	= 15000L
 				
 				var Ntables			= 0
+				val clientQueue : Queue<String> = LinkedList<String>()
 				
 				var CurST			= ""
 				var PL				= ""
 				var Dest			= ""
 		
 				var wJson = json.WaiterJson()
+				
+				var TimeCleaned 	= 0
+				var CleaningInrement = 500
+				var MaxCleaning 	= 5000
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
@@ -133,7 +138,8 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 						else
 						 { 
 						 				WaitTime = MaxWaitTime
-						 				WaitingClient = true 
+						 				WaitingClient = true
+						 				clientQueue.add(CCID) 
 						 answer("waitTime", "wait", "wait($WaitTime)"   )  
 						 }
 						
@@ -344,12 +350,23 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 									wJson.setReceivedRequest("tableDirty")						
 						updateResourceRep( wJson.toJson()  
 						)
-						delay(5000) 
 						
-									wJson.setArrival("")
-									wJson.setTableDirty(false)
+									if (TimeCleaned < MaxCleaning){
+										TimeCleaned = TimeCleaned + CleaningInrement
+									
+						delay(500) 
+						forward("tableDirty", "tableDirty($CTABLE)" ,"waiter" ) 
+							
+									}		
+									else {
+										wJson.setArrival("")
+										wJson.setTableDirty(false)	
+										//We use to return null if there are no more clients waiting
+										wJson.setClientID(clientQueue.poll())	
 						updateResourceRep( wJson.toJson()  
 						)
+						
+									}
 						solve("cleanTable($CTABLE)","") //set resVar	
 					}
 					 transition( edgeName="goto",targetState="listening", cond=doswitch() )

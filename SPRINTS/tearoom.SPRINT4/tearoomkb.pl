@@ -3,7 +3,7 @@
 %===========================================
  
 maxStayTime(20000).
-maxWaitTime(30000).
+maxWaitTime(120000).
 timeToGoHome(15000).
 
 clientRequestPayload(order, ok).

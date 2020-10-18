@@ -7,6 +7,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import java.util.Queue
+import java.util.LinkedList
 	
 class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, scope ){
 
@@ -28,6 +30,7 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 				var TimeToGoHome	= 15000L
 				
 				var Ntables			= 0
+				val clientQueue : Queue<String> = LinkedList<String>()
 				
 				var CurST			= ""
 				var PL				= ""
@@ -133,7 +136,8 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 						else
 						 { 
 						 				WaitTime = MaxWaitTime
-						 				WaitingClient = true 
+						 				WaitingClient = true
+						 				clientQueue.add(CCID) 
 						 answer("waitTime", "wait", "wait($WaitTime)"   )  
 						 }
 						
@@ -348,6 +352,8 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 						
 									wJson.setArrival("")
 									wJson.setTableDirty(false)
+								//We use to return null if there are no more clients waiting
+									wJson.setClientID(clientQueue.poll())
 						updateResourceRep( wJson.toJson()  
 						)
 						solve("cleanTable($CTABLE)","") //set resVar	

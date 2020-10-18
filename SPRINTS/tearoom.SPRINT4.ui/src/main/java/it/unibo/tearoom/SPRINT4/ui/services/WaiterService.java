@@ -194,6 +194,10 @@ public class WaiterService extends ActorService {
 						WaiterState.getInstance().setCurrentMovement("Arrived at table "+table);
 						WaiterState.getInstance().decreaseDirtyTables();
 						WaiterState.getInstance().increaseFreeTables();
+						if (clientID != null) {
+							SmartbellState.getInstance().decreaseClientsWaiting();
+							simpMessagingTemplate.convertAndSendToUser(users.get(clientID),WebSocketConfig.topicForClientMain, new ServerReply("/tearoom", clientID, Integer.toString(0)));
+						}
 					}
 					sendUpdate(simpMessagingTemplate, WebSocketConfig.topicForManager, WaiterState.getInstance());
 				}
@@ -263,8 +267,16 @@ public class WaiterService extends ActorService {
 
 	}
 
-	public ApplMessage executeSmartbellMessage(ApplMessage msg) {
-		return waiterConn.request(msg);
+	//we save the ClientID-UUID mapping so we can tell the Client when he can come inside
+	public String executeSmartbellMessage(ApplMessage msg, String UUID, String clientID) {
+		ApplMessage timeToWait = waiterConn.request(msg);
+		String ttw = ApplMessageUtils.extractApplMessagePayload(timeToWait, 0);
+
+		if(Integer.parseInt(ttw) > 0) {
+			users.put(clientID, UUID);
+		}
+		
+		return ttw;
 	}
 
 	private ServerReply askForDeployment(ClientRequest req) {

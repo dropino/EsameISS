@@ -1,5 +1,8 @@
 package it.unibo.tearoom.SPRINT4.ui.services;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.californium.core.CoapHandler;
 import org.eclipse.californium.core.CoapResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +29,7 @@ import it.unibo.tearoom.SPRINT4.ui.model.states.SmartbellState;
 public class SmartbellService extends ActorService {
 
 	connQakCoap smartbellConn;
+	
 
 	/*
 	 * ---------------------------------------------------------- Client update on
@@ -90,13 +94,8 @@ public class SmartbellService extends ActorService {
 			// on tempStatus msg the clientId is the second argument, so idx = 1
 			ApplMessage askWaitTime = MsgUtil.buildRequest("web", "waitTime", "waitTime(" + ringRepArgs[1] + ")",
 					"waiter");
-			ApplMessage timeToWait = waiterService.executeSmartbellMessage(askWaitTime);
-
-			System.out.println(
-					"------------------- Smartbell Service appl message reply WAITTIME p = " + reply.msgContent());
-
-			String ttw = ApplMessageUtils.extractApplMessagePayload(timeToWait, 0);
-
+			String ttw = waiterService.executeSmartbellMessage(askWaitTime, UUID, ringRepArgs[1]);
+		
 			System.out
 					.println("------------------- Smartbell Service ANSWER TO CLIENT = " + ringRepArgs[1] + ", " + ttw);
 

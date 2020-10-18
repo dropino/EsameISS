@@ -1,6 +1,6 @@
 System -msglog tearoomsys 
 //mqttBroker "localhost" : 1883 eventTopic "unibo/waiter"   
- 
+  
 //MESSAGES
 mqttBroker "localhost" : 1883 eventTopic "unibo/basicrobot"   
 
@@ -76,6 +76,7 @@ QActor waiter context ctxtearoom {
 		var TimeToGoHome	= 15000L
 		
 		var Ntables			= 0
+		val clientQueue : Queue<String> = LinkedList<String>()
 		
 		var CurST			= ""
 		var PL				= ""
@@ -184,7 +185,8 @@ QActor waiter context ctxtearoom {
 		} else {
 			[# 
 				WaitTime = MaxWaitTime
-				WaitingClient = true 
+				WaitingClient = true
+				clientQueue.add(CCID) 
 			#]
 			replyTo waitTime with wait : wait($WaitTime)
 		}
@@ -409,6 +411,8 @@ QActor waiter context ctxtearoom {
 		[#
 			wJson.setArrival("")
 			wJson.setTableDirty(false)
+		//We use to return null if there are no more clients waiting
+			wJson.setClientID(clientQueue.poll())
 		#]
 		updateResource [# wJson.toJson() #]
 		solve( cleanTable($CTABLE) )

@@ -1,5 +1,5 @@
 System walkersys  
- 
+  
 Event    walkerstarted   : walkerstarted(X)
  
 Dispatch cmd       	: cmd(MOVE) 

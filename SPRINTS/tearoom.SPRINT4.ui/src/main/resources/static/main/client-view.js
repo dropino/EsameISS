@@ -31,10 +31,6 @@ function startTimer(duration, display) {
         	url.searchParams.append('badtemp', false);
         	window.location.assign(url);
         }
-
-        if ((seconds % 5) == 0) {
-            stompClient.send("/app/smartbell");
-        }
     }, 1000);
 }
 

@@ -213,13 +213,15 @@ QActor waiter context ctxtearoom {
 
   	
   	State handleDeploy {
-  		println("WAITER | handling deployment request... ")  		
   		onMsg(deploy : deploy(FROM, TO, CID)) {
   			[#
   				CTABLE = payloadArg(0).toString().toIntOrNull()
   				Dest = payloadArg(1).toString()
   				CCID = payloadArg(2).toString()	
   			#]
+  			
+  			println("WAITER | handling deployment request for client $CCID... ")  		
+  			
   		}		
   	}
   	Goto goToEntrance if [# Dest == "table" #] else deployClientExit
@@ -245,10 +247,12 @@ QActor waiter context ctxtearoom {
 	
 	
 	State deployClientEntrance {		
-	 	solve( teatable(T, $CCID ) ) 
+	 	solve( teatable(T,busy($CCID)) ) 
 	 	ifSolved {
 	 		[# CTABLE = getCurSol("T").toString().toInt() #]
 	 	}
+	 	
+	 	println("WAITER | DEPLOYING Client $CCID to table $CTABLE")
 	 	
 	 	[#		
 			wJson.setBusy(true)

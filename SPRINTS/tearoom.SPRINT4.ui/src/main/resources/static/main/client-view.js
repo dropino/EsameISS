@@ -112,5 +112,5 @@ $(document).on("click", "#btn-smartbell", function(event) {
     console.log("sending Smartbell request");
     stompClient.send("/app/smartbell");
 	$( "#btn-smartbell").hide();
-	$( "#clickOnce").hide();
+	$( "#clickOnce").show();
 });

@@ -255,7 +255,7 @@ public class WaiterService extends ActorService {
 		else if (req.getName().compareTo("pay") == 0) {
 			ApplMessage msg = MsgUtil.buildDispatch("web", "pay", "pay(" + req.getPayload0() + ")", "waiter");
 			waiterConn.forward(msg);
-			ClientRequest deployReq = new ClientRequest("deploy", "table", "exitdoor", req.getClientid());
+			ClientRequest deployReq = new ClientRequest("deploy", req.getPayload1(), "exitdoor", req.getClientid());
 			result = askForDeployment(deployReq);
 		}
 

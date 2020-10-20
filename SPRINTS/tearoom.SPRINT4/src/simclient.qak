@@ -44,7 +44,6 @@ QActor simclient context ctxclient {
 		var MyTable				= 0
 		var MyCID 				= ""
 		var ToPay 				= 0
-		var X					= 0
 	#]
 	
 		State s0 initial{

@@ -24,7 +24,6 @@ class Simclient ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, 
 				var MyTable				= 0
 				var MyCID 				= ""
 				var ToPay 				= 0
-				var X					= 0
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State

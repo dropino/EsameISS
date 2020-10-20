@@ -15,8 +15,8 @@
  * ================================================================================
  */ 
   
-System -msglog basicrobot 
-//mqttBroker "localhost" : 1883 eventTopic "unibo/polar"   
+System -msglog basicrobot
+mqttBroker "localhost" : 1883 eventTopic "unibo/polar"   
 
 Dispatch cmd       	: cmd(MOVE)    
 Dispatch end       	: end(ARG)  
@@ -95,7 +95,7 @@ QActor basicrobot context ctxbasicrobot{
  			run unibo.robot.robotSupport.move( "w" )
  			memoCurrentTime StartTime  
 		}  
-	}
+	}  
 	Transition t0 
 		whenTimeVar StepTime      -> stepPerhapsDone	
 		whenEvent  obstacle       -> stepFail		 

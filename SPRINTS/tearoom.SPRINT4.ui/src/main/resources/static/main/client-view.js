@@ -69,7 +69,6 @@ function handleSmartbellReply(msg) {
 		$( "#clickOnce").hide();
         startTimer(ttw/1000, $( "#countdown" ));
     }
-    
 }
 
 function connect() {

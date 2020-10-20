@@ -81,7 +81,7 @@ function startTimer(duration, display) {
         if (--timer < 0) {
 			maxStayTimeOver();
 			reqID = 'servicePay';
-			stompClient.send("/app/waiter", {}, JSON.stringify({'name': reqID, 'payload0': 'pay', 'payload1': Table, 'payload2': ClientID}));
+			stompClient.send("/app/waiter", {}, JSON.stringify({'name': reqID, 'payload0': 'pay', 'payload1': Table, 'clientid': ClientID}));
         	clearInterval(timeout);
         }
 		
@@ -100,7 +100,7 @@ function initialSetup() {
 
 	stompClient.send("/app/waiter", {}, JSON.stringify({'name': reqID, 'payload0': 'entrancedoor', 'payload1': 'table', 'clientid': ClientID}));
 	
-	showWaitMessage();
+	showDeploymentMessage();
 }
 
 function connect() {
@@ -149,13 +149,6 @@ function showDeploymentMessage() {
     $( "#btn-waiter" ).hide();
 }
 
-function showReadyToLeaveMessage() {
-	$( "#title" ).text('Ready to leave?');
-    $( "#caption" ).show();
-    $( "#caption" ).text('Call the Waiter by clicking the button below to leave the tearoom.');
-    $( "#btn-waiter" ).show();
-}
-
 function maxStayTimeOver() {
 	$( "#title" ).text('Your maxStayTime is over');
     $( "#caption" ).show();
@@ -165,16 +158,15 @@ function maxStayTimeOver() {
 }
 
 $(document).on("click", "#btn-waiter", function(event) {
-
-	if(reqID == 'deployExit') {
-		stompClient.send("/app/waiter", {}, JSON.stringify({'name': reqID, 'payload0': Table, 'payload1': 'exitdoor', 'clientid': ClientID}));
-        showDeploymentMessage();
-	}
 	
 	if(reqID == 'pay') {
 		stompClient.send("/app/waiter", {}, JSON.stringify({'name': reqID, 'payload0': Bill, 'clientid': ClientID}));
-		showReadyToLeaveMessage();
-		reqID='deployExit';
+		
+        showDeploymentMessage();
+//        setTimeout(function() {
+//    		stompClient.send("/app/waiter", {}, JSON.stringify({'name': reqID, 'payload0': table, 'payload1': 'exitdoor', 'clientid': ClientID}));
+//        }, 1000);
+
 	}
 	if(reqID == 'servicePay') {
 		clearInterval(timeout);

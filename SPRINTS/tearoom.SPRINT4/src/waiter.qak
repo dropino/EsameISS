@@ -83,7 +83,7 @@ QActor waiter context ctxtearoom {
 		var wJson = json.WaiterJson()
 		
 		var TimeCleaned : LongArray = longArrayOf( 0L, 0L)
-		var LastCleanedTable= 0
+		var LastCleanedTable = 0
 		var CleaningInrement = 500L
 		var MaxCleaning 	= 5000L
 	#]
@@ -121,7 +121,10 @@ QActor waiter context ctxtearoom {
 			wJson.reset()
   		#]
   		println("WAITER | listening... ")
- 		updateResource [#wJson.toJson()#]
+ 		
+ 		if [# LastCleanedTable == 0 #] {
+ 			updateResource [#wJson.toJson()#]
+ 		}
 	}
 	Transition t0  	whenTimeVar	TimeToGoHome		-> goHome
 	  				whenRequest waitTime			-> answerTime
@@ -137,15 +140,13 @@ QActor waiter context ctxtearoom {
 			[# CurST = getCurSol("ST").toString()  #] 
 			println("WAITER | current waiter state: $CurST")
 		}
-		println("WAITER | current waiter state: $CurST")
-		
-  		
+			
   		//se non sono a casa ci vado
   		if [# CurST != "athome" #] {  			
  			request waiterwalker -m moveForTask : moveForTask(home, 1)
  			println("WAITER | Changing movement state")
  			
- 			solve ( changeWaiterState(athome) )	
+ 			solve ( changeWaiterState($CurST, athome) )	
  			ifSolved {
  				 			[#
  				wJson.setMovingTo("home")
@@ -239,7 +240,7 @@ QActor waiter context ctxtearoom {
 
 		println("WAITER | GOING to ENTRANCE door ")
 		request waiterwalker -m moveForTask : moveForTask(entrancedoor, 1)
-		solve ( changeWaiterState(moving) )		
+		solve ( changeWaiterState(athome, moving) )		
 	} 
 	 Transition t0		whenReply	movementDone -> deployClientEntrance
 	  					whenReply	walkbreak	 -> error
@@ -325,10 +326,10 @@ QActor waiter context ctxtearoom {
 		
 		updateResource [#wJson.toJson()#]
 		
-		println("WAITER | received CLIENTREQUEST $KIND $CTABLE ")
+		println("WAITER | received CLIENTREQUEST $KIND from Client $CCID at table $CTABLE ")
 		
 		request waiterwalker -m moveForTask : moveForTask(teatable, $CTABLE)
-		solve ( changeWaiterState(moving) )	
+		solve ( changeWaiterState(athome, moving) )	
 	}
 	 Transition t0		whenReply	movementDone -> atTableForRequest
 	  					whenReply	walkbreak	 -> error	
@@ -406,7 +407,7 @@ QActor waiter context ctxtearoom {
 		
 		println("WAITER | going to table for CLEANING $CTABLE... ")
 		request waiterwalker -m moveForTask : moveForTask(teatable, $CTABLE)
-		solve ( changeWaiterState(moving) )	
+		solve ( changeWaiterState(athome, moving) )	
 		[#
 			wJson.setBusy(true)
 			wJson.setTable(CTABLE)
@@ -460,7 +461,7 @@ QActor waiter context ctxtearoom {
 		}
 		println("WAITER | going to barman... ")
 		request waiterwalker -m moveForTask : moveForTask(barman, 1)
-		solve ( changeWaiterState(moving) )
+		solve ( changeWaiterState(athome, moving) )
 		
 		[#
 			wJson.setBusy(true)

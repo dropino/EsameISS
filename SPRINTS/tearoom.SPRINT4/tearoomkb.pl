@@ -62,11 +62,11 @@ stateOfTeatables( [teatable1(V1),teatable2(V2)] ) :-
 
 waiter( athome ).	
 
-changeWaiterState( STATE )	 :-
-	%%stdout <- println( tearoomkb_changeWaiterState( STATE ) ),
-	retract( waiter( athome ) ),
+changeWaiterState( STATE, NEWSTATE )	 :-
+	%%stdout <- println( tearoomkb_changeWaiterState( STATE, NEWSTATE ) ),
+	retract( waiter( STATE ) ),
 	!,
-	assert( waiter( STATE ) ).
+	assert( waiter( NEWSTATE ) ).
 changeWaiterState(_).
 
 %% ------------------------------------------ 

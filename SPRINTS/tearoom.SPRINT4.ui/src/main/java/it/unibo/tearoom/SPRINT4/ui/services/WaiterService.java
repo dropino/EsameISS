@@ -72,7 +72,7 @@ public class WaiterService extends ActorService {
 				try {
 					msg = mapper.readTree(response.getResponseText());
 				} catch (Exception ex) {
-					ex.printStackTrace();
+					return;
 				}
 
 				System.out.println("Waiter Service --> CoapClient changed -> " + response.getResponseText());
@@ -255,9 +255,9 @@ public class WaiterService extends ActorService {
 		else if (req.getName().compareTo("pay") == 0) {
 			ApplMessage msg = MsgUtil.buildDispatch("web", "pay", "pay(" + req.getPayload0() + ")", "waiter");
 			waiterConn.forward(msg);
-			result = new ServerReply("", "success");
-		} else
-			result = new ServerReply("", "error");
+			ClientRequest deployReq = new ClientRequest("deploy", "table", "exitdoor", req.getClientid());
+			result = askForDeployment(deployReq);
+		}
 
 		System.out.println("------------------- WaiterService ANSWER TO CLIENT = " + result.getPayload0());
 

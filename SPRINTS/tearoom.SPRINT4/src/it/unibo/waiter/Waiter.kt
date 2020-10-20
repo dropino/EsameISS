@@ -7,8 +7,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import java.util.Queue
 import java.util.LinkedList
+import java.util.Queue
 	
 class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, scope ){
 

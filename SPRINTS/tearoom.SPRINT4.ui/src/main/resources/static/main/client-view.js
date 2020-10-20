@@ -35,8 +35,8 @@ function startTimer(duration, display) {
 }
 
 function handleSmartbellReply(msg) {
-    var redir = JSON.parse(msg.body).redir;
-    var CID = JSON.parse(msg.body).payload0;
+	var redir = JSON.parse(msg.body).redir;
+  	var CID = JSON.parse(msg.body).payload0;
     var ttw = JSON.parse(msg.body).payload1;
     
     console.log(msg.body);
@@ -88,10 +88,29 @@ function intialSetup() {
 	$( "#h-countdown" ).hide();
 	$( "#countdown" ).hide();
 	$( "#connection-error").hide();
+	$( "#clickOnce").hide();
 }
+
+function getCookie(cname) {
+  var name = cname + "=";
+  var ca = document.cookie.split(';');
+  for(var i = 0; i < ca.length; i++) {
+    var c = ca[i];
+    while (c.charAt(0) == ' ') {
+      c = c.substring(1);
+    }
+    if (c.indexOf(name) == 0) {
+      return c.substring(name.length, c.length);
+    }
+  }
+  return "";
+}
+
 
 $(document).on("click", "#btn-smartbell", function(event) {
 
     console.log("sending Smartbell request");
     stompClient.send("/app/smartbell");
+	$( "#btn-smartbell").hide();
+	$( "#clickOnce").show();
 });

@@ -124,12 +124,10 @@ public class WaiterService extends ActorService {
 				// handleDeploy entrance
 				else if (receivedRequest.equals("deployEntrance")) {
 					if (movingTo.equals("entrancedoor")) {
-						WaiterState.getInstance()
-								.setCurrentTask("Received request to deploy client " + clientID + " to table");
+						WaiterState.getInstance().setCurrentTask("Received request to deploy client " + clientID + " to table");
 						WaiterState.getInstance().setCurrentMovement("Moving to entrance door");
 					} else if (movingTo.contains("table")) {
-						WaiterState.getInstance().setCurrentTask(
-								"Deploying client " + clientID + " from entrance door to table " + table);
+						WaiterState.getInstance().setCurrentTask("Deploying client " + clientID + " from entrance door to table " + table);
 						WaiterState.getInstance().increaseDeployedToTable();
 						WaiterState.getInstance().decreaseFreeTables();
 					}

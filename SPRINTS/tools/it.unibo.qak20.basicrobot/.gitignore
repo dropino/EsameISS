@@ -3,7 +3,7 @@ bin/default
 .metadata
 .classpath
 .project
-build
+
 
 #node
 nodeCode/*/node_modules/

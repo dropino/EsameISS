@@ -148,9 +148,7 @@ QActor waiter context ctxtearoom {
  			
  			solve ( changeWaiterState($CurST, athome) )	
  			ifSolved {
- 				 			[#
- 				wJson.setMovingTo("home")
- 			#]
+ 				 [# wJson.setMovingTo("home") #]
  			}
  			updateResource [#wJson.toJson()#] 
   		} 
@@ -220,7 +218,7 @@ QActor waiter context ctxtearoom {
   				CCID = payloadArg(2).toString()	
   			#]
   			
-  			println("WAITER | handling deployment request for client $CCID... ")  		
+  			println("WAITER | handling deployment request for client $CCID from $CTABLE to $Dest... ")  		
   			
   		}		
   	}
@@ -246,11 +244,12 @@ QActor waiter context ctxtearoom {
 	  					whenReply	walkbreak	 -> error
 	
 	
-	State deployClientEntrance {		
-	 	solve( teatable(T,busy($CCID)) ) 
+	State deployClientEntrance {
+		//we engage the table in the waitTime fucntion to prevent other clients to enter thinking there was a free table		
+	 	solve( teatable(T, busy($CCID)) ) 
 	 	ifSolved {
 	 		[# CTABLE = getCurSol("T").toString().toInt() #]
-	 	}
+	 	}	 	
 	 	
 	 	println("WAITER | DEPLOYING Client $CCID to table $CTABLE")
 	 	
@@ -273,9 +272,10 @@ QActor waiter context ctxtearoom {
 
 	State deployClientExit {
 		
-		println("WAITER | deploying simclient from table to exit door... ")
+		println("WAITER | deploying simclient from table $CTABLE to exit door... ")
 		forward waiter -m tableDirty : tableDirty($CTABLE)
-
+		solve (dirtyTable($CTABLE, $CCID))
+		println("WAITER | sent message to self for DIRTY TABLE $CTABLE ")
 		request waiterwalker -m moveForTask : moveForTask(exitdoor, 1)
 		
 		[#		
@@ -391,9 +391,14 @@ QActor waiter context ctxtearoom {
 	
 	
 	State cleanTable {
+		println("WAITER | CLEANING TABLE MSG ARRIVED")
+		
 		onMsg(tableDirty : tableDirty(N)) {
 			[#  CTABLE = payloadArg(0).toString().toInt() #]
 		}
+		
+		println("WAITER | Gotta clean table $CTABLE. Last cleaned table: $LastCleanedTable")
+		
 		
 		if [# LastCleanedTable != 0 
 			&& LastCleanedTable != CTABLE
@@ -405,7 +410,8 @@ QActor waiter context ctxtearoom {
 		
 		[#  LastCleanedTable = CTABLE!!  #]
 		
-		println("WAITER | going to table for CLEANING $CTABLE... ")
+		
+		println("WAITER | going to table $CTABLE for CLEANING... ")
 		request waiterwalker -m moveForTask : moveForTask(teatable, $CTABLE)
 		solve ( changeWaiterState(athome, moving) )	
 		[#
@@ -436,6 +442,8 @@ QActor waiter context ctxtearoom {
 				[# TimeCleaned[CTABLE!! - 1] += CleaningInrement #]
 				delay 500
 				forward waiter -m tableDirty : tableDirty ($CTABLE)
+				
+				println("WAITER | cleaned table $CTABLE for ${TimeCleaned[CTABLE!! - 1]} of $MaxCleaning... ")
 		} else {
 			[# 
 				wJson.setArrival("")
@@ -443,7 +451,9 @@ QActor waiter context ctxtearoom {
 				//We use to return null if there are no more clients waiting
 				wJson.setClientID(clientQueue.poll())	
 				LastCleanedTable = 0
+				
 		#]
+				println("WAITER | FINISHED CLEANING table $CTABLE")	
 				updateResource [# wJson.toJson() #]
 				solve( cleanTable($CTABLE) )
 			}

@@ -45,7 +45,7 @@ cleanTable(N)	 :-
 	%% stdout <- println( tearoomkb_cleanTable(N) ),
 	retract( teatable( N, dirty ) ),
 	!,
-	assert( teatable( N, clean ) ).
+	assert( teatable( N, available ) ).
 cleanTable(N).	
  
 stateOfTeatables( [teatable1(V1),teatable2(V2)] ) :-

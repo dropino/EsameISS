@@ -22,7 +22,7 @@ function handleWaiterReply(msg) {
 	if (JSON.parse(msg.body).payload0 == 'success')
 		return;
 	
-	if(reqID == 'deployExit') {
+	if(reqID == 'pay') {
       $( "#title" ).text('So long, and thanks for all the tea!');
       $( "#caption" ).hide();
       $( "#txt-input" ).hide();
@@ -143,6 +143,7 @@ function showWaitMessage() {
 }
 
 function showDeploymentMessage() {
+    $( "#title" ).show();
 	$( "#title" ).text('Please, let the waiter escort you.');
     $( "#caption" ).hide();
     $( "#txt-input" ).hide();
@@ -150,6 +151,7 @@ function showDeploymentMessage() {
 }
 
 function maxStayTimeOver() {
+    $( "#title" ).show();
 	$( "#title" ).text('Your maxStayTime is over');
     $( "#caption" ).show();
     $( "#caption" ).text('Please, pay the amount due once the waiter gets to your table.');
@@ -160,13 +162,9 @@ function maxStayTimeOver() {
 $(document).on("click", "#btn-waiter", function(event) {
 	
 	if(reqID == 'pay') {
-		stompClient.send("/app/waiter", {}, JSON.stringify({'name': reqID, 'payload0': Bill, 'clientid': ClientID}));
+		stompClient.send("/app/waiter", {}, JSON.stringify({'name': reqID, 'payload0': Bill, 'payload1': Table, 'clientid': ClientID}));
 		
         showDeploymentMessage();
-//        setTimeout(function() {
-//    		stompClient.send("/app/waiter", {}, JSON.stringify({'name': reqID, 'payload0': table, 'payload1': 'exitdoor', 'clientid': ClientID}));
-//        }, 1000);
-
 	}
 	if(reqID == 'servicePay') {
 		clearInterval(timeout);

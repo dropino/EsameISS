@@ -15,11 +15,17 @@ class WaiterJson : ActorJson {
 	}
 
 	fun setClientID(stat: String?) {
-		jobj.put("clientID", stat)
+		if (stat == null)
+			jobj.put("clientID", "")
+		else
+			jobj.put("clientID", stat)
 	}
 
 	fun setTable(stat: Int?) {
-		jobj.put("table", stat)
+		if (stat == null)
+			jobj.put("table", -1)
+		else
+			jobj.put("table", stat)
 	}
 
 	fun setOrder(stat: String) {

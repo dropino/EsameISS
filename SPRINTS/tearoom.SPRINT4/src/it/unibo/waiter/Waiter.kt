@@ -38,9 +38,10 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 		
 				var wJson = json.WaiterJson()
 				
-				var TimeCleaned 	= 0
-				var CleaningInrement = 500
-				var MaxCleaning 	= 5000
+				var TimeCleaned : LongArray = longArrayOf( 0L, 0L)
+				var LastCleanedTable= 0
+				var CleaningInrement = 500L
+				var MaxCleaning 	= 5000L
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
@@ -333,6 +334,13 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								  CTABLE = payloadArg(0).toString().toInt()  
 						}
+						if(  LastCleanedTable != 0 
+									&& LastCleanedTable != CTABLE
+									 && TimeCleaned[LastCleanedTable - 1] < MaxCleaning  
+						 ){forward("tableDirty", "tableDirty($CTABLE)" ,"waiter" ) 
+						  CTABLE = LastCleanedTable  
+						}
+						  LastCleanedTable = CTABLE!!   
 						println("WAITER | going to table for CLEANING $CTABLE... ")
 						request("moveForTask", "moveForTask(teatable,$CTABLE)" ,"waiterwalker" )  
 						solve("changeWaiterState(moving)","") //set resVar	
@@ -358,24 +366,22 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 									wJson.setReceivedRequest("tableDirty")						
 						updateResourceRep( wJson.toJson()  
 						)
-						
-									if (TimeCleaned < MaxCleaning){
-										TimeCleaned = TimeCleaned + CleaningInrement
-									
+						if(  TimeCleaned[CTABLE!! - 1] < MaxCleaning  
+						 ){ TimeCleaned[CTABLE!! - 1] += CleaningInrement  
 						delay(500) 
 						forward("tableDirty", "tableDirty($CTABLE)" ,"waiter" ) 
-							
-									}		
-									else {
-										wJson.setArrival("")
-										wJson.setTableDirty(false)	
-										//We use to return null if there are no more clients waiting
-										wJson.setClientID(clientQueue.poll())	
-						updateResourceRep( wJson.toJson()  
-						)
-						
-									}
-						solve("cleanTable($CTABLE)","") //set resVar	
+						}
+						else
+						 { 
+						 				wJson.setArrival("")
+						 				wJson.setTableDirty(false)	
+						 				//We use to return null if there are no more clients waiting
+						 				wJson.setClientID(clientQueue.poll())	
+						 				LastCleanedTable = 0
+						 updateResourceRep( wJson.toJson()  
+						 )
+						 solve("cleanTable($CTABLE)","") //set resVar	
+						 }
 					}
 					 transition( edgeName="goto",targetState="listening", cond=doswitch() )
 				}	 

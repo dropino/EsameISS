@@ -33,11 +33,17 @@ engageTable(N,CID)	 :-
 engageTable(_,_).	
 
 tableavailable(N):- teatable(N,	available ).
- 
+
+dirtyTable(N, CID)	 :-
+	%% stdout <- println( tearoomkb_dirtyTable(N) ),
+	retract( teatable( N, busy(CID) ) ),
+	!,
+	assert( teatable( N, dirty ) ).
+dirtyTable(N, CID). 
 	
 cleanTable(N)	 :-
 	%% stdout <- println( tearoomkb_cleanTable(N) ),
-	retract( teatable( N, engaged ) ),
+	retract( teatable( N, dirty ) ),
 	!,
 	assert( teatable( N, clean ) ).
 cleanTable(N).	

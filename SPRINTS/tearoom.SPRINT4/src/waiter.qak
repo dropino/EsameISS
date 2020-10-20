@@ -1,6 +1,4 @@
-System -msglog tearoomsys 
-//mqttBroker "localhost" : 1883 eventTopic "unibo/waiter"   
-  
+System -msglog tearoomsys   
 //MESSAGES
 mqttBroker "localhost" : 1883 eventTopic "unibo/basicrobot"   
 
@@ -84,9 +82,10 @@ QActor waiter context ctxtearoom {
 
 		var wJson = json.WaiterJson()
 		
-		var TimeCleaned 	= 0
-		var CleaningInrement = 500
-		var MaxCleaning 	= 5000
+		var TimeCleaned : LongArray = longArrayOf( 0L, 0L)
+		var LastCleanedTable= 0
+		var CleaningInrement = 500L
+		var MaxCleaning 	= 5000L
 	#]
 	
 	State s0 initial {	
@@ -129,7 +128,7 @@ QActor waiter context ctxtearoom {
 	  				whenRequest	deploy			 	-> handleDeploy
 					whenRequest	clientRequest 		-> answerClientRequest
 					whenMsg 	orderReady 	 		-> getDrink
-					whenMsg 	tableDirty	 		-> cleanTable
+					whenMsg 	tableDirty	 		-> cleanTable		
 						
   	
   	State goHome {
@@ -394,6 +393,17 @@ QActor waiter context ctxtearoom {
 		onMsg(tableDirty : tableDirty(N)) {
 			[#  CTABLE = payloadArg(0).toString().toInt() #]
 		}
+		
+		if [# LastCleanedTable != 0 
+			&& LastCleanedTable != CTABLE
+			 && TimeCleaned[LastCleanedTable - 1] < MaxCleaning #
+		] {
+			forward waiter -m tableDirty : tableDirty($CTABLE)
+			[#  CTABLE = LastCleanedTable #]
+		}
+		
+		[#  LastCleanedTable = CTABLE!!  #]
+		
 		println("WAITER | going to table for CLEANING $CTABLE... ")
 		request waiterwalker -m moveForTask : moveForTask(teatable, $CTABLE)
 		solve ( changeWaiterState(moving) )	
@@ -421,27 +431,21 @@ QActor waiter context ctxtearoom {
 		#]
 		updateResource [# wJson.toJson() #]
 
-
-		[#
-			if (TimeCleaned < MaxCleaning){
-				TimeCleaned = TimeCleaned + CleaningInrement
-			
-		#]
+		if [# TimeCleaned[CTABLE!! - 1] < MaxCleaning #] {
+				[# TimeCleaned[CTABLE!! - 1] += CleaningInrement #]
 				delay 500
 				forward waiter -m tableDirty : tableDirty ($CTABLE)
-		[#	
-			}		
-			else {
+		} else {
+			[# 
 				wJson.setArrival("")
 				wJson.setTableDirty(false)	
 				//We use to return null if there are no more clients waiting
 				wJson.setClientID(clientQueue.poll())	
+				LastCleanedTable = 0
 		#]
 				updateResource [# wJson.toJson() #]
-		[#
+				solve( cleanTable($CTABLE) )
 			}
-		#]
-		solve( cleanTable($CTABLE) )
 	}
 	Goto listening
 

@@ -36,7 +36,7 @@ class SmartBellJson : ActorJson {
 	override fun reset() {
 		jobj.put("busy", false)
 		jobj.put("ClientArrived", false)
-		jobj.put("ClientAccepted", true)
+		jobj.put("ClientAccepted", false)
 		jobj.put("ClientDenied", true)
 	}
 

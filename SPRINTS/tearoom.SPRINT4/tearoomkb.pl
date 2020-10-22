@@ -12,9 +12,7 @@ clientRequestPayload(pay, 5).
 %% ------------------------------------------ 
 %% Teatables
 	%% busy
-	%% free		(not busy but not clean)
 	%% dirty	(not clean)
-	%% clean	(not dirty)
 	%% available (free and clean)	
 %% ------------------------------------------ 
 teatable( 1, available ).
@@ -25,8 +23,8 @@ numavailabletables(N) :-
 	%% stdout <- println( tearoomkb_numavailabletables(NList) ),
 	length(NList,N).
 
-engageTable(N,CID)	 :-
-	%%stdout <- println( tearoomkb_engageTable(N) ),
+engageTable(N, CID)	 :-
+	%%stdout <- println( tearoomkb_engageTable(N, CID) ),
 	retract( teatable( N, available ) ),
 	!,
 	assert( teatable( N, busy(CID) ) ).
@@ -35,7 +33,7 @@ engageTable(_,_).
 tableavailable(N):- teatable(N,	available ).
 
 dirtyTable(N, CID)	 :-
-	%% stdout <- println( tearoomkb_dirtyTable(N) ),
+	%% stdout <- println( tearoomkb_dirtyTable(N, CID) ),
 	retract( teatable( N, busy(CID) ) ),
 	!,
 	assert( teatable( N, dirty ) ).

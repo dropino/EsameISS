@@ -74,7 +74,7 @@ class WaiterJson : ActorJson {
 		jobj.put("clientID", "")
 		jobj.put("table", -1)
 		jobj.put("order", "")
-		jobj.put("payment", false)
+		jobj.put("payment", -1)
 		jobj.put("waitTime", -1)
 		jobj.put("movingTo", "")
 		jobj.put("movingFrom", "")

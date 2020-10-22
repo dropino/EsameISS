@@ -7,10 +7,10 @@ Event    waiterwalkerstarted   : waiterwalkerstarted(X)
 Event    walkerstarted   	: walkerstarted(X)
 
 Request	 doPlan 			: doPlan(X,Y)
+Request	 posCorrection		: posCorrection(X,Y)
 Reply 	 walkerError 		: walkerError( X,Y, CAUSE, DIR )
 Reply	 walkerDone 		: walkerDone(X,Y)
 
-Request	 posCorrection		: posCorrection(X, Y)
 
 //Waiter-Waiterwalker
 Event    waiterwalkerstarted : waiterwalkerstarted(X)
@@ -614,7 +614,7 @@ QActor waiterwalker context ctxtearoom {
 				
 				println("waiterwalker | SOLVED query KB with NewX = $NewX, NewY = $NewY")
 				
-				request walker -m posCorrection : posCorrextion($NewX, $NewY)
+				request walker -m posCorrection : posCorrection($NewX, $NewY)
 			} else {
 				println("waiterwalker | NO SOLUTION in KB")
 				
@@ -622,8 +622,7 @@ QActor waiterwalker context ctxtearoom {
 			}
 		}
 	}
-	Transition t0 	whenTime	10000 		->  waitCmd
-					whenReply 	walkerDone  -> waitCmd 
+	Transition t0 	whenReply 	walkerDone  -> movementCompleted 
 					whenReply 	walkerError -> movementError
 					
  }

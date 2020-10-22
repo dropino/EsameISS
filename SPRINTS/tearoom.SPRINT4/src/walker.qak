@@ -7,11 +7,11 @@ Request step       	: step( TIME )
 Reply   stepdone   	: stepdone(V)  
 Reply   stepfail   	: stepfail(DURATION, CAUSE) 
 
-Request	doPlan 		: doPlan(X,Y)
-Reply walkerDone 	: walkerDone(OK)
-Reply walkerError 	: walkerError( XT,YT, CAUSE, DIR ) 
+Request	doPlan 			: doPlan(X,Y)
+Request posCorrection 	: posCorrection(X,Y)
+Reply walkerDone 		: walkerDone(OK)
+Reply walkerError 		: walkerError( XT,YT, CAUSE, DIR ) 
 
-Request posCorrection : posCorrection(X,Y)
  
 Context ctxwalker		        ip [host="localhost"		port=8050]     
 Context ctxbasicrobot     		ip [host="localhost"		port=8020]    //"192.168.1.121"
@@ -102,7 +102,7 @@ ExternalQActor basicrobot    context ctxbasicrobot
 	 */					  
  	State execPlannedMoves{ 
  		[#  CurrentPlannedMove = itunibo.planner.plannerUtil.getNextPlannedMove() #]
- 		//println("walker | doing move $CurrentPlannedMove")
+ 		println("walker | doing move $CurrentPlannedMove")
  		delayVar PauseTime
  	}
  	Goto wMove if [# CurrentPlannedMove == "w" #] else otherPlannedMove
@@ -131,7 +131,7 @@ ExternalQActor basicrobot    context ctxbasicrobot
 		
 		
 	State stepFailed {  //has found an obstacle 
-	    [# obstacleFound = true #]
+//	    [# obstacleFound = true #]
  		println("walker | stepFailed")
 		onMsg(stepfail : stepfail(DURATION, CAUSE) ){
 			[# 
@@ -151,20 +151,31 @@ ExternalQActor basicrobot    context ctxbasicrobot
 	Goto sendFailureAnswer
 		
 	State correctAndResume {
-		onMsg(posCorrection : posCorrection(X,Y)) {
+		
+		println("walker in correctAndResume ")
+		printCurrentMessage
+		
+		onMsg( posCorrection : posCorrection(X, Y) ) {
 			[#
 				val NewX = payloadArg(0).toString()
 				val NewY = payloadArg(1).toString()		
 			#]
 			println("walker correctAndResume ($NewX,$NewY)")
 			
+			//try to fix the position by planning from the supposed current position to
+			//what was found to be the actual position. Then we virtually do the movements
+			//to update the map to reach the actual position we're in
+			//The only movements we actually perform are the direction changes to, in the end, 
+			//be consistent with the planner direction 
 			run itunibo.planner.plannerUtil.planForGoal("$NewX","$NewY")
 			if [# itunibo.planner.plannerUtil.existActions() #] {
 				println("walker correctAndResume the plan to correct the position was found")
-				//TODO sistemare che non aggiorna la mappa con la nuova posizione ricevuta dal waiterwalker
 				[#
 					CurrentPlannedMove = itunibo.planner.plannerUtil.getNextPlannedMove()
 					while( CurrentPlannedMove != "" ) {
+						if ( CurrentPlannedMove == "l" || CurrentPlannedMove == "r" ){
+  							forward("cmd", "cmd($CurrentPlannedMove)" ,"basicrobot" )
+  						}
 						itunibo.planner.plannerUtil.updateMap( "$CurrentPlannedMove" )
 						CurrentPlannedMove = itunibo.planner.plannerUtil.getNextPlannedMove()
 					}		
@@ -179,15 +190,13 @@ ExternalQActor basicrobot    context ctxbasicrobot
 	}
 	Goto execPlannedMoves if[# itunibo.planner.plannerUtil.existActions() #] else sendFailureAnswer 
 	
- 	State otherPlannedMove{
+ 	State otherPlannedMove {
   		if [# CurrentPlannedMove == "l" || CurrentPlannedMove == "r"  #]{
   			forward basicrobot -m cmd : cmd($CurrentPlannedMove)
  			run itunibo.planner.plannerUtil.updateMap( "$CurrentPlannedMove" )
   		} 
  	}   
  	Goto execPlannedMoves if [# CurrentPlannedMove.length > 0 #] else sendSuccessAnswer 
- 
- 
  
 /*
  * Answers  
@@ -198,7 +207,8 @@ ExternalQActor basicrobot    context ctxbasicrobot
 	     	if [# ExecutingCorrectedPlan == false #]{
 	     		replyTo doPlan with walkerDone : walkerDone(ok) 						
 	     	}else {
-	     		replyTo posCorrection with walkerDone : walkerDone(ok) 					
+	     		replyTo posCorrection with walkerDone : walkerDone(ok) 	
+	     		[# ExecutingCorrectedPlan = false #]    										
 	     	}
 	}
 	Goto waitReq  

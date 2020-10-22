@@ -89,19 +89,16 @@ class Waiterwalker ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 														NewY = CurY
 													}
 								println("waiterwalker | SOLVED query KB with NewX = $NewX, NewY = $NewY")
-								request("posCorrection", "posCorrextion($NewX,$NewY)" ,"walker" )  
+								request("posCorrection", "posCorrection($NewX,$NewY)" ,"walker" )  
 								}
 								else
 								{println("waiterwalker | NO SOLUTION in KB")
 								answer("moveForTask", "walkbreak", "walkbreak($XT,$YT)"   )  
 								}
 						}
-						stateTimer = TimerActor("timer_movementError", 
-							scope, context!!, "local_tout_waiterwalker_movementError", 10000.toLong() )
 					}
-					 transition(edgeName="t031",targetState="waitCmd",cond=whenTimeout("local_tout_waiterwalker_movementError"))   
-					transition(edgeName="t032",targetState="waitCmd",cond=whenReply("walkerDone"))
-					transition(edgeName="t033",targetState="movementError",cond=whenReply("walkerError"))
+					 transition(edgeName="t031",targetState="movementCompleted",cond=whenReply("walkerDone"))
+					transition(edgeName="t032",targetState="movementError",cond=whenReply("walkerError"))
 				}	 
 			}
 		}

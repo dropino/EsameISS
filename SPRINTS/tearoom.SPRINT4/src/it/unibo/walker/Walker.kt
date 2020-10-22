@@ -90,6 +90,7 @@ class Walker ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 				state("execPlannedMoves") { //this:State
 					action { //it:State
 						  CurrentPlannedMove = itunibo.planner.plannerUtil.getNextPlannedMove()  
+						println("walker | doing move $CurrentPlannedMove")
 						delay(PauseTime)
 					}
 					 transition( edgeName="goto",targetState="wMove", cond=doswitchGuarded({ CurrentPlannedMove == "w"  
@@ -121,7 +122,6 @@ class Walker ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 				}	 
 				state("stepFailed") { //this:State
 					action { //it:State
-						 obstacleFound = true  
 						println("walker | stepFailed")
 						if( checkMsgContent( Term.createTerm("stepfail(DURATION,CAUSE)"), Term.createTerm("stepfail(DURATION,CAUSE)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
@@ -141,6 +141,8 @@ class Walker ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 				}	 
 				state("correctAndResume") { //this:State
 					action { //it:State
+						println("walker in correctAndResume ")
+						println("$name in ${currentState.stateName} | $currentMsg")
 						if( checkMsgContent( Term.createTerm("posCorrection(X,Y)"), Term.createTerm("posCorrection(X,Y)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								
@@ -153,6 +155,9 @@ class Walker ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 								
 													CurrentPlannedMove = itunibo.planner.plannerUtil.getNextPlannedMove()
 													while( CurrentPlannedMove != "" ) {
+														if ( CurrentPlannedMove == "l" || CurrentPlannedMove == "r" ){
+								  							forward("cmd", "cmd($CurrentPlannedMove)" ,"basicrobot" )
+								  						}
 														itunibo.planner.plannerUtil.updateMap( "$CurrentPlannedMove" )
 														CurrentPlannedMove = itunibo.planner.plannerUtil.getNextPlannedMove()
 													}		
@@ -187,6 +192,7 @@ class Walker ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 						}
 						else
 						 {answer("posCorrection", "walkerDone", "walkerDone(ok)"   )  
+						  ExecutingCorrectedPlan = false  
 						 }
 					}
 					 transition( edgeName="goto",targetState="waitReq", cond=doswitch() )

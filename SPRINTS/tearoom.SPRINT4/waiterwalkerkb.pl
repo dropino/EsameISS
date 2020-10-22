@@ -13,7 +13,7 @@ pos( exitdoor, 1, 5, 4 ).
 pos( barman, 1, 4, 0 ).
 pos( barman, 2, 5, 0 ).
 
-corrPos(gateIn, downDir, 0, 4).
+corrPos(gatein, downDir, 0, 4).
 
 corrPos(table1, upDir, 2, 4).
 corrPos(table1, downDir, 2, 2).

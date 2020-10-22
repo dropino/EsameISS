@@ -7,7 +7,7 @@ SPRINT | GOAL
 10/09/2020 [Sprint1]() | Elaborate Requirement Analysis for the whole Project. Elaborate Problem Analysis and develop Project of a Prototype of the Waiter behavior to control a [Virtual Robot](https://github.com/anatali/iss2020LabBo/tree/master/it.unibo.virtualRobot2020).
 17/09/2020 [Sprint2]() | Develop Prototype of a UI to control a Client, implement separation Waiterwalker-Walker, write extended functional tests.
 24/09/2020 [Sprint3]() | Complete Prototype of the UI to control a Client, add multi-clients support, write extended functional tests.
-22/10/2020 [Sprint4]() | Developed manager interface, fatto refactoring dei controller che ora lavorano con 4 services: *smartbell service*, *waiter service*, *barman service* and *walker service*
+22/10/2020 [Sprint4]() | Developed manager interface, refactoring of Server Controllers 4 services: *smartbell service*, *waiter service*, *barman service* and *walker service*, Basicrobot propagates collision cause to be handled by Walker to reposition on map based on obstacle found.
 
 
 ## Required libraries and tools version

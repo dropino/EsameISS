@@ -70,10 +70,7 @@ class Simclient ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, 
 						}
 						println("Client $MyCID | the waiter told me to wait $WaitTime time")
 					}
-					 transition( edgeName="goto",targetState="end", cond=doswitchGuarded({ WaitTime == 20000  
-					}) )
-					transition( edgeName="goto",targetState="waitingInTheHall", cond=doswitchGuarded({! ( WaitTime == 20000  
-					) }) )
+					 transition( edgeName="goto",targetState="waitingInTheHall", cond=doswitch() )
 				}	 
 				state("waitingInTheHall") { //this:State
 					action { //it:State

@@ -1,7 +1,7 @@
 package connQak
 
 import java.net.URL
- 
+
 import org.apache.http.client.HttpClient
 import org.apache.http.impl.client.HttpClientBuilder
 import org.apache.http.client.methods.HttpPost
@@ -15,28 +15,29 @@ import it.unibo.kactor.ApplMessage
  * The interaction is with an instance of httpserver/server.kt
  */
 
-class connQakHttp(hostIP : String,  port : String,  destName : String, context : String ) :
-										           connQakBase(hostIP, port, destName, context){
-lateinit var client   : CloseableHttpClient  
-lateinit var hostAddr : String 
-	 
- 		
-	override fun createConnection(  ){
-		hostAddr =  "http://$hostIP:$port"    //"http://localhost:8080"
+class connQakHttp(hostIP: String, port: String, destName: String, context: String) :
+	connQakBase(hostIP, port, destName, context) {
+	lateinit var client: CloseableHttpClient
+	lateinit var hostAddr: String
+
+
+	override fun createConnection() {
+		hostAddr = "http://$hostIP:$port"    //"http://localhost:8080"
 		println("connQakHttp | createConnection hostAddr=$")
-		client   =  HttpClientBuilder.create().build()
- 	}
-	override fun forward(  msg: ApplMessage){
- 		 	
+		client = HttpClientBuilder.create().build()
 	}
-	
-	override fun request(  msg: ApplMessage) : ApplMessage? {
+
+	override fun forward(msg: ApplMessage) {
+
+	}
+
+	override fun request(msg: ApplMessage): ApplMessage? {
 		return null
 	}
-	
-	override fun emit( msg: ApplMessage ){
-  	}	
-	
+
+	override fun emit(msg: ApplMessage) {
+	}
+
 //	override fun forward( move : String ){
 //		println("connQakHttp | forward $move")
 //		val response = client.execute( HttpPost(hostAddr+"/$move")) //HttpResponse
@@ -59,8 +60,8 @@ lateinit var hostAddr : String
 //		val response = client.execute( HttpPost(hostAddr+"/$ev")) //HttpResponse
 //		showResponse( "POST $ev", response.getEntity().getContent() )
 // 	}
-	
-	fun showResponse(  msg : String, inps : InputStream ){
+
+	fun showResponse(msg: String, inps: InputStream) {
 		inps.bufferedReader().use {
 			val response = StringBuffer()
 			var inputLine = it.readLine()
@@ -71,9 +72,8 @@ lateinit var hostAddr : String
 			it.close()
 			println(msg)
 			println(response.toString())
-		}	
+		}
 	}
-	
-	
-	
+
+
 }

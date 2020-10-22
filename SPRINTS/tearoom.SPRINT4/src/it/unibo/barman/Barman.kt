@@ -18,6 +18,9 @@ class Barman ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		
 				var CTABLE = 0
+				var CTEA = ""
+				var CCID = ""
+				var bJson = json.BarmanJson()
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
@@ -29,20 +32,44 @@ class Barman ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 				state("waitForNewOrder") { //this:State
 					action { //it:State
 						println("  Barman | Waiting Order  ")
+						
+									CTABLE = 0
+									bJson.setBusy(false)
+									bJson.setPreparingForTable(-1)
+									bJson.setPreparingOrder("")
+									bJson.setOrderReadyTable(-1)
+									bJson.setOrderReady(false)
+						updateResourceRep(bJson.toJson() 
+						)
 					}
-					 transition(edgeName="t031",targetState="prepare",cond=whenDispatch("sendOrder"))
+					 transition(edgeName="t034",targetState="prepare",cond=whenDispatch("sendOrder"))
 				}	 
 				state("prepare") { //this:State
 					action { //it:State
-						if( checkMsgContent( Term.createTerm("sendOrder(TEA,TABLE)"), Term.createTerm("sendOrder(TEA,TABLE)"), 
+						if( checkMsgContent( Term.createTerm("sendOrder(TEA,TABLE,CID)"), Term.createTerm("sendOrder(TEA,TABLE,CID)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
-								println("  Barman | Making tea ")
 								
+												CTEA = payloadArg(0).toString()
 												CTABLE = payloadArg(1).toString().toInt()
+												CCID = payloadArg(2).toString()
+												
+												bJson.setBusy(true)
+												bJson.setPreparingForTable(CTABLE)
+												bJson.setPreparingOrder(CTEA)
+								updateResourceRep(bJson.toJson() 
+								)
+								println("  Barman | Making $CTEA for client $CCID sit at table $CTABLE")
 						}
-						delay(2000) 
-						forward("orderReady", "orderReady(tea,$CTABLE)" ,"waiter" ) 
-						println("  Barman | Tea ready to be served ")
+						delay(5000) 
+						forward("orderReady", "orderReady($CTEA,$CTABLE,$CCID)" ,"waiter" ) 
+						println("  Barman | $CTEA READY to be served to client $CCID at table $CTABLE")
+						
+										bJson.setPreparingForTable(-1)
+										bJson.setPreparingOrder("")
+										bJson.setOrderReadyTable(CTABLE)
+										bJson.setOrderReady(true)
+						updateResourceRep(bJson.toJson() 
+						)
 					}
 					 transition( edgeName="goto",targetState="waitForNewOrder", cond=doswitch() )
 				}	 

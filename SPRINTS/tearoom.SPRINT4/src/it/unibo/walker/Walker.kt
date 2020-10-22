@@ -19,15 +19,21 @@ class Walker ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 		 
 				var XT = "0"
 				var YT = "0"
+				var Curx = 0
+				var Cury = 0
+				var Dir = ""
+				var Cause = ""
+				
+				var ExecutingCorrectedPlan = false
 				var CurrentPlannedMove 	= ""
-				var StepTime    	   	= 355L
-				var obstacleFound      	= false  
+				var StepTime    	   	= 360L
+				var obstacleFound      	= false
 				
 				val inmapname			= "teaRoomExplored"
 				val PauseTime          	= 250L 
-				val BackTime           	= 2 * StepTime / 3 
-				 
+				val BackTime           	= StepTime / 3 
 				
+				val jobj = json.WalkerJson()		
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
@@ -40,6 +46,12 @@ class Walker ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 						forward("cmd", "cmd(r)" ,"basicrobot" ) 
 						delay(500) 
 						emit("walkerstarted", "walkerstarted(0)" ) 
+						 
+							    	Curx = itunibo.planner.plannerUtil.getPosX()
+							       	Cury = itunibo.planner.plannerUtil.getPosY()	
+							       	jobj.setPosition(Curx,Cury)
+						updateResourceRep(jobj.toJson() 
+						)
 						println("walker | STARTS")
 					}
 					 transition( edgeName="goto",targetState="waitReq", cond=doswitch() )
@@ -49,6 +61,7 @@ class Walker ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 						println("walker | waiting for a doPlan message")
 					}
 					 transition(edgeName="t00",targetState="solveReq",cond=whenRequest("doPlan"))
+					transition(edgeName="t01",targetState="correctAndResume",cond=whenRequest("posCorrection"))
 				}	 
 				state("solveReq") { //this:State
 					action { //it:State
@@ -70,13 +83,14 @@ class Walker ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 				state("noPlan") { //this:State
 					action { //it:State
 						println("walker | NO PLAN FOUND for MOVING to ($XT,$YT)")
-						answer("doPlan", "walkerError", "walkerError($XT,$YT)"   )  
+						answer("doPlan", "walkerError", "walkerError($XT,$YT,noPlan,noDir)"   )  
 					}
 					 transition( edgeName="goto",targetState="waitReq", cond=doswitch() )
 				}	 
 				state("execPlannedMoves") { //this:State
 					action { //it:State
 						  CurrentPlannedMove = itunibo.planner.plannerUtil.getNextPlannedMove()  
+						println("walker | doing move $CurrentPlannedMove")
 						delay(PauseTime)
 					}
 					 transition( edgeName="goto",targetState="wMove", cond=doswitchGuarded({ CurrentPlannedMove == "w"  
@@ -88,12 +102,18 @@ class Walker ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 					action { //it:State
 						request("step", "step($StepTime)" ,"basicrobot" )  
 					}
-					 transition(edgeName="t01",targetState="stepDone",cond=whenReply("stepdone"))
-					transition(edgeName="t02",targetState="stepFailed",cond=whenReply("stepfail"))
+					 transition(edgeName="t02",targetState="stepDone",cond=whenReply("stepdone"))
+					transition(edgeName="t03",targetState="stepFailed",cond=whenReply("stepfail"))
 				}	 
 				state("stepDone") { //this:State
 					action { //it:State
 						itunibo.planner.plannerUtil.updateMap( "w"  )
+						 
+							    	Curx = itunibo.planner.plannerUtil.getPosX()
+							       	Cury = itunibo.planner.plannerUtil.getPosY()	
+							       	jobj.setPosition(Curx,Cury)
+						updateResourceRep(jobj.toJson() 
+						)
 					}
 					 transition( edgeName="goto",targetState="execPlannedMoves", cond=doswitchGuarded({ CurrentPlannedMove.length > 0  
 					}) )
@@ -102,21 +122,54 @@ class Walker ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 				}	 
 				state("stepFailed") { //this:State
 					action { //it:State
-						 obstacleFound = true  
-						println("waiterwalker | stepFailed")
+						println("walker | stepFailed")
 						if( checkMsgContent( Term.createTerm("stepfail(DURATION,CAUSE)"), Term.createTerm("stepfail(DURATION,CAUSE)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
-								 val D = payloadArg(0).toLong()  ; val Dt = Math.abs(StepTime-D); val BackT = D/2  
-								println("waiterwalker stepFail D= $D, BackTime = ${BackTime}")
-								if(  D > BackTime  
-								 ){forward("cmd", "cmd(s)" ,"basicrobot" ) 
-								delay(BackT)
+								 
+												val D = payloadArg(0).toLong();
+												val Dt = Math.abs(StepTime-D)
+												val BackT = D/2 
+												Cause = payloadArg(1).toString()
+												Dir = itunibo.planner.plannerUtil.getDirection() 
+								println("walker stepFail D= $D, DT= $Dt BackTime = $BackTime Cause = $Cause")
+								forward("cmd", "cmd(s)" ,"basicrobot" ) 
+								delay(BackTime)
 								forward("cmd", "cmd(h)" ,"basicrobot" ) 
-								}
 						}
-						itunibo.planner.plannerUtil.updateMapObstacleOnCurrentDirection(  )
 					}
 					 transition( edgeName="goto",targetState="sendFailureAnswer", cond=doswitch() )
+				}	 
+				state("correctAndResume") { //this:State
+					action { //it:State
+						println("walker in correctAndResume ")
+						println("$name in ${currentState.stateName} | $currentMsg")
+						if( checkMsgContent( Term.createTerm("posCorrection(X,Y)"), Term.createTerm("posCorrection(X,Y)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+								
+												val NewX = payloadArg(0).toString()
+												val NewY = payloadArg(1).toString()		
+								println("walker correctAndResume ($NewX,$NewY)")
+								itunibo.planner.plannerUtil.planForGoal( "$NewX", "$NewY"  )
+								if(  itunibo.planner.plannerUtil.existActions()  
+								 ){println("walker correctAndResume the plan to correct the position was found")
+								
+													CurrentPlannedMove = itunibo.planner.plannerUtil.getNextPlannedMove()
+													while( CurrentPlannedMove != "" ) {
+														if ( CurrentPlannedMove == "l" || CurrentPlannedMove == "r" ){
+								  							forward("cmd", "cmd($CurrentPlannedMove)" ,"basicrobot" )
+								  						}
+														itunibo.planner.plannerUtil.updateMap( "$CurrentPlannedMove" )
+														CurrentPlannedMove = itunibo.planner.plannerUtil.getNextPlannedMove()
+													}		
+								 ExecutingCorrectedPlan = true  
+								}
+						}
+						itunibo.planner.plannerUtil.planForGoal( "$XT", "$YT"  )
+					}
+					 transition( edgeName="goto",targetState="execPlannedMoves", cond=doswitchGuarded({ itunibo.planner.plannerUtil.existActions()  
+					}) )
+					transition( edgeName="goto",targetState="sendFailureAnswer", cond=doswitchGuarded({! ( itunibo.planner.plannerUtil.existActions()  
+					) }) )
 				}	 
 				state("otherPlannedMove") { //this:State
 					action { //it:State
@@ -132,19 +185,32 @@ class Walker ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 				}	 
 				state("sendSuccessAnswer") { //this:State
 					action { //it:State
-						println("waiterwalker | POINT ($XT,$YT) REACHED")
+						println("walker | POINT ($XT,$YT) REACHED")
 						itunibo.planner.plannerUtil.showCurrentRobotState(  )
-						answer("doPlan", "walkerDone", "walkerDone(ok)"   )  
+						if(  ExecutingCorrectedPlan == false  
+						 ){answer("doPlan", "walkerDone", "walkerDone(ok)"   )  
+						}
+						else
+						 {answer("posCorrection", "walkerDone", "walkerDone(ok)"   )  
+						  ExecutingCorrectedPlan = false  
+						 }
 					}
 					 transition( edgeName="goto",targetState="waitReq", cond=doswitch() )
 				}	 
 				state("sendFailureAnswer") { //this:State
 					action { //it:State
-						println("waiterwalker | FAILS")
-						 val Curx = itunibo.planner.plannerUtil.getPosX()
-							       val Cury = itunibo.planner.plannerUtil.getPosY()	
+						println("walker | FAILS")
+						 
+							    	Curx = itunibo.planner.plannerUtil.getPosX()
+							       	Cury = itunibo.planner.plannerUtil.getPosY()	
 						itunibo.planner.plannerUtil.showCurrentRobotState(  )
-						answer("doPlan", "walkerError", "walkerError($Curx,$Cury)"   )  
+						if(  ExecutingCorrectedPlan == false  
+						 ){answer("doPlan", "walkerError", "walkerError($Curx,$Cury,$Cause,$Dir)"   )  
+						}
+						else
+						 {answer("posCorrection", "walkerError", "walkerError($Curx,$Cury,$Cause,$Dir)"   )  
+						  ExecutingCorrectedPlan = false  
+						 }
 					}
 					 transition( edgeName="goto",targetState="waitReq", cond=doswitch() )
 				}	 

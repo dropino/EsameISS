@@ -19,9 +19,8 @@ class Waiterwalker ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 		
 				var XT = "0"
 				var YT = "0"
-				
-				var TASK				= "" 
-				var N					= ""
+				var TASK	= "" 
+				var N		= ""
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
@@ -30,13 +29,13 @@ class Waiterwalker ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 						println("waiterwalker | STARTS")
 						emit("waiterwalkerstarted", "waiterwalkerstarted(ok)" ) 
 					}
-					 transition(edgeName="t026",targetState="waitCmd",cond=whenEvent("walkerstarted"))
+					 transition(edgeName="t027",targetState="waitCmd",cond=whenEvent("walkerstarted"))
 				}	 
 				state("waitCmd") { //this:State
 					action { //it:State
 						println("waiterwalker | waiting for a moveForTask message")
 					}
-					 transition(edgeName="t027",targetState="locateObjective",cond=whenRequest("moveForTask"))
+					 transition(edgeName="t028",targetState="locateObjective",cond=whenRequest("moveForTask"))
 				}	 
 				state("locateObjective") { //this:State
 					action { //it:State
@@ -58,8 +57,8 @@ class Waiterwalker ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 								request("doPlan", "doPlan($XT,$YT)" ,"walker" )  
 						}
 					}
-					 transition(edgeName="t128",targetState="movementCompleted",cond=whenReply("walkerDone"))
-					transition(edgeName="t129",targetState="movementError",cond=whenReply("walkerError"))
+					 transition(edgeName="t129",targetState="movementCompleted",cond=whenReply("walkerDone"))
+					transition(edgeName="t130",targetState="movementError",cond=whenReply("walkerError"))
 				}	 
 				state("movementCompleted") { //this:State
 					action { //it:State
@@ -72,15 +71,34 @@ class Waiterwalker ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 					action { //it:State
 						println("waiterwalker | FAILS")
 						println("$name in ${currentState.stateName} | $currentMsg")
-						if( checkMsgContent( Term.createTerm("moveForTask(TASK,N)"), Term.createTerm("moveForTask(X,Y)"), 
+						if( checkMsgContent( Term.createTerm("walkerError(X,Y,CAUSE,DIR)"), Term.createTerm("walkerError(X,Y,CAUSE,DIR)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								 
-												XT = payloadArg(0).toString()
-												YT = payloadArg(1).toString()
+												val CurX = payloadArg(0).toString().toInt()
+												val CurY = payloadArg(1).toString().toInt()
+												val Cause = payloadArg(2).toString()
+												val Dir = payloadArg(3).toString()
+								println("waiterwalker | CurX: $CurX, CurY: $CurY, Cause = $Cause, Dir = $Dir")
+								solve("corrPos($Cause,$Dir,X,Y)","") //set resVar	
+								if( currentSolution.isSuccess() ) {
+													var NewX = getCurSol("X").toString().toInt()
+													var NewY = getCurSol("Y").toString().toInt()
+													if (NewX == -1) {
+														NewX = CurX
+													}	else if (NewY == -1) {
+														NewY = CurY
+													}
+								println("waiterwalker | SOLVED query KB with NewX = $NewX, NewY = $NewY")
+								request("posCorrection", "posCorrection($NewX,$NewY)" ,"walker" )  
+								}
+								else
+								{println("waiterwalker | NO SOLUTION in KB")
 								answer("moveForTask", "walkbreak", "walkbreak($XT,$YT)"   )  
+								}
 						}
 					}
-					 transition( edgeName="goto",targetState="waitCmd", cond=doswitch() )
+					 transition(edgeName="t031",targetState="movementCompleted",cond=whenReply("walkerDone"))
+					transition(edgeName="t032",targetState="movementError",cond=whenReply("walkerError"))
 				}	 
 			}
 		}

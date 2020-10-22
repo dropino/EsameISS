@@ -18,24 +18,22 @@ import kotlinx.coroutines.delay
 import org.eclipse.californium.core.CoapClient
 import org.eclipse.californium.core.CoapResponse
 import kotlinx.coroutines.channels.actor
- 
+
 
 class testTearoomSys {
-	
-var waiter             : ActorBasic? = null
-var smartbell          : ActorBasic? = null
-var barman       	   : ActorBasic? = null
-val mqttTest   	      = MqttUtils("test") 
-val initDelayTime     = 1500L   //
 
-		
-	
-   
+	var waiter: ActorBasic? = null
+	var smartbell: ActorBasic? = null
+	var barman: ActorBasic? = null
+	val mqttTest = MqttUtils("test")
+	val initDelayTime = 1500L   //
+
+
 	@kotlinx.coroutines.ObsoleteCoroutinesApi
-	@kotlinx.coroutines.ExperimentalCoroutinesApi    
+	@kotlinx.coroutines.ExperimentalCoroutinesApi
 	@Before
 	fun systemSetUp() {
-   		kotlin.concurrent.thread(start = true) {
+		kotlin.concurrent.thread(start = true) {
 			it.unibo.ctxtearoom.main()
 		}
 	}
@@ -46,65 +44,61 @@ val initDelayTime     = 1500L   //
 	fun terminate() {
 		println("%%%  Test terminate ")
 	}
-	
 
-	fun checkResource(value: String){		
-		if( waiter != null ){
-			assertTrue( waiter!!.geResourceRep() == value)
-		}  
+
+	fun checkResource(value: String) {
+		if (waiter != null) {
+			assertTrue(waiter!!.geResourceRep() == value)
+		}
 	}
 
-	
+
 	@kotlinx.coroutines.ObsoleteCoroutinesApi
 	@kotlinx.coroutines.ExperimentalCoroutinesApi
 	@Test
-    fun testWaiter(){
-		runBlocking{
+	fun testWaiter() {
+		runBlocking {
 
-			
-			while( waiter == null ){
+
+			while (waiter == null) {
 				delay(1000)
-				waiter = it.unibo.kactor.sysUtil.getActor("waiter") 
+				waiter = it.unibo.kactor.sysUtil.getActor("waiter")
 			}
-			
-			while( smartbell == null ){
+
+			while (smartbell == null) {
 				delay(1000)
-				smartbell = it.unibo.kactor.sysUtil.getActor("smartbell") 
+				smartbell = it.unibo.kactor.sysUtil.getActor("smartbell")
 			}
-			
-			while( barman == null ){
+
+			while (barman == null) {
 				delay(1000)
-				barman = it.unibo.kactor.sysUtil.getActor("barman") 
+				barman = it.unibo.kactor.sysUtil.getActor("barman")
 			}
-			
-			
+
+
 			//-----------------TEST RIFIUTO CLIENTE---------------
 			delay(1000)
 			println("---------------------------	MESSAGGIO INVIATO		---------------------------")
-			MsgUtil.sendMsg (MsgUtil.buildRequest( "test", "ringBell", "ringBell(38)", "smartbell") , smartbell!!   )
+			MsgUtil.sendMsg(MsgUtil.buildRequest("test", "ringBell", "ringBell(38)", "smartbell"), smartbell!!)
 			delay(1000)
 			checkResource("listening")
-			
-			
-			
+
+
 			//-----------------TEST ACCETTO CLIENTE---------------
 			delay(1000)
 			println("---------------------------	MESSAGGIO INVIATO		---------------------------")
-			MsgUtil.sendMsg (MsgUtil.buildRequest( "test", "ringBell", "ringBell(36)", "smartbell") , smartbell!!   )
+			MsgUtil.sendMsg(MsgUtil.buildRequest("test", "ringBell", "ringBell(36)", "smartbell"), smartbell!!)
 			delay(1000)
 			checkResource("listening")
-	
 
-			
+
 			//-----------------TEST ORDINAZIONE TEA---------------
 			delay(1000)
 			println("---------------------------	MESSAGGIO INVIATO		---------------------------")
-			MsgUtil.sendMsg ("test", "sendOrder", "sendOrder(tea, 2)",barman!! )
+			MsgUtil.sendMsg("test", "sendOrder", "sendOrder(tea, 2)", barman!!)
 			delay(1000)
 			checkResource("listening")
-		
 
-			
 
 		}
 	}

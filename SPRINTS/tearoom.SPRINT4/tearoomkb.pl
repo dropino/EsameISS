@@ -1,16 +1,18 @@
 %===========================================
-% tearoom.pl
+% tearoomkb.pl
 %===========================================
  
+maxStayTime(20000).
+maxWaitTime(120000).
+timeToGoHome(15000).
+
 clientRequestPayload(order, ok).
 clientRequestPayload(pay, 5).
 
 %% ------------------------------------------ 
 %% Teatables
 	%% busy
-	%% free		(not busy but not clean)
 	%% dirty	(not clean)
-	%% clean	(not dirty)
 	%% available (free and clean)	
 %% ------------------------------------------ 
 teatable( 1, available ).
@@ -21,21 +23,27 @@ numavailabletables(N) :-
 	%% stdout <- println( tearoomkb_numavailabletables(NList) ),
 	length(NList,N).
 
-engageTable(N,CID)	 :-
-	%%stdout <- println( tearoomkb_engageTable(N) ),
+engageTable(N, CID)	 :-
+	%%stdout <- println( tearoomkb_engageTable(N, CID) ),
 	retract( teatable( N, available ) ),
 	!,
 	assert( teatable( N, busy(CID) ) ).
 engageTable(_,_).	
 
 tableavailable(N):- teatable(N,	available ).
- 
+
+dirtyTable(N, CID)	 :-
+	%% stdout <- println( tearoomkb_dirtyTable(N, CID) ),
+	retract( teatable( N, busy(CID) ) ),
+	!,
+	assert( teatable( N, dirty ) ).
+dirtyTable(N, CID). 
 	
 cleanTable(N)	 :-
 	%% stdout <- println( tearoomkb_cleanTable(N) ),
-	retract( teatable( N, engaged ) ),
+	retract( teatable( N, dirty ) ),
 	!,
-	assert( teatable( N, clean ) ).
+	assert( teatable( N, available ) ).
 cleanTable(N).	
  
 stateOfTeatables( [teatable1(V1),teatable2(V2)] ) :-
@@ -52,11 +60,11 @@ stateOfTeatables( [teatable1(V1),teatable2(V2)] ) :-
 
 waiter( athome ).	
 
-changeWaiterState( STATE )	 :-
-	%%stdout <- println( tearoomkb_changeWaiterState( STATE ) ),
-	retract( waiter( athome ) ),
+changeWaiterState( STATE, NEWSTATE )	 :-
+	%%stdout <- println( tearoomkb_changeWaiterState( STATE, NEWSTATE ) ),
+	retract( waiter( STATE ) ),
 	!,
-	assert( waiter( STATE ) ).
+	assert( waiter( NEWSTATE ) ).
 changeWaiterState(_).
 
 %% ------------------------------------------ 

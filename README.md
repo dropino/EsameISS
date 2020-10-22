@@ -56,7 +56,7 @@ To use Qak we move in Eclipse *"dropins"* folder those plugin:
 4. Run *.bat* file **"it.unibo.qak20.basicrobot.bat"** in the following folder [tools](SPRINTS\tools\it.unibo.qak20.basicrobot\build\distributions\it.unibo.qak20.basicrobot-1.0\bin)  
 5. Open Eclipse and import the following projects  
   a. [**tearoom.SPRINT4**](https://github.com/lauramazzuca21/EsameIss2020/tree/sprint4/SPRINTS/tearoom.SPRINT4)  
-  b. [**tearoom.SPRINT3.ui**](https://github.com/lauramazzuca21/EsameIss2020/tree/sprint4/SPRINTS/tearoom.SPRINT3.ui)   
+  b. [**tearoom.SPRINT4.ui**](https://github.com/lauramazzuca21/EsameIss2020/tree/sprint4/SPRINTS/tearoom.SPRINT3.ui)   
 6. Import *java.util* libraries in **SPRINT4\it.unibo.waiter**    
 7. In the workspace [SPRINT4/src](https://github.com/lauramazzuca21/EsameIss2020/tree/sprint4/SPRINTS/tearoom.SPRINT4) run "*MainCtxtearoom.kt*" as *kotlin application*
 8. In the workspace [SPRINT4.ui/src](https://github.com/lauramazzuca21/EsameIss2020/tree/sprint4/SPRINTS/tearoom.SPRINT4.ui) run "*Application.java*" as *java application*

@@ -1,6 +1,6 @@
 # EsameIss2020
 
-Group project for the course: Software Systems Engineering at the University of Bologna.
+Group project for the course: **Software Systems Engineering** at the University of Bologna.
 
 SPRINT | GOAL
 ------------ | -------------
@@ -71,4 +71,4 @@ To use Qak we move in Eclipse *"dropins"* folder those plugin:
 [Nicholas Carroll](https://github.com/dropino) | [Laura Mazzuca](https://github.com/lauramazzuca21) | [Giuseppe Giorgio](https://github.com/gitdevel7)
 ------------ | ------------ | -------------
 ![Nicholas](https://github.com/lauramazzuca21/EsameIss2020/blob/sprint4/UserDocs/OurPics/nicholas.png) | ![Laura](https://github.com/lauramazzuca21/EsameIss2020/blob/sprint4/UserDocs/OurPics/laura.png) | ![Giuseppe](https://github.com/lauramazzuca21/EsameIss2020/blob/sprint4/UserDocs/OurPics/giuseppe.png)   
-nicholas.carroll@studio.unibo.it | laura.mazzucca@studio.unibo.it | giuseppe.giorgio3@studio.unibo.it
+nicholas.carroll@studio.unibo.it | laura.mazzuca@studio.unibo.it | giuseppe.giorgio3@studio.unibo.it

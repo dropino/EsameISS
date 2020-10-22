@@ -50,11 +50,12 @@ SPRINT | GOAL
 9. Open your browser and go to **localhost:8080** and choose *manager view* or *client view* 
 10. Enjoy our *Tearoom* 
 
-![MainMenuPage](https://github.com/lauramazzuca21/EsameIss2020/blob/sprint4/SPRINTS/tools/interfaccia.png)
+![MainMenuPage](https://github.com/lauramazzuca21/EsameIss2020/blob/sprint4/UserDocs/interfaccia.png)
 
 
 Group composed by:   
 
 [Nicholas Carroll](https://github.com/dropino) | [Laura Mazzuca](https://github.com/lauramazzuca21) | [Giuseppe Giorgio](https://github.com/gitdevel7)
 ------------ | ------------ | -------------
-
+![Nicholas](https://github.com/lauramazzuca21/EsameIss2020/blob/sprint4/UserDocs/OurPics/nicholas.png) | ![Laura](https://github.com/lauramazzuca21/EsameIss2020/blob/sprint4/UserDocs/OurPics/laura.png) | ![Giuseppe](https://github.com/lauramazzuca21/EsameIss2020/blob/sprint4/UserDocs/OurPics/giuseppe.png)   
+nicholas.carroll@studio.unibo.it | laura.mazzucca@studio.unibo.it | giuseppe.giorgio3@studio.unibo.it

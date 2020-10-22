@@ -171,22 +171,6 @@ class testMultiClientMsg {
 		}
 		assertTrue(c3.await())
 
-//--------------WAITER GO TO ENTRANCEDOOR FOR C3------------		
-		c3 = GlobalScope.async(handler) {
-			testDeployEntrance(CID3.toInt())
-		}
-		assertTrue(c3.await())
-
-		delay(5000)
-		c3 = GlobalScope.async(handler) {
-			testDeployEntrance(CID3.toInt())
-		}
-		assertTrue(c3.await())
-		delay(5000)
-		c3 = GlobalScope.async(handler) {
-			testDeployEntrance(CID3.toInt())
-		}
-		assertTrue(c3.await())
 
 //--------------PAY REQUEST FOR C1	&& ORDER REQUEST FOR C2------------		
 		c2 = GlobalScope.async(handler) {
@@ -198,11 +182,6 @@ class testMultiClientMsg {
 		}
 		assertTrue(c1.await())
 		assertTrue(c2.await())
-
-		c3 = GlobalScope.async(handler) {
-			testDeployEntrance(CID3.toInt())
-		}
-		assertTrue(c3.await())
 
 //--------------WAITER GO TO EXITDOOR FOR C1------------		
 		c1 = GlobalScope.async(handler) {
@@ -232,8 +211,8 @@ class testMultiClientMsg {
 		var reply: ApplMessage? = null
 		var ringRepArgs = arrayOf<String>()
 
-		//-----------------TEST ACCETTO CLIENTE---------------
-		ringMsg = MsgUtil.buildRequest("web", "ringBell", "ringBell(36)", "smartbell")
+	//-----------------TESt CLIENTE---------------
+		ringMsg = MsgUtil.buildRequest("web", "ringBell", "ringBell($temp)", "smartbell")
 		reply = smartbellConn!!.request(ringMsg)
 		ringRepArgs = ApplMessageUtils.extractApplMessagePayloadArgs(reply)
 		Status = ringRepArgs[0].toString()

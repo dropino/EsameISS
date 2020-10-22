@@ -25,8 +25,19 @@ class SmartBellJson : ActorJson {
 	fun setClientDenied(stat: Boolean) {
 		jobj.put("ClientDenied", stat)
 	}
+	
+	fun getClientAccepted() : Boolean {
+		return jobj.getBoolean("ClientAccepted")
+	}
 
-
+	fun getClientDenied() : Boolean {
+		return jobj.getBoolean("ClientDenied")
+	}
+	
+	fun getClientArrived() : Boolean {
+		return jobj.getBoolean("ClientArrived")
+	}
+	
 	//transforms the jsonObject in a json string string
 	override fun toJson(): String {
 		return jobj.toString()

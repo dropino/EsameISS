@@ -20,7 +20,7 @@ class Smartbell ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, 
 		 	var Temp = 0
 		 	var CID = 0 
 		 	val sJson = json.SmartBellJson()
-		 	
+		 	var T = 0
 		 	var id = 0
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
@@ -44,8 +44,14 @@ class Smartbell ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, 
 					action { //it:State
 						if( checkMsgContent( Term.createTerm("ringBell(TEMP)"), Term.createTerm("ringBell(T)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
-								
-												Temp = (36..38).random()
+								 T = payloadArg(0).toInt() 
+								if(  T<34 || T>38  
+								 ){Temp = (36..38).random() 
+								}
+								else
+								 {Temp = T 
+								 }
+									
 												sJson.setBusy(true)
 												sJson.setClientArrived(true)
 												

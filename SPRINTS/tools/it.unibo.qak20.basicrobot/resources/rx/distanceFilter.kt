@@ -14,30 +14,34 @@ val LimitDistance = 10
 @kotlinx.coroutines.ObsoleteCoroutinesApi
 @kotlinx.coroutines.ExperimentalCoroutinesApi
     override suspend fun actorBody(msg: ApplMessage) {
-		if( msg.msgId() != virtualrobotSonarSupportActor.eventId ) return //AVOID to handle other events
+		if( msg.msgId() != virtualrobotSonarSupportActor.eventId) return //AVOID to handle other events
 		if( msg.msgSender() == name) return //AVOID to handle the event emitted by itself
-  		elabData( msg )
+  		
+	elabData( msg )
  	}
 
  	
 @kotlinx.coroutines.ObsoleteCoroutinesApi
 @kotlinx.coroutines.ExperimentalCoroutinesApi
-	  suspend fun elabData( msg: ApplMessage ){ //OPTIMISTIC		 
- 		val data  = (Term.createTerm( msg.msgContent() ) as Struct).getArg(0).toString()
+	  suspend fun elabData( msg: ApplMessage ){ //OPTIMISTIC
+	println( "distanceFilter elaborating data of ${msg.msgContent()}"   ) 
+ 		val content  = (Term.createTerm( msg.msgContent() ) as Struct)
+		val dist = content.getArg(0).toString()
+		val collisionObj = content.getArg(1).toString()
 //  		println("$tt $name |  data = $data ")
-		val Distance = Integer.parseInt( data ) 
-/*
- * Emit a sonarRobot event to test the behavior with MQTT
- * We should avoid this pattern
-*/	
-//	 	val m0 = MsgUtil.buildEvent(name, "sonarRobot", "sonar($data)")
-//	 	emit( m0 )
- 		if( Distance < LimitDistance ){
-	 		val m1 = MsgUtil.buildEvent(name, "obstacle", "obstacle($data)")
-			//println("$tt $name |  emit m1= $m1")
-			emitLocalStreamEvent( m1 ) //propagate event obstacle
-     	}else{
-			//println("$tt $name | DISCARDS $Distance ")
- 		}				
+		var sendEvent = true;
+
+		val Distance = Integer.parseInt( dist )
+		if( Distance >= LimitDistance ) {
+			sendEvent = false;
+			println( "distanceFilter not sending event since $Distance >= $LimitDistance"   ) 
+     	}
+
+		if (sendEvent) {
+			println( "distanceFilter sending event obstacle($dist, $collisionObj)"   ) 
+
+			val m1 = MsgUtil.buildEvent(name, "obstacle", "obstacle($dist, $collisionObj)")
+				emitLocalStreamEvent( m1 )
+		}
  	}
 }

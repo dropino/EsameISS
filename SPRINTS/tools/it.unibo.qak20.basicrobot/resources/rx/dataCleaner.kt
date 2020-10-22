@@ -16,14 +16,15 @@ val LimitHigh = 150
 @kotlinx.coroutines.ObsoleteCoroutinesApi
 @kotlinx.coroutines.ExperimentalCoroutinesApi
     override suspend fun actorBody(msg: ApplMessage) {
-		if( msg.msgId() != virtualrobotSonarSupportActor.eventId ) return //AVOID to handle other events
+		if( msg.msgId() != virtualrobotSonarSupportActor.eventId) return //AVOID to handle other events
   		elabData( msg )
  	}
 
  	
 @kotlinx.coroutines.ObsoleteCoroutinesApi
 @kotlinx.coroutines.ExperimentalCoroutinesApi
-	  suspend fun elabData( msg: ApplMessage ){ //OPTIMISTIC		 
+	  suspend fun elabData( msg: ApplMessage ){ //OPTIMISTIC
+		 
  		val data  = (Term.createTerm( msg.msgContent() ) as Struct).getArg(0).toString()
   		//println("$tt $name |  data = $data ")
 		try{

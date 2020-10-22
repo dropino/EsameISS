@@ -21,7 +21,7 @@ import it.unibo.kactor.ApplMessage
 class virtualrobotSonarSupportActor( name : String, val clientSocket : Socket ) : ActorBasic( name ) {
 private var sensorObserver : Job? = null
 companion object {
-	val eventId = "sonarRobot"
+	val eventId= "sonarRobot"
 }
 		init{
 		println("$tt $name | CREATING")		
@@ -65,10 +65,16 @@ companion object {
 								emit("local_sonar",m1)
                             }
                             "collision" -> {
- 								val m1 = "sonar( 5 )"
+                                val obstacle = jsonObject.getJSONObject("arg").getString("objectName");
+								val m1 = "sonar( 5, $obstacle )"
+								println( "sensorObserver creating event $m1"   )
                                 val event = MsgUtil.buildEvent( name,"sonarRobot",m1)
                                 emitLocalStreamEvent( event )		//not propagated to remote actors
-                              }
+                            								
+//								val m2 = "collision($obstacle)"
+//                                val event2 = MsgUtil.buildEvent( name,"collision",m2)
+//                                emitLocalStreamEvent( event2 )		//not propagated to remote actors  
+							}
                         }
                     } catch (e: Exception) {
                         //e.printStackTrace()

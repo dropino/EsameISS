@@ -19,7 +19,10 @@ class Basicrobot ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name,
 		
 		  var StepTime      = 0L
 		  var StartTime     = 0L    
-		  var Duration      = 0L    
+		  var Duration      = 0L   
+		  
+		  var Distance		= ""
+		  var Obstacle		= "" 
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
@@ -88,8 +91,10 @@ class Basicrobot ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name,
 						unibo.robot.robotSupport.move( "h"  )
 						if( checkMsgContent( Term.createTerm("sonar(DISTANCE,NAME)"), Term.createTerm("sonar(D,T)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
-								println("basicrobot | after a step emit polar(${payloadArg(0)}, 180) ")
-								emit("polar", "polar(${payloadArg(0)},180)" ) 
+								 
+												Distance = payloadArg(0)
+												Obstacle = payloadArg(1)
+								println("basicrobot | sonar found obstacle $Obstacle at distance $Distance")
 						}
 						stateTimer = TimerActor("timer_stepPerhapsDone", 
 							scope, context!!, "local_tout_basicrobot_stepPerhapsDone", StepTime )
@@ -108,19 +113,32 @@ class Basicrobot ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name,
 				}	 
 				state("stepFailDetected") { //this:State
 					action { //it:State
-						println("basicrobot | stepFailDetected near end of step ")
-						answer("step", "stepfail", "stepfail($StepTime,obstacle)"   )  
+						println("basicrobot | stepFailDetected state ")
+						if( checkMsgContent( Term.createTerm("obstacle(ARG1,ARG2)"), Term.createTerm("obstacle(DIST,OBJ)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+								 Obstacle = payloadArg(1)  
+								println("basicrobot | stepFailDetected for obstacle $Obstacle near end of step ")
+						}
+						answer("step", "stepfail", "stepfail($StepTime,$Obstacle)"   )  
 					}
 					 transition( edgeName="goto",targetState="work", cond=doswitch() )
 				}	 
 				state("stepFail") { //this:State
 					action { //it:State
+						println("basicrobot | stepFail state ")
 						Duration = getDuration(StartTime)
 						updateResourceRep( "stepFail($Duration)"  
 						)
-						emit("obstacle", "obstacle(unknown)" ) 
-						emit("polar", "polar(10,90)" ) 
-						answer("step", "stepfail", "stepfail($Duration,obstacle)"   )  
+						if( checkMsgContent( Term.createTerm("obstacle(ARG1,ARG2)"), Term.createTerm("obstacle(DIST,OBJ)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+								 
+												Distance = payloadArg(0)
+												Obstacle = payloadArg(1) 
+								println("basicrobot | stepFail for obstacle $Obstacle near end of step ")
+						}
+						println("basicrobot | stepFail emitting obstacle($Obstacle, $Distance)")
+						emit("obstacle", "obstacle($Obstacle,$Distance)" ) 
+						answer("step", "stepfail", "stepfail($Duration,$Obstacle)"   )  
 					}
 					 transition( edgeName="goto",targetState="work", cond=doswitch() )
 				}	 

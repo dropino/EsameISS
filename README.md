@@ -2,14 +2,12 @@
 
 Group project for the course: Software Systems Engineering at the University of Bologna.
 
-Group composed by [Nicholas Carroll](https://github.com/dropino), [Laura Mazzuca](https://github.com/lauramazzuca21) and [Giuseppe Giorgio](https://github.com/gitdevel7).
-
 SPRINT | GOAL
 ------------ | -------------
 10/09/2020 [Sprint1]() | Elaborate Requirement Analysis for the whole Project. Elaborate Problem Analysis and develop Project of a Prototype of the Waiter behavior to control a [Virtual Robot](https://github.com/anatali/iss2020LabBo/tree/master/it.unibo.virtualRobot2020).
 17/09/2020 [Sprint2]() | Develop Prototype of a UI to control a Client, implement separation Waiterwalker-Walker, write extended functional tests.
 24/09/2020 [Sprint3]() | Complete Prototype of the UI to control a Client, add multi-clients support, write extended functional tests.
---/10/2020 [Sprint4]() | Developed manager interface, fatto refactoring dei controller che ora lavorano con 4 services: *smartbell service*, *waiter service*, *barman service* and *walker service*
+22/10/2020 [Sprint4]() | Developed manager interface, fatto refactoring dei controller che ora lavorano con 4 services: *smartbell service*, *waiter service*, *barman service* and *walker service*
 
 ### Sprint1 
 *To test the Sprint1:*
@@ -45,10 +43,18 @@ SPRINT | GOAL
 4. Run *.bat* file **"it.unibo.qak20.basicrobot.bat"** in the following folder **GitHub\EsameIss2020\SPRINTS\tools\it.unibo.qak20.basicrobot\build\distributions\it.unibo.qak20.basicrobot-1.0\bin**  
 5. Open Eclipse and import the following projects  
   a. **GitHub\EsameIss2020\SPRINTS\tearoom.SPRINT4**  
-  b. **GitHub\EsameIss2020\SPRINTS\tearoom.SPRINT4.ui**  
-6. In the workspace SPRINT4/src run "*ctxtearoom*" as *kotlin application*
-7. In the workspace SPRINT4.ui/src run "*Application.java*" as *java application*
-8. Open your browser and go to **localhost:8080** and choose *manager view* or *client view* 
-9. Enjoy our *Tearoom* 
+  b. **GitHub\EsameIss2020\SPRINTS\tearoom.SPRINT4.ui** 
+6. Import *java.util* libraries in **SPRINT4\it.unibo.waiter**    
+7. In the workspace SPRINT4/src run "*ctxtearoom*" as *kotlin application*
+8. In the workspace SPRINT4.ui/src run "*Application.java*" as *java application*
+9. Open your browser and go to **localhost:8080** and choose *manager view* or *client view* 
+10. Enjoy our *Tearoom* 
 
 ![MainMenuPage](https://github.com/lauramazzuca21/EsameIss2020/blob/sprint4/SPRINTS/tools/interfaccia.png)
+
+
+Group composed by:   
+
+[Nicholas Carroll](https://github.com/dropino) | [Laura Mazzuca](https://github.com/lauramazzuca21) | [Giuseppe Giorgio](https://github.com/gitdevel7)
+------------ | ------------ | -------------
+

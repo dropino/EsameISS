@@ -30,7 +30,7 @@ Dispatch pay				: pay(MONEY)
 Dispatch timeExpired		: timeExpired(V)
 
 Context ctxclient	ip [host="localhost"	port=8071]
-Context ctxtearoom	ip [host="192.168.1.55"	port=8072]
+Context ctxtearoom	ip [host="localhost"	port=8072]
 
 ExternalQActor smartbell context ctxtearoom
 ExternalQActor waiter	 context ctxtearoom

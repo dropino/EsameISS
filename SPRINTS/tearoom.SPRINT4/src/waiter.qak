@@ -7,8 +7,10 @@ Event    waiterwalkerstarted   : waiterwalkerstarted(X)
 Event    walkerstarted   	: walkerstarted(X)
 
 Request	 doPlan 			: doPlan(X,Y)
-Reply 	 walkerError 		: walkerError( $XT,$YT )
+Reply 	 walkerError 		: walkerError( X,Y, CAUSE, DIR )
 Reply	 walkerDone 		: walkerDone(X,Y)
+
+Request	 posCorrection		: posCorrection(X, Y)
 
 //Waiter-Waiterwalker
 Event    waiterwalkerstarted : waiterwalkerstarted(X)
@@ -60,7 +62,7 @@ Context ctxwalker 		ip [host="localhost" 	port=8050]
 
 CodedQActor walker context ctxwalker className "it.unibo.walker.Walker"  
 
-QActor waiter context ctxtearoom {
+QActor waiter context ctxtearoom {  
 	
 	[#
 		var CCID 			= ""	
@@ -587,20 +589,45 @@ QActor waiterwalker context ctxtearoom {
 	State movementError{
 		println("waiterwalker | FAILS")
 		printCurrentMessage
-		onMsg( moveForTask : moveForTask(X, Y) ){
+		onMsg( walkerError : walkerError(X, Y, CAUSE, DIR) ){
 			[# 
-				XT = payloadArg(0).toString()
-				YT = payloadArg(1).toString()
+				val CurX = payloadArg(0).toString().toInt()
+				val CurY = payloadArg(1).toString().toInt()
+				val Cause = payloadArg(2).toString()
+				val Dir = payloadArg(3).toString()
 			#]
-	  		replyTo moveForTask with walkbreak : walkbreak( $XT, $YT ) 	
+			
+			println("waiterwalker | CurX: $CurX, CurY: $CurY, Cause = $Cause, Dir = $Dir")
+			
+			
+			solve (corrPos($Cause, $Dir, X, Y)) 
+			ifSolved {				
+				[#
+					var NewX = getCurSol("X").toString().toInt()
+					var NewY = getCurSol("Y").toString().toInt()
+					if (NewX == -1) {
+						NewX = CurX
+					}	else if (NewY == -1) {
+						NewY = CurY
+					}
+				#]
+				
+				println("waiterwalker | SOLVED query KB with NewX = $NewX, NewY = $NewY")
+				
+				request walker -m posCorrection : posCorrextion($NewX, $NewY)
+			} else {
+				println("waiterwalker | NO SOLUTION in KB")
+				
+				replyTo moveForTask with walkbreak : walkbreak( $XT, $YT ) 		
+			}
 		}
 	}
-	Goto waitCmd  
+	Transition t0 	whenTime	10000 		->  waitCmd
+					whenReply 	walkerDone  -> waitCmd 
+					whenReply 	walkerError -> movementError
+					
  }
  
- 
- 
-
 
 QActor smartbell context ctxsmartbell {
  [# 

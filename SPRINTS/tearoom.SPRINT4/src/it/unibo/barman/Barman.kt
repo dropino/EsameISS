@@ -42,7 +42,7 @@ class Barman ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 						updateResourceRep(bJson.toJson() 
 						)
 					}
-					 transition(edgeName="t032",targetState="prepare",cond=whenDispatch("sendOrder"))
+					 transition(edgeName="t035",targetState="prepare",cond=whenDispatch("sendOrder"))
 				}	 
 				state("prepare") { //this:State
 					action { //it:State

@@ -38,7 +38,7 @@ class Smartbell ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, 
 						updateResourceRep(sJson.toJson() 
 						)
 					}
-					 transition(edgeName="t031",targetState="checkTemp",cond=whenRequest("ringBell"))
+					 transition(edgeName="t034",targetState="checkTemp",cond=whenRequest("ringBell"))
 				}	 
 				state("checkTemp") { //this:State
 					action { //it:State

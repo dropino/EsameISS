@@ -19,7 +19,7 @@ var timeout;
 //	deployExit->the waiter has brought the Client from the table to the exit door
 function handleWaiterReply(msg) {
 	
-	if (JSON.parse(msg.body).payload0 == 'success')
+	if (JSON.parse(msg.body).result == 'success')
 		return;
 	
 	if(reqID == 'pay') {
@@ -29,7 +29,7 @@ function handleWaiterReply(msg) {
       $( "#btn-waiter" ).hide();
 	}
 	if(reqID == 'servicePay') {
-		Bill = JSON.parse(msg.body).payload0;
+		Bill = JSON.parse(msg.body).result;
       $( "#title" ).text("Your bill is " + Bill + "$");
       $( "#caption" ).hide();
       $( "#txt-input" ).hide();
@@ -44,7 +44,7 @@ function handleWaiterReply(msg) {
       $( "#btn-waiter" ).show();
       $("#countdown").show();
 		reqID = 'servicePay';
-		startTimer(JSON.parse(msg.body).payload0/1000, $("#countdown") );
+		startTimer(JSON.parse(msg.body).waitTime/1000, $("#countdown") );
 	}
 	if(reqID == 'serviceOrder') {
       $( "#title" ).text('What would you like to order?');
@@ -54,7 +54,7 @@ function handleWaiterReply(msg) {
       reqID = 'order';
 	}
 	if (reqID == 'deployEntrance') {
-	    Table = JSON.parse(msg.body).payload0;
+	    Table = JSON.parse(msg.body).result;
       $( "#table" ).text('Table: ' + Table);
 
 		$( "#title" ).text('Ready to order?');
@@ -81,7 +81,7 @@ function startTimer(duration, display) {
         if (--timer < 0) {
 			maxStayTimeOver();
 			reqID = 'servicePay';
-			stompClient.send("/app/waiter", {}, JSON.stringify({'name': reqID, 'payload0': 'pay', 'payload1': Table, 'clientid': ClientID}));
+			stompClient.send("/app/waiter", {}, JSON.stringify({'name': reqID, 'id': 'pay', 'table': Table, 'clientid': ClientID}));
         	clearInterval(timeout);
         }
 		
@@ -98,7 +98,7 @@ function initialSetup() {
 	reqID = 'deployEntrance';
     $( "#cid" ).text('Client ID: ' + ClientID);
 
-	stompClient.send("/app/waiter", {}, JSON.stringify({'name': reqID, 'payload0': 'entrancedoor', 'payload1': 'table', 'clientid': ClientID}));
+	stompClient.send("/app/waiter", {}, JSON.stringify({'name': reqID, 'deployFrom': 'entrancedoor', 'deployTo': 'table', 'clientid': ClientID}));
 	
 	showDeploymentMessage();
 }
@@ -162,22 +162,22 @@ function maxStayTimeOver() {
 $(document).on("click", "#btn-waiter", function(event) {
 	
 	if(reqID == 'pay') {
-		stompClient.send("/app/waiter", {}, JSON.stringify({'name': reqID, 'payload0': Bill, 'payload1': Table, 'clientid': ClientID}));
+		stompClient.send("/app/waiter", {}, JSON.stringify({'name': reqID, 'payment': Bill, 'table': Table, 'clientid': ClientID}));
 		
         showDeploymentMessage();
 	}
 	if(reqID == 'servicePay') {
 		clearInterval(timeout);
-		stompClient.send("/app/waiter", {}, JSON.stringify({'name': reqID, 'payload0': 'pay', 'payload1': Table, 'clientid': ClientID}));
+		stompClient.send("/app/waiter", {}, JSON.stringify({'name': reqID, 'id': 'pay', 'table': Table, 'clientid': ClientID}));
         showWaitMessage();
 	}
 	if(reqID == 'order') { //this will be a dispatch and the client will have to wait for the event "delivery"
-        stompClient.send("/app/waiter", {}, JSON.stringify({'name': reqID, 'payload0': $( "#txt-input" ).val(), 'clientid': ClientID}));
+        stompClient.send("/app/waiter", {}, JSON.stringify({'name': reqID, 'order': $( "#txt-input" ).val(), 'clientid': ClientID}));
         showWaitMessage();
         reqID='delivery';
 	}
 	if(reqID == 'serviceOrder') {
-		stompClient.send("/app/waiter", {}, JSON.stringify({'name': reqID, 'payload0': 'order', 'payload1': Table, 'clientid': ClientID}));
+		stompClient.send("/app/waiter", {}, JSON.stringify({'name': reqID, 'id': 'order', 'table': Table, 'clientid': ClientID}));
         showWaitMessage();
 	}
 });

@@ -179,24 +179,28 @@ public class WaiterService extends ActorService {
 				}
 				// pulisci tavolo
 				else if (receivedRequest.equals("tableDirty")) {    
-					if(movingTo.equals("")) {// already at the table
-						WaiterState.getInstance().setCurrentTask("Received request to clean table "+table);
-						WaiterState.getInstance().setCurrentMovement("Going to table "+table);
-					}
-					else if(arrival.contains("table")){
-						WaiterState.getInstance().setCurrentTask("Cleaning table "+table);
-						WaiterState.getInstance().setCurrentMovement("Arrived at table "+table);
-					}
-					else if(tableDirty == false) {
+					if(tableDirty == false) {
 						WaiterState.getInstance().setCurrentTask("Finished cleaning table "+table);
-						WaiterState.getInstance().setCurrentMovement("Arrived at table "+table);
+						WaiterState.getInstance().setCurrentMovement("At table "+table);
 						WaiterState.getInstance().decreaseDirtyTables();
 						WaiterState.getInstance().increaseFreeTables();
-						if (clientID != null) {
-							SmartbellState.getInstance().decreaseClientsWaiting();
-							simpMessagingTemplate.convertAndSendToUser(users.get(clientID),WebSocketConfig.topicForClientMain, new ServerReply("/tearoom", clientID, Integer.toString(0)));
+						if (clientID != null && users.get(clientID) != null) {
+							ServerReply reply = new ServerReply();
+							reply.setClientid(clientID);
+							reply.setWaitTime(Integer.toString(waitTime));
+							simpMessagingTemplate.convertAndSendToUser(users.get(clientID),WebSocketConfig.topicForClientMain, reply);
+						}
+					} else {
+						if(movingTo.contains("table")) {
+							WaiterState.getInstance().setCurrentTask("Received request to clean table "+table);
+							WaiterState.getInstance().setCurrentMovement("Going to table "+table);
+						}
+						else if(arrival.contains("table")){ // already at the table
+							WaiterState.getInstance().setCurrentTask("Cleaning table "+table);
+							WaiterState.getInstance().setCurrentMovement("At table "+table);
 						}
 					}
+					
 					sendUpdate(simpMessagingTemplate, WebSocketConfig.topicForManager, WaiterState.getInstance());
 				}
 				// drink arrives to client
@@ -217,7 +221,9 @@ public class WaiterService extends ActorService {
 						WaiterState.getInstance().increaseTeasDelivered();
 						System.out.println("Waiter Service: DrinkReady arrived for delivery clientID " + clientID + "(" + users.get(clientID) + ") at table " + table);
 						System.out.println("Waiter Service: DrinkReady sending PERSONAL update");
-						simpMessagingTemplate.convertAndSendToUser(users.get(clientID),WebSocketConfig.topicForClientInTearoom, new ServerReply("", Integer.toString(waitTime)));
+						ServerReply reply = new ServerReply();
+						reply.setWaitTime(Integer.toString(waitTime));
+						simpMessagingTemplate.convertAndSendToUser(users.get(clientID),WebSocketConfig.topicForClientInTearoom, reply);//waitTime contains the maximumStayTime
 					}
 					System.out.println("Waiter Service: DrinkReady sending STATE update");
 					sendUpdate(simpMessagingTemplate, WebSocketConfig.topicForManager, WaiterState.getInstance());
@@ -234,7 +240,7 @@ public class WaiterService extends ActorService {
 
 	public void executeClientService(ClientRequest req, String UUID) {
 
-		ServerReply result = null;
+		ServerReply result = new ServerReply();
 
 		this.users.put(req.getClientid(), UUID);
 
@@ -247,27 +253,32 @@ public class WaiterService extends ActorService {
 			result = askForService(req);
 
 		else if (req.getName().compareTo("order") == 0) {
-			ApplMessage msg = MsgUtil.buildDispatch("web", "order", "order(" + req.getPayload0() + ")", "waiter");
+			ApplMessage msg = MsgUtil.buildDispatch("web", "order", "order(" + req.getOrder() + ")", "waiter");
 			waiterConn.forward(msg);
-			result = new ServerReply("", "success");
+			result.setResult("success");
 		}
 
 		else if (req.getName().compareTo("pay") == 0) {
-			ApplMessage msg = MsgUtil.buildDispatch("web", "pay", "pay(" + req.getPayload0() + ")", "waiter");
+			ApplMessage msg = MsgUtil.buildDispatch("web", "pay", "pay(" + req.getPayment() + ")", "waiter");
 			waiterConn.forward(msg);
-			ClientRequest deployReq = new ClientRequest("deploy", req.getPayload1(), "exitdoor", req.getClientid());
+			ClientRequest deployReq = new ClientRequest();
+			deployReq.setClientid(req.getClientid());
+			deployReq.setDeployFrom(req.getTable());
+			deployReq.setDeployTo("exitdoor");
 			result = askForDeployment(deployReq);
 		}
-
-		System.out.println("------------------- WaiterService ANSWER TO CLIENT = " + result.getPayload0());
-
+		else {
+			result.setResult("failure");
+		}
 		simpMessagingTemplate.convertAndSendToUser(UUID, WebSocketConfig.topicForClientInTearoom, result);
 
 	}
 
 	//we save the ClientID-UUID mapping so we can tell the Client when he can come inside
-	public String executeSmartbellMessage(ApplMessage msg, String UUID, String clientID) {
-		ApplMessage timeToWait = waiterConn.request(msg);
+	public String executeWaitTimeRequest(String UUID, String clientID) {
+		ApplMessage askWaitTime = MsgUtil.buildRequest("web", "waitTime", "waitTime(" + clientID + ")",
+				"waiter");
+		ApplMessage timeToWait = waiterConn.request(askWaitTime);
 		String ttw = ApplMessageUtils.extractApplMessagePayload(timeToWait, 0);
 
 		if(Integer.parseInt(ttw) > 0) {
@@ -278,30 +289,36 @@ public class WaiterService extends ActorService {
 	}
 
 	private ServerReply askForDeployment(ClientRequest req) {
-
+		ServerReply result = new ServerReply();
+		
 		ApplMessage msg = MsgUtil.buildRequest("web", "deploy",
-				"deploy(" + req.getPayload0() + "," + req.getPayload1() + "," + req.getClientid() + ")", "waiter");
-		System.out.println("------------------- Waiter Service sending deployment message msg =" + msg.toString());
+				"deploy(" + req.getDeployFrom() + "," + req.getDeployTo() + "," + req.getClientid() + ")", "waiter");
+		System.out.println("------------------- Waiter Service sending deployment message msg = " + msg.toString());
 
 		ApplMessage reply = waiterConn.request(msg);
-		System.out.println("------------------- Waiter Service appl message reply content p =" + reply.msgContent());
+		System.out.println("------------------- Waiter Service appl message reply content p = " + reply.msgContent());
 
 		String[] repArgs = ApplMessageUtils.extractApplMessagePayloadArgs(reply);
 
-		return new ServerReply("", repArgs[0]);
+		result.setResult(repArgs[0]);
+		
+		return result;
 	}
 
 	private ServerReply askForService(ClientRequest req) {
+		ServerReply result = new ServerReply();
+		
 		ApplMessage msg = MsgUtil.buildRequest("web", "clientRequest",
-				"clientRequest(" + req.getPayload0() + "," + req.getPayload1() + "," + req.getClientid() + ")",
+				"clientRequest(" + req.getId() + "," + req.getTable() + "," + req.getClientid() + ")",
 				"waiter");
-		System.out.println("------------------- Waiter Service sending service message msg =" + msg.toString());
+		System.out.println("------------------- Waiter Service sending service message msg = " + msg.toString());
 		ApplMessage reply = waiterConn.request(msg);
-		System.out.println("------------------- Waiter Service appl message reply content p =" + reply.msgContent());
+		System.out.println("------------------- Waiter Service appl message reply content p = " + reply.msgContent());
 
 		String[] repArgs = ApplMessageUtils.extractApplMessagePayloadArgs(reply);
 
-		return new ServerReply("", repArgs[0]);
+		result.setResult(repArgs[0]);
+		return result;
 	}
 
 	@Override

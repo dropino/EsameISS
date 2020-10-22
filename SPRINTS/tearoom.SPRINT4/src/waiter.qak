@@ -81,6 +81,7 @@ QActor waiter context ctxtearoom {
 		var CurST			= ""
 		var PL				= ""
 		var Dest			= ""
+		var Status			= ""
 
 		var wJson = json.WaiterJson()
 		
@@ -133,7 +134,7 @@ QActor waiter context ctxtearoom {
 	  				whenRequest	deploy			 	-> handleDeploy
 					whenRequest	clientRequest 		-> answerClientRequest
 					whenMsg 	orderReady 	 		-> getDrink
-					whenMsg 	tableDirty	 		-> cleanTable		
+					whenMsg 	tableDirty	 		-> cleanTableReceived		
 						
   	
   	State goHome {
@@ -173,7 +174,7 @@ QActor waiter context ctxtearoom {
 		solve( numavailabletables(N) ) 
 		ifSolved { 
 			[# Ntables = getCurSol("N").toString().toInt()  #] 
-			println("WAITER | numavailabletables=$Ntables")
+			println("WAITER -answerTime | numavailabletables=$Ntables")
 		}
 		
 		if [# Ntables != 0 #] {
@@ -186,10 +187,13 @@ QActor waiter context ctxtearoom {
 			#]
 			
 			solve( tableavailable(N) ) 
-			ifSolved { [# CTABLE = getCurSol("N").toString().toInt()  #] 
-				println("WAITER | tableavailable=$CTABLE")					 
-				solve( engageTable($CTABLE, $CCID ) ) 
-				println("WAITER | Going to DEPLOY Client $CCID to table $CTABLE")	
+			ifSolved { 
+				[# CTABLE = getCurSol("N").toString().toInt()  #] 
+				println("WAITER -answerTime | tableavailable=$CTABLE")		
+				println("WAITER -answerTime | Engaging table $CTABLE for Client $CCID")	
+							 
+				solve( engageTable($CTABLE, $CCID) ) 
+				println("WAITER -answerTime | Going to DEPLOY Client $CCID to table $CTABLE")	
 		 	}
 			
 			replyTo waitTime with wait : wait(0)
@@ -220,7 +224,7 @@ QActor waiter context ctxtearoom {
   				CCID = payloadArg(2).toString()	
   			#]
   			
-  			println("WAITER | handling deployment request for client $CCID from $CTABLE to $Dest... ")  		
+  			println("WAITER -handleDeploy | handling deployment request for client $CCID from $CTABLE to $Dest... ")  		
   			
   		}		
   	}
@@ -238,7 +242,7 @@ QActor waiter context ctxtearoom {
 		
 		 updateResource [#wJson.toJson()#] 
 
-		println("WAITER | GOING to ENTRANCE door ")
+		println("WAITER -goToEntrance | GOING to ENTRANCE door ")
 		request waiterwalker -m moveForTask : moveForTask(entrancedoor, 1)
 		solve ( changeWaiterState(athome, moving) )		
 	} 
@@ -253,7 +257,7 @@ QActor waiter context ctxtearoom {
 	 		[# CTABLE = getCurSol("T").toString().toInt() #]
 	 	}	 	
 	 	
-	 	println("WAITER | DEPLOYING Client $CCID to table $CTABLE")
+	 	println("WAITER -deployClientEntrance | DEPLOYING Client $CCID to table $CTABLE")
 	 	
 	 	[#		
 			wJson.setBusy(true)
@@ -274,10 +278,12 @@ QActor waiter context ctxtearoom {
 
 	State deployClientExit {
 		
-		println("WAITER | deploying simclient from table $CTABLE to exit door... ")
+		println("WAITER -deployExit | deploying simclient from table $CTABLE to exit door... ")
+		println("WAITER -deployExit | DIRTY TABLE SELF MSG = $CTABLE")					 
+		
 		forward waiter -m tableDirty : tableDirty($CTABLE)
 		solve (dirtyTable($CTABLE, $CCID))
-		println("WAITER | sent message to self for DIRTY TABLE $CTABLE ")
+		println("WAITER -deployExit | sent message to self for DIRTY TABLE $CTABLE ")
 		request waiterwalker -m moveForTask : moveForTask(exitdoor, 1)
 		
 		[#		
@@ -298,7 +304,7 @@ QActor waiter context ctxtearoom {
 	  	
 	  					
 	State confirmClientArrival {		
-		println("WAITER | SENDING CONFIRMATION to simclient $CCID: arrived $Dest $CTABLE")
+		println("WAITER -confirmClientArrival | SENDING CONFIRMATION to simclient $CCID: arrived $Dest $CTABLE")
 		
 		replyTo deploy with  arrived	: arrived($CTABLE)
 		
@@ -328,7 +334,7 @@ QActor waiter context ctxtearoom {
 		
 		updateResource [#wJson.toJson()#]
 		
-		println("WAITER | received CLIENTREQUEST $KIND from Client $CCID at table $CTABLE ")
+		println("WAITER -answerClientRequest | received CLIENTREQUEST $KIND from Client $CCID at table $CTABLE ")
 		
 		request waiterwalker -m moveForTask : moveForTask(teatable, $CTABLE)
 		solve ( changeWaiterState(athome, moving) )	
@@ -338,11 +344,12 @@ QActor waiter context ctxtearoom {
 	
 	
 	State atTableForRequest {
+		
 		solve( clientRequestPayload($KIND, P) )
 		ifSolved {
 			[# PL = getCurSol("P").toString() #]
 		}
-			println("WAITER | CLIENT $CCID requested $KIND")
+			println("WAITER -atTableForRequest | at table $CTABLE for CLIENT $CCID request $KIND")
 		
 		[#				
 			wJson.setMovingTo("")
@@ -392,44 +399,55 @@ QActor waiter context ctxtearoom {
 	Goto listening
 	
 	
-	State cleanTable {
-		println("WAITER | CLEANING TABLE MSG ARRIVED")
+	State cleanTableReceived {
+		println("WAITER | CLEANING TABLE MSG ARRIVED")	
 		
 		onMsg(tableDirty : tableDirty(N)) {
 			[#  CTABLE = payloadArg(0).toString().toInt() #]
 		}
-		
+				
+		solve( teatable($CTABLE, V) ) 
+		ifSolved { 
+			[# Status = getCurSol("V").toString() #] 
+			println("WAITER -answerTime | numavailabletables=$Ntables")
+		}
+	}
+	Goto cleanTable if [# Status == "dirty" #] else listening	
+	
+	State cleanTable {
 		println("WAITER | Gotta clean table $CTABLE. Last cleaned table: $LastCleanedTable")
-		
 		
 		if [# LastCleanedTable != 0 
 			&& LastCleanedTable != CTABLE
-			 && TimeCleaned[LastCleanedTable - 1] < MaxCleaning #
-		] {
+			 && TimeCleaned[LastCleanedTable - 1] < MaxCleaning #] {
+			println("WAITER  -cleanTable | DIRTY TABLE SELF MSG = $CTABLE")					 
 			forward waiter -m tableDirty : tableDirty($CTABLE)
-			[#  CTABLE = LastCleanedTable #]
+			[#  CTABLE = LastCleanedTable
+				wJson.setArrival("")
+			#]
 		}
 		
 		[#  LastCleanedTable = CTABLE!!  #]
 		
-		
-		println("WAITER | going to table $CTABLE for CLEANING... ")
+		println("WAITER  -cleanTable | going to table $CTABLE for CLEANING... ")
 		request waiterwalker -m moveForTask : moveForTask(teatable, $CTABLE)
 		solve ( changeWaiterState(athome, moving) )	
-		[#
+		[#	
+			wJson.setMovingTo("table "+ CTABLE)	
 			wJson.setBusy(true)
 			wJson.setTable(CTABLE)
 			wJson.setTableDirty(true)
-			wJson.setMovingTo("table "+ CTABLE)
 			wJson.setReceivedRequest("tableDirty")						
 		#]
+		
+		
 	}
 	Transition t0		whenReply	movementDone -> atTableToClean
 	  					whenReply	walkbreak	 -> error
 	
 	
 	State atTableToClean {	
-		println("WAITER | cleaning table $CTABLE... ")
+		println("WAITER -atTableToClean | cleaning table $CTABLE... ")
 		[#
 			wJson.setBusy(true)
 			wJson.setTable(CTABLE)
@@ -440,21 +458,22 @@ QActor waiter context ctxtearoom {
 		#]
 		updateResource [# wJson.toJson() #]
 
+		[# TimeCleaned[CTABLE!! - 1] += CleaningInrement #]
+		delay 500
 		if [# TimeCleaned[CTABLE!! - 1] < MaxCleaning #] {
-				[# TimeCleaned[CTABLE!! - 1] += CleaningInrement #]
-				delay 500
+				println("WAITER -atTableToClean | DIRTY TABLE SELF MSG = $CTABLE")					 
 				forward waiter -m tableDirty : tableDirty ($CTABLE)
-				
-				println("WAITER | cleaned table $CTABLE for ${TimeCleaned[CTABLE!! - 1]} of $MaxCleaning... ")
+				println("WAITER -atTableToClean | cleaned table $CTABLE for ${TimeCleaned[CTABLE!! - 1]} of $MaxCleaning... ")
 		} else {
 			[# 
 				wJson.setArrival("")
 				wJson.setTableDirty(false)	
-				//We use to return null if there are no more clients waiting
+				//We use poll to return null if there are no more clients waiting
 				wJson.setClientID(clientQueue.poll())	
 				LastCleanedTable = 0
+				TimeCleaned[CTABLE!! - 1] = 0
 				
-		#]
+			#]
 				println("WAITER | FINISHED CLEANING table $CTABLE")	
 				updateResource [# wJson.toJson() #]
 				solve( cleanTable($CTABLE) )
@@ -668,7 +687,6 @@ QActor smartbell context ctxsmartbell {
 			[#	
 				sJson.setBusy(true)
 				sJson.setClientArrived(true)
-				
 			#]
 			updateResource[#sJson.toJson()#]
 			println("  SmartBell | Check Temp $Temp ")	 
@@ -682,7 +700,6 @@ QActor smartbell context ctxsmartbell {
 		println("  SmartBell | Client Discard  ")
 		replyTo ringBell with tempStatus : tempStatus (0, $CID)
 		[#
-			sJson.setBusy(true)
 			sJson.setClientArrived(false)
 			sJson.setClientDenied(true)
 		#]

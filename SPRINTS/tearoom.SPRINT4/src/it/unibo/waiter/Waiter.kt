@@ -35,6 +35,7 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 				var CurST			= ""
 				var PL				= ""
 				var Dest			= ""
+				var Status			= ""
 		
 				var wJson = json.WaiterJson()
 				
@@ -88,7 +89,7 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 					transition(edgeName="t03",targetState="handleDeploy",cond=whenRequest("deploy"))
 					transition(edgeName="t04",targetState="answerClientRequest",cond=whenRequest("clientRequest"))
 					transition(edgeName="t05",targetState="getDrink",cond=whenDispatch("orderReady"))
-					transition(edgeName="t06",targetState="cleanTable",cond=whenDispatch("tableDirty"))
+					transition(edgeName="t06",targetState="cleanTableReceived",cond=whenDispatch("tableDirty"))
 				}	 
 				state("goHome") { //this:State
 					action { //it:State
@@ -126,7 +127,7 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 						}
 						solve("numavailabletables(N)","") //set resVar	
 						if( currentSolution.isSuccess() ) { Ntables = getCurSol("N").toString().toInt()   
-						println("WAITER | numavailabletables=$Ntables")
+						println("WAITER -answerTime | numavailabletables=$Ntables")
 						}
 						else
 						{}
@@ -138,9 +139,10 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 										} 
 						solve("tableavailable(N)","") //set resVar	
 						if( currentSolution.isSuccess() ) { CTABLE = getCurSol("N").toString().toInt()   
-						println("WAITER | tableavailable=$CTABLE")
+						println("WAITER -answerTime | tableavailable=$CTABLE")
+						println("WAITER -answerTime | Engaging table $CTABLE for Client $CCID")
 						solve("engageTable($CTABLE,$CCID)","") //set resVar	
-						println("WAITER | Going to DEPLOY Client $CCID to table $CTABLE")
+						println("WAITER -answerTime | Going to DEPLOY Client $CCID to table $CTABLE")
 						}
 						else
 						{}
@@ -171,7 +173,7 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 								  				CTABLE = payloadArg(0).toString().toIntOrNull()
 								  				Dest = payloadArg(1).toString()
 								  				CCID = payloadArg(2).toString()	
-								println("WAITER | handling deployment request for client $CCID from $CTABLE to $Dest... ")
+								println("WAITER -handleDeploy | handling deployment request for client $CCID from $CTABLE to $Dest... ")
 						}
 					}
 					 transition( edgeName="goto",targetState="goToEntrance", cond=doswitchGuarded({ Dest == "table"  
@@ -188,7 +190,7 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 									wJson.setReceivedRequest("DeployEntrance")	  				
 						updateResourceRep(wJson.toJson() 
 						)
-						println("WAITER | GOING to ENTRANCE door ")
+						println("WAITER -goToEntrance | GOING to ENTRANCE door ")
 						request("moveForTask", "moveForTask(entrancedoor,1)" ,"waiterwalker" )  
 						solve("changeWaiterState(athome,moving)","") //set resVar	
 					}
@@ -202,7 +204,7 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 						}
 						else
 						{}
-						println("WAITER | DEPLOYING Client $CCID to table $CTABLE")
+						println("WAITER -deployClientEntrance | DEPLOYING Client $CCID to table $CTABLE")
 								
 									wJson.setBusy(true)
 									wJson.setClientID(CCID)
@@ -219,10 +221,11 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 				}	 
 				state("deployClientExit") { //this:State
 					action { //it:State
-						println("WAITER | deploying simclient from table $CTABLE to exit door... ")
+						println("WAITER -deployExit | deploying simclient from table $CTABLE to exit door... ")
+						println("WAITER -deployExit | DIRTY TABLE SELF MSG = $CTABLE")
 						forward("tableDirty", "tableDirty($CTABLE)" ,"waiter" ) 
 						solve("dirtyTable($CTABLE,$CCID)","") //set resVar	
-						println("WAITER | sent message to self for DIRTY TABLE $CTABLE ")
+						println("WAITER -deployExit | sent message to self for DIRTY TABLE $CTABLE ")
 						request("moveForTask", "moveForTask(exitdoor,1)" ,"waiterwalker" )  
 								
 									wJson.setBusy(true)
@@ -240,7 +243,7 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 				}	 
 				state("confirmClientArrival") { //this:State
 					action { //it:State
-						println("WAITER | SENDING CONFIRMATION to simclient $CCID: arrived $Dest $CTABLE")
+						println("WAITER -confirmClientArrival | SENDING CONFIRMATION to simclient $CCID: arrived $Dest $CTABLE")
 						answer("deploy", "arrived", "arrived($CTABLE)"   )  
 								
 									wJson.setMovingFrom("")
@@ -267,7 +270,7 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 						}
 						updateResourceRep(wJson.toJson() 
 						)
-						println("WAITER | received CLIENTREQUEST $KIND from Client $CCID at table $CTABLE ")
+						println("WAITER -answerClientRequest | received CLIENTREQUEST $KIND from Client $CCID at table $CTABLE ")
 						request("moveForTask", "moveForTask(teatable,$CTABLE)" ,"waiterwalker" )  
 						solve("changeWaiterState(athome,moving)","") //set resVar	
 					}
@@ -281,7 +284,7 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 						}
 						else
 						{}
-						println("WAITER | CLIENT $CCID requested $KIND")
+						println("WAITER -atTableForRequest | at table $CTABLE for CLIENT $CCID request $KIND")
 										
 									wJson.setMovingTo("")
 									wJson.setArrival("table " + CTABLE)
@@ -330,29 +333,45 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 					}
 					 transition( edgeName="goto",targetState="listening", cond=doswitch() )
 				}	 
-				state("cleanTable") { //this:State
+				state("cleanTableReceived") { //this:State
 					action { //it:State
 						println("WAITER | CLEANING TABLE MSG ARRIVED")
 						if( checkMsgContent( Term.createTerm("tableDirty(N)"), Term.createTerm("tableDirty(N)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								  CTABLE = payloadArg(0).toString().toInt()  
 						}
+						solve("teatable($CTABLE,V)","") //set resVar	
+						if( currentSolution.isSuccess() ) { Status = getCurSol("V").toString()  
+						println("WAITER -answerTime | numavailabletables=$Ntables")
+						}
+						else
+						{}
+					}
+					 transition( edgeName="goto",targetState="cleanTable", cond=doswitchGuarded({ Status == "dirty"  
+					}) )
+					transition( edgeName="goto",targetState="listening", cond=doswitchGuarded({! ( Status == "dirty"  
+					) }) )
+				}	 
+				state("cleanTable") { //this:State
+					action { //it:State
 						println("WAITER | Gotta clean table $CTABLE. Last cleaned table: $LastCleanedTable")
 						if(  LastCleanedTable != 0 
 									&& LastCleanedTable != CTABLE
 									 && TimeCleaned[LastCleanedTable - 1] < MaxCleaning  
-						 ){forward("tableDirty", "tableDirty($CTABLE)" ,"waiter" ) 
-						  CTABLE = LastCleanedTable  
+						 ){println("WAITER  -cleanTable | DIRTY TABLE SELF MSG = $CTABLE")
+						forward("tableDirty", "tableDirty($CTABLE)" ,"waiter" ) 
+						  CTABLE = LastCleanedTable
+										wJson.setArrival("")
 						}
 						  LastCleanedTable = CTABLE!!   
-						println("WAITER | going to table $CTABLE for CLEANING... ")
+						println("WAITER  -cleanTable | going to table $CTABLE for CLEANING... ")
 						request("moveForTask", "moveForTask(teatable,$CTABLE)" ,"waiterwalker" )  
 						solve("changeWaiterState(athome,moving)","") //set resVar	
-						
+							
+									wJson.setMovingTo("table "+ CTABLE)	
 									wJson.setBusy(true)
 									wJson.setTable(CTABLE)
 									wJson.setTableDirty(true)
-									wJson.setMovingTo("table "+ CTABLE)
 									wJson.setReceivedRequest("tableDirty")						
 					}
 					 transition(edgeName="t021",targetState="atTableToClean",cond=whenReply("movementDone"))
@@ -360,7 +379,7 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 				}	 
 				state("atTableToClean") { //this:State
 					action { //it:State
-						println("WAITER | cleaning table $CTABLE... ")
+						println("WAITER -atTableToClean | cleaning table $CTABLE... ")
 						
 									wJson.setBusy(true)
 									wJson.setTable(CTABLE)
@@ -370,19 +389,21 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 									wJson.setReceivedRequest("tableDirty")						
 						updateResourceRep( wJson.toJson()  
 						)
-						if(  TimeCleaned[CTABLE!! - 1] < MaxCleaning  
-						 ){ TimeCleaned[CTABLE!! - 1] += CleaningInrement  
+						 TimeCleaned[CTABLE!! - 1] += CleaningInrement  
 						delay(500) 
+						if(  TimeCleaned[CTABLE!! - 1] < MaxCleaning  
+						 ){println("WAITER -atTableToClean | DIRTY TABLE SELF MSG = $CTABLE")
 						forward("tableDirty", "tableDirty($CTABLE)" ,"waiter" ) 
-						println("WAITER | cleaned table $CTABLE for ${TimeCleaned[CTABLE!! - 1]} of $MaxCleaning... ")
+						println("WAITER -atTableToClean | cleaned table $CTABLE for ${TimeCleaned[CTABLE!! - 1]} of $MaxCleaning... ")
 						}
 						else
 						 { 
 						 				wJson.setArrival("")
 						 				wJson.setTableDirty(false)	
-						 				//We use to return null if there are no more clients waiting
+						 				//We use poll to return null if there are no more clients waiting
 						 				wJson.setClientID(clientQueue.poll())	
 						 				LastCleanedTable = 0
+						 				TimeCleaned[CTABLE!! - 1] = 0
 						 				
 						 println("WAITER | FINISHED CLEANING table $CTABLE")
 						 updateResourceRep( wJson.toJson()  

@@ -3,56 +3,17 @@ package it.unibo.tearoom.SPRINT4.ui.model;
 public class ServerReply {
 
 	private String redir;
-	private String payload0;
-	private String payload1;
-	private String payload2;
-	private String payload3;
-	private String payload4;
+	private String clientid;
+	private String table;
+	private String waitTime;
+	private String result;
 
-	public ServerReply(String redir) {
-		super();
-		this.redir = redir;
-	}
-
-	public ServerReply(String redir, String payload0) {
-		super();
-		this.redir = redir;
-		this.payload0 = payload0;
-	}
-
-	public ServerReply(String redir, String payload0, String payload1) {
-		super();
-		this.redir = redir;
-		this.payload1 = payload1;
-		this.payload0 = payload0;
-	}
-
-	public ServerReply(String redir, String payload0, String payload1, String payload2) {
-		super();
-		this.redir = redir;
-		this.payload0 = payload0;
-		this.payload1 = payload1;
-		this.payload2 = payload2;
-	}
-
-	public ServerReply(String redir, String payload0, String payload1, String payload2, String payload3) {
-		super();
-		this.redir = redir;
-		this.payload1 = payload1;
-		this.payload2 = payload2;
-		this.payload3 = payload3;
-		this.payload0 = payload0;
-	}
-
-	public ServerReply(String redir, String payload0, String payload1, String payload2, String payload3,
-			String payload4) {
-		super();
-		this.redir = redir;
-		this.payload1 = payload1;
-		this.payload2 = payload2;
-		this.payload3 = payload3;
-		this.payload4 = payload4;
-		this.payload0 = payload0;
+	public ServerReply() {
+		this.redir = "";
+		this.table = "";
+		this.waitTime = "";
+		this.result = "";
+		this.clientid = "";
 	}
 
 	public String getRedir() {
@@ -63,43 +24,35 @@ public class ServerReply {
 		this.redir = redir;
 	}
 
-	public String getPayload1() {
-		return payload1;
+	public String getTable() {
+		return table;
 	}
 
-	public void setPayload1(String payload1) {
-		this.payload1 = payload1;
+	public void setTable(String table) {
+		this.table = table;
 	}
 
-	public String getPayload2() {
-		return payload2;
+	public String getWaitTime() {
+		return waitTime;
 	}
 
-	public void setPayload2(String payload2) {
-		this.payload2 = payload2;
+	public void setWaitTime(String waitTime) {
+		this.waitTime = waitTime;
 	}
 
-	public String getPayload3() {
-		return payload3;
+	public String getResult() {
+		return result;
 	}
 
-	public void setPayload3(String payload3) {
-		this.payload3 = payload3;
+	public void setResult(String result) {
+		this.result = result;
 	}
 
-	public String getPayload4() {
-		return payload4;
+	public String getClientid() {
+		return clientid;
 	}
 
-	public void setPayload4(String payload4) {
-		this.payload4 = payload4;
-	}
-
-	public String getPayload0() {
-		return payload0;
-	}
-
-	public void setPayload0(String payload0) {
-		this.payload0 = payload0;
+	public void setClientid(String clientid) {
+		this.clientid = clientid;
 	}
 }

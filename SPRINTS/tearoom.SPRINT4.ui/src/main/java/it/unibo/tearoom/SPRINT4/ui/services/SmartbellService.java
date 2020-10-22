@@ -19,6 +19,7 @@ import connQak.utils.ApplMessageUtils;
 import it.unibo.kactor.ApplMessage;
 import it.unibo.kactor.MsgUtil;
 import it.unibo.tearoom.SPRINT4.ui.config.WebSocketConfig;
+import it.unibo.tearoom.SPRINT4.ui.model.ClientRequest;
 import it.unibo.tearoom.SPRINT4.ui.model.ServerReply;
 import it.unibo.tearoom.SPRINT4.ui.model.states.SmartbellState;
 
@@ -53,7 +54,7 @@ public class SmartbellService extends ActorService {
 	 */
 
 	/*
-	 * ringSmartbell returnType : ResourceRep with payload
+	 * ringSmartbell returnType : ServerReply with correct payload
 	 * "redirection,ClientID,timeToWait" if reuqest is successful, "/badtemp" if
 	 * it's not
 	 * 
@@ -70,36 +71,43 @@ public class SmartbellService extends ActorService {
 	 * to /tearoom and clientID which handles the UI for that. if >0 we send back a
 	 * message with ClientID , time to wait and the javascript will handle the view
 	 * to show the countdown.
+	 * 
+	 * It also handles the second request of waitTime that the client makes to the Waiter
+	 * when it's notified a table is freed.
 	 */
-	public void executeService(WaiterService waiterService, String UUID) {
+	public void executeService(WaiterService waiterService, String UUID, ClientRequest req) {
+		ServerReply result = new ServerReply();
 
-		ServerReply result = null;
+		result.setClientid(req.getClientid());
+		
+		System.out.println("------------------- Smartbell Service CID-A = " + result.getClientid());
+		
+		if (!req.getName().equalsIgnoreCase("waitTime")) {
+			ApplMessage ringMsg = MsgUtil.buildRequest("web", "ringBell", "ringBell(ok)", "smartbell");
 
-		ApplMessage ringMsg = MsgUtil.buildRequest("web", "ringBell", "ringBell(ok)", "smartbell");
+			ApplMessage reply = smartbellConn.request(ringMsg);
+			System.out
+					.println("------------------- Smartbell Service appl message reply RINGBELL p = " + reply.msgContent());
 
-		ApplMessage reply = smartbellConn.request(ringMsg);
-		System.out
-				.println("------------------- Smartbell Service appl message reply RINGBELL p = " + reply.msgContent());
-
-		String[] ringRepArgs = ApplMessageUtils.extractApplMessagePayloadArgs(reply);
-
-		if (ringRepArgs[0].compareTo("0") == 0) {
-			System.out.println("------------------- Smartbell Service: respond with BAD TEMPERATURE REDIR");
-			result = new ServerReply("/badreq", "0", "0");
+			//reply comes back in the form (STATUS, CID)
+			String[] ringRepArgs = ApplMessageUtils.extractApplMessagePayloadArgs(reply);
+			result.setClientid(ringRepArgs[1]);	
+			result.setResult(ringRepArgs[0]);
+			System.out.println("------------------- Smartbell Service CID-B = " + result.getClientid());
+		}
+		
+		if (result.getResult().equalsIgnoreCase("0")) {
+				System.out.println("------------------- Smartbell Service: respond with BAD TEMPERATURE REDIR");
+				result.setRedir("/badreq"); 
 		} else {
 
-			// on tempStatus msg the clientId is the second argument, so idx = 1
-			ApplMessage askWaitTime = MsgUtil.buildRequest("web", "waitTime", "waitTime(" + ringRepArgs[1] + ")",
-					"waiter");
-			String ttw = waiterService.executeSmartbellMessage(askWaitTime, UUID, ringRepArgs[1]);
+			String ttw = waiterService.executeWaitTimeRequest(UUID, result.getClientid());
 		
-			System.out
-					.println("------------------- Smartbell Service ANSWER TO CLIENT = " + ringRepArgs[1] + ", " + ttw);
+			System.out.println("------------------- Smartbell Service ANSWER TO CLIENT = " + result.getClientid() + ", " + ttw);
 
-			result = new ServerReply("/tearoom", ringRepArgs[1], ttw);
-
+			result.setRedir("/tearoom");
+			result.setWaitTime(ttw);
 		}
-
 		simpMessagingTemplate.convertAndSendToUser(UUID, WebSocketConfig.topicForClientMain, result);
 
 	}
@@ -133,18 +141,17 @@ public class SmartbellService extends ActorService {
 					SmartbellState.getInstance().setCurrentTask("waiting for a client to arrive...");
 					System.out.println("Smartbell Service --> CoapClient changed -> " + response.getResponseText());
 				} else if (ClientArrived == true) {
+					SmartbellState.getInstance().increaseClientsProcessed();
 					SmartbellState.getInstance().setCurrentTask("A Client has arrived, measure temperature");
 					System.out.println("Smartbell Service --> CoapClient changed -> " + response.getResponseText());
 				} else if (ClientDenied == true) {
 					SmartbellState.getInstance()
 							.setCurrentTask("A Client has been denied, his temperature is too high");
-					SmartbellState.getInstance().increaseClientsProcessed();
 					System.out.println("Smartbell Service --> CoapClient changed -> " + response.getResponseText());
 
-				} else if (ClientAccepted == false) {
+				} else if (ClientAccepted == true) {
 					SmartbellState.getInstance()
 							.setCurrentTask("A Client has been accepted, his temperature is below 37.5 Celsius");
-					SmartbellState.getInstance().increaseClientsProcessed();
 					SmartbellState.getInstance().increaseClientsAdmitted();
 					System.out.println("Smartbell Service --> CoapClient changed -> " + response.getResponseText());
 				}

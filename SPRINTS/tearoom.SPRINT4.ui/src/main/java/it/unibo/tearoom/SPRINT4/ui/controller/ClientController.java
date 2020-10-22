@@ -47,11 +47,11 @@ public class ClientController {
 	}
 
 	@MessageMapping("/smartbell")
-	public void ringSmartbell(SimpMessageHeaderAccessor sha) throws Exception {
+	public void ringSmartbell(SimpMessageHeaderAccessor sha, ClientRequest req) throws Exception {
 
 		System.out.println("!!!!!------------------- /app/smartbell principal name " + sha.getUser().getName());
 
-		this.smartbellService.executeService(waiterService, sha.getUser().getName());
+		this.smartbellService.executeService(waiterService, sha.getUser().getName(), req);
 
 	}
 

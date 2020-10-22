@@ -54,7 +54,6 @@ class Smartbell ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, 
 									
 												sJson.setBusy(true)
 												sJson.setClientArrived(true)
-												
 								updateResourceRep(sJson.toJson() 
 								)
 								println("  SmartBell | Check Temp $Temp ")
@@ -71,7 +70,6 @@ class Smartbell ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, 
 						println("  SmartBell | Client Discard  ")
 						answer("ringBell", "tempStatus", "tempStatus(0,$CID)"   )  
 						
-									sJson.setBusy(true)
 									sJson.setClientArrived(false)
 									sJson.setClientDenied(true)
 						updateResourceRep(sJson.toJson() 

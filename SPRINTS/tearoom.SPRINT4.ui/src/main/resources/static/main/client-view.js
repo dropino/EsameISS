@@ -6,8 +6,6 @@ var time = false;
 
 function showMsg(message) {
     console.log(message );
-//    $("#applmsgs").html( "<pre>"+message.replace(/\n/g,"<br/>")+"</pre>" );
-        //$("#applmsgintable").append("<tr><td>" + message + "</td></tr>");
 }
 
 function startTimer(duration, display) {
@@ -35,40 +33,52 @@ function startTimer(duration, display) {
 }
 
 function handleSmartbellReply(msg) {
+	
 	var redir = JSON.parse(msg.body).redir;
-  	var CID = JSON.parse(msg.body).payload0;
-    var ttw = JSON.parse(msg.body).payload1;
+  	var CID = JSON.parse(msg.body).clientid;
+    var ttw = JSON.parse(msg.body).waitTime;
     
     console.log(msg.body);
     
-    if (ttw == 0)    {
-    	var url = new URL(window.location.href + redir);
-    	
-    	if (CID != 0) {
-    		url.searchParams.append('cid', CID);
-    	}
-    	else {
-    		url.searchParams.append('timer', false);
-        	url.searchParams.append('badtemp', true);
-    	}
-    	
-    	stompClient.disconnect(function(){
-    	    console.log("disconnected from stompClient");
-    	});
-    	
-    	window.location.assign(url);
+    if(ttw < 0) {
+        stompClient.send("/app/smartbell", {}, JSON.stringify({'name': 'waitTime', 'clientid': CID}));
+    }
+    else if (ttw == 0)    { 	
+    	redirect(redir, CID);
     }
     else if (time == false) {
-	    console.log("Client has to wait");
-        $( "#title" ).text("The tearoom is currently full :(");
-        $( "#caption" ).text("If a table frees up in the following " + ttw/1000 + " seconds the waiter will come and get you. Otherwiase we hope to see you again another time!");
-	    $( "#btn-smartbell" ).hide();
-        $( "#h-countdown" ).show();
-        $( "#h-countdown" ).text("Time before you have to go:");
-        $( "#countdown" ).show();
-		$( "#clickOnce").hide();
+    	showTimerMessage(ttw);
         startTimer(ttw/1000, $( "#countdown" ));
     }
+}
+
+function showTimerMessage(ttw) {
+    console.log("Client has to wait");
+    $( "#title" ).text("The tearoom is currently full :(");
+    $( "#caption" ).text("If a table frees up in the following " + ttw/1000 + " seconds the waiter will come and get you. Otherwiase we hope to see you again another time!");
+    $( "#btn-smartbell" ).hide();
+    $( "#h-countdown" ).show();
+    $( "#h-countdown" ).text("Time before you have to go:");
+    $( "#countdown" ).show();
+	$( "#click-once").hide();
+}
+
+function redirect(redir, CID) {
+	var url = new URL(window.location.href + redir);
+	
+	if (CID != 0) {
+		url.searchParams.append('cid', CID);
+	}
+	else {
+		url.searchParams.append('timer', false);
+    	url.searchParams.append('badtemp', true);
+	}
+	
+	stompClient.disconnect(function(){
+	    console.log("disconnected from stompClient");
+	});
+	
+	window.location.assign(url);
 }
 
 function connect() {
@@ -88,14 +98,14 @@ function intialSetup() {
 	$( "#h-countdown" ).hide();
 	$( "#countdown" ).hide();
 	$( "#connection-error").hide();
-	$( "#clickOnce").hide();
+	$( "#click-once").hide();
 }
 
 
 $(document).on("click", "#btn-smartbell", function(event) {
 
     console.log("sending Smartbell request");
-    stompClient.send("/app/smartbell");
+    stompClient.send("/app/smartbell", {}, JSON.stringify({'name': 'ring'}));
 	$( "#btn-smartbell").hide();
-	$( "#clickOnce").show();
+	$( "#click-once").show();
 });

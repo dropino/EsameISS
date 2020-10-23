@@ -1,6 +1,8 @@
 # EsameIss2020
 
-Group project for the course: **Software Systems Engineering** at the University of Bologna.
+Group project for the course: **Software Systems Engineering** at the University of Bologna. 
+  
+To check out how we carried out our work go to our [ClickUp list view of tasks](https://share.clickup.com/l/h/4-4619775-1/b7a9e3a51c55fdc).
 
 SPRINT | GOAL
 ------------ | -------------
@@ -8,8 +10,7 @@ SPRINT | GOAL
 17/09/2020 [Sprint2]() | Develop Prototype of a UI to control a Client, implement separation Waiterwalker-Walker, write extended functional tests.
 28/09/2020 [Sprint3]() | Complete Prototype of the UI to control a Client, add multi-clients support, write extended functional tests.
 22/10/2020 [Sprint4]() | Developed manager interface, refactoring of Server Controllers 4 services: *smartbell service*, *waiter service*, *barman service* and *walker service*, Basicrobot propagates collision cause to be handled by Walker to reposition on map based on obstacle found.
-
-
+  
 ## Required libraries and tools version
 **Kotlin** *version 1.3.61*  
 **Gradle** *version 6.2.2*  

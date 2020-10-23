@@ -39,12 +39,12 @@ To use Qak we move in Eclipse *"dropins"* folder those plugin:
 1. Run the *MQTT* broker with **Mosquitto**
 2. Run the project [*Virtual Robot*](https://github.com/lauramazzuca21/EsameIss2020/tree/master/SPRINTS/tools/it.unibo.virtualRobot2020/node/WEnv/server/src) with the command line **node main 8999**  
 3. Open your browser and go to **localhost:8090**  
-4. Run *.bat* file **"it.unibo.qak20.basicrobot.bat"** in the following folder [tools](https://github.com/lauramazzuca21/EsameIss2020/tree/master/SPRINTS/toolsit.unibo.qak20.basicrobot/build/distributions/it.unibo.qak20.basicrobot-1.0/bin) 
+4. Run *.bat* file **"it.unibo.qak20.basicrobot.bat"** in the following folder [tools](https://github.com/lauramazzuca21/EsameIss2020/tree/master/SPRINTS/tools/it.unibo.qak20.basicrobot/build/distributions/it.unibo.qak20.basicrobot-1.0/bin) 
 5. Open Eclipse and import the following projects  
-  a. [**tearoom.SPRINT3**](https://github.com/lauramazzuca21/EsameIss2020/tree/sprint4/SPRINTS/tearoom.SPRINT3)  
-  b. [**tearoom.SPRINT3.ui**](https://github.com/lauramazzuca21/EsameIss2020/tree/sprint4/SPRINTS/tearoom.SPRINT3.ui)  
-6. In the workspace [SPRINT3/src](https://github.com/lauramazzuca21/EsameIss2020/tree/sprint4/SPRINTS/tearoom.SPRINT3/src) run "*MainCtxtearoom.kt*" as *kotlin application*
-7. In the workspace [SPRINT3.ui/src](https://github.com/lauramazzuca21/EsameIss2020/tree/sprint4/SPRINTS/tearoom.SPRINT3.ui/src) run "*Application.java*" as *java application*
+  a. [**tearoom.SPRINT3**](https://github.com/lauramazzuca21/EsameIss2020/tree/master/SPRINTS/tearoom.SPRINT3)  
+  b. [**tearoom.SPRINT3.ui**](https://github.com/lauramazzuca21/EsameIss2020/tree/master/SPRINTS/tearoom.SPRINT3.ui)  
+6. In the workspace [SPRINT3/src](https://github.com/lauramazzuca21/EsameIss2020/tree/master/SPRINTS/tearoom.SPRINT3/src) run "*MainCtxtearoom.kt*" as *kotlin application*
+7. In the workspace [SPRINT3.ui/src](https://github.com/lauramazzuca21/EsameIss2020/tree/master/SPRINTS/tearoom.SPRINT3.ui/src) run "*Application.java*" as *java application*
 8. Open your browser and go to **localhost:8080** and choose *client view*  
   8.1 You can also run some [tests](https://github.com/lauramazzuca21/EsameIss2020/tree/sprint4/SPRINTS/tearoom.SPRINT3/test), without *client view*, to verify waiter behaviour with CoAP message
 

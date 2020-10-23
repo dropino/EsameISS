@@ -76,7 +76,7 @@ companion object {
 //                                emitLocalStreamEvent( event2 )		//not propagated to remote actors  
 							}
                         }
-                    } catch (e: Exception) {
+                    } catch (e: Exception) {     
                         //e.printStackTrace()
 						println("startSensorObserver ERROR: ${e.message}")
 						break

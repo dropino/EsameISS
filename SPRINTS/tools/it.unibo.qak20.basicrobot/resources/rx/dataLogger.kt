@@ -31,7 +31,7 @@ class dataLogger(name : String) : ActorBasic(name){
  		val data  = (Term.createTerm( msg.msgContent() ) as Struct).getArg(0).toString()
 		println("	-------------------------------------------- $name data=$data")
    		pw.append( "$data\n " )
-		pw.flush()
+		pw.flush()     
      }
 
 }

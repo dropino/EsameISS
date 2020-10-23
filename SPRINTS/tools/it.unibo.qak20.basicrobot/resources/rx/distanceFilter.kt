@@ -37,7 +37,7 @@ val LimitDistance = 10
 			println( "distanceFilter not sending event since $Distance >= $LimitDistance"   ) 
      	}
 
-		if (sendEvent) {
+		if (sendEvent) {   
 			println( "distanceFilter sending event obstacle($dist, $collisionObj)"   ) 
 
 			val m1 = MsgUtil.buildEvent(name, "obstacle", "obstacle($dist, $collisionObj)")

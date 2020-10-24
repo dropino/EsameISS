@@ -211,7 +211,7 @@ class testMultiClientMsg {
 		var reply: ApplMessage? = null
 		var ringRepArgs = arrayOf<String>()
 
-	//-----------------TESt CLIENTE---------------
+	//-----------------TEST CLIENTE---------------
 		ringMsg = MsgUtil.buildRequest("web", "ringBell", "ringBell($temp)", "smartbell")
 		reply = smartbellConn!!.request(ringMsg)
 		ringRepArgs = ApplMessageUtils.extractApplMessagePayloadArgs(reply)

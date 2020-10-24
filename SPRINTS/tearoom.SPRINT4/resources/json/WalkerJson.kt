@@ -14,7 +14,10 @@ class WalkerJson : ActorJson {
 		jobj.put("positionX", x)
 		jobj.put("positionY", y)
 	}
-
+	
+	fun printPosition() {
+		println("x="+jobj.getInt("positionX")+" y="+jobj.getInt("positionY"))
+	}
 
 	//transforms the jsonObject in a json string string
 	override fun toJson(): String {

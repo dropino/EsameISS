@@ -64,7 +64,7 @@ class testTearoomSysMsg {
 	@kotlinx.coroutines.ObsoleteCoroutinesApi
 	@kotlinx.coroutines.ExperimentalCoroutinesApi
 	@Test
-	fun test_smartbellRingbell() = runBlocking {
+	fun test_multiClient() = runBlocking {
 		var CID = "0"
 		var Status = "0"
 		var V = "0"
@@ -82,7 +82,6 @@ class testTearoomSysMsg {
 		assertTrue(ringRepArgs.size == 2)
 		assertTrue(Status.matches("-?\\d+(\\.\\d+)?".toRegex()))
 		assertTrue(CID.matches("-?\\d+(\\.\\d+)?".toRegex()))
-		assertTrue(Status.toInt() == 0)
 		delay(1000)
 
 //-----------------TEST ACCETTO CLIENTE---------------
@@ -95,20 +94,23 @@ class testTearoomSysMsg {
 		assertTrue(ringRepArgs.size == 2)
 		assertTrue(Status.matches("-?\\d+(\\.\\d+)?".toRegex()))
 		assertTrue(CID.matches("-?\\d+(\\.\\d+)?".toRegex()))
-		assertTrue(Status.toInt() == 1)
-
-
+		
+		
+		ringMsg = MsgUtil.buildRequest("web", "waitTime", "waitTime($CID)", "waiter")
+		reply = waiterConn!!.request(ringMsg)
+		
+		
 //-----------------TEST WAITER DEPLOY ---------------	
-		ringMsg = MsgUtil.buildRequest("web", "deploy", "deploy(entrancedoor, 1, $CID)", "waiter")
+		ringMsg = MsgUtil.buildRequest("web", "deploy", "deploy(entrancedoor, table, $CID)", "waiter")
 		reply = waiterConn!!.request(ringMsg)
 		ringRepArgs = ApplMessageUtils.extractApplMessagePayloadArgs(reply)
 		V = ringRepArgs[0].toString()
-
+		
 		assertTrue(ringRepArgs.size == 1)
 		assertTrue(V.matches("-?\\d+(\\.\\d+)?".toRegex()))
 		println("=========================================================================   $V   ---------")
 
-		delay(1000)
+		delay(6000)
 //-----------------TEST CLIENT ORDER ---------------		
 		ringMsg = MsgUtil.buildRequest("web", "clientRequest", "clientRequest(order, $V, $CID)", "waiter")
 		reply = waiterConn!!.request(ringMsg)

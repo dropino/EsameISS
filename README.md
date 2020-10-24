@@ -51,7 +51,7 @@ To use Qak we move in Eclipse *"dropins"* folder those plugin:
 
 ## Sprint4  
 *To test the final system you have to:*
-1. Run the *MQTT* broker with **Mosquitto**
+1. Run the *MQTT* broker with **Mosquitto**  
 2.Install node and use the command **npm install** in EsameIss2020\SPRINTS\tools\it.unibo.virtualRobot2020\node\WEnv\WebGLScene  
   a. Use the command **npm install** in EsameIss2020\SPRINTS\tools\it.unibo.virtualRobot2020\node\WEnv\server\sr  
   b. Run the project Virtual Robot in EsameIss2020\SPRINTS\tools\it.unibo.virtualRobot2020\node\WEnv\server\src with the command line **node main 8999**  

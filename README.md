@@ -6,10 +6,10 @@ To check out how we carried out our work go to our [ClickUp list view of tasks](
 
 SPRINT | GOAL
 ------------ | -------------
-10/09/2020 [Sprint1]() | Elaborate Requirement Analysis for the whole Project. Elaborate Problem Analysis and develop Project of a Prototype of the Waiter behavior to control a [Virtual Robot](https://github.com/anatali/iss2020LabBo/tree/master/it.unibo.virtualRobot2020).
-17/09/2020 [Sprint2]() | Develop Prototype of a UI to control a Client, implement separation Waiterwalker-Walker, write extended functional tests.
-28/09/2020 [Sprint3]() | Complete Prototype of the UI to control a Client, add multi-clients support, write extended functional tests.
-22/10/2020 [Sprint4]() | Developed manager interface, refactoring of Server Controllers 4 services: *smartbell service*, *waiter service*, *barman service* and *walker service*, Basicrobot propagates collision cause to be handled by Walker to reposition on map based on obstacle found.
+10/09/2020 [Sprint1](https://github.com/lauramazzuca21/EsameIss2020/blob/master/SPRINTS/UserDocs/SPRINT1-def.pdf) | Elaborate Requirement Analysis for the whole Project. Elaborate Problem Analysis and develop Project of a Prototype of the Waiter behavior to control a [Virtual Robot](https://github.com/anatali/iss2020LabBo/tree/master/it.unibo.virtualRobot2020).
+17/09/2020 [Sprint2](https://github.com/lauramazzuca21/EsameIss2020/blob/master/SPRINTS/UserDocs/SPRINT2-def.pdf) | Develop Prototype of a UI to control a Client, implement separation Waiterwalker-Walker, write extended functional tests.
+28/09/2020 [Sprint3](https://github.com/lauramazzuca21/EsameIss2020/blob/master/SPRINTS/UserDocs/SPRINT3-def.pdf) | Complete Prototype of the UI to control a Client, add multi-clients support, write extended functional tests.
+22/10/2020 [Sprint4](https://github.com/lauramazzuca21/EsameIss2020/blob/master/SPRINTS/UserDocs/SPRINT4-def.pdf) | Developed manager interface, refactoring of Server Controllers 4 services: *smartbell service*, *waiter service*, *barman service* and *walker service*, Basicrobot propagates collision cause to be handled by Walker to reposition on map based on obstacle found.
   
 ## Required libraries and tools version
 **Kotlin** *version 1.3.61*  
@@ -64,7 +64,7 @@ To use Qak we move in Eclipse *"dropins"* folder those plugin:
 9. Open your browser and go to **localhost:8080** and choose *manager view* or *client view* 
 10. Enjoy our *Tearoom* 
 
-![MainMenuPage](https://github.com/lauramazzuca21/EsameIss2020/blob/sprint4/UserDocs/interfaccia.png)
+![MainMenuPage](https://github.com/lauramazzuca21/EsameIss2020/tree/sprint4/UserDocs/interfaccia.png)
 
 
 ### Group composed by:   

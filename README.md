@@ -53,8 +53,8 @@ To use Qak we move in Eclipse *"dropins"* folder those plugin:
 *To test the final system you have to:*
 1. Run the *MQTT* broker with **Mosquitto**
 2.Install node and use the command **npm install** in EsameIss2020\SPRINTS\tools\it.unibo.virtualRobot2020\node\WEnv\WebGLScene
-2.2. use the command **npm install** in EsameIss2020\SPRINTS\tools\it.unibo.virtualRobot2020\node\WEnv\server\sr
-2.3. Run the project Virtual Robot in EsameIss2020\SPRINTS\tools\it.unibo.virtualRobot2020\node\WEnv\server\src with the command line **node main 8999**  
+  a. use the command **npm install** in EsameIss2020\SPRINTS\tools\it.unibo.virtualRobot2020\node\WEnv\server\sr
+  b. Run the project Virtual Robot in EsameIss2020\SPRINTS\tools\it.unibo.virtualRobot2020\node\WEnv\server\src with the command line **node main 8999**  
 3. Open your browser and go to **localhost:8090**  
 4. After importing, building and making a gradle distribution, run *.bat* file **"it.unibo.qak20.basicrobot.bat"** in the following folder EsameIss2020\SPRINTS\tools\it.unibo.qak20.basicrobot\build\distributions\it.unibo.qak20.basicrobot-1.0\bin  
 5. Open Eclipse and import the following projects  

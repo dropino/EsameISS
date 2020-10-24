@@ -29,6 +29,10 @@ class BarmanJson : ActorJson {
 	fun setOrderReady(stat: Boolean) {
 		jobj.put("OrderReady", stat)
 	}
+	
+	fun getPreparingOrder() : String {
+		return jobj.get("PreparingOrder").toString()
+	}
 
 	//transforms the jsonObject in a json string string
 	override fun toJson(): String {

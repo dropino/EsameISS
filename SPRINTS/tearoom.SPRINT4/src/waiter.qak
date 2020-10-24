@@ -652,7 +652,7 @@ QActor smartbell context ctxsmartbell {
  	var Temp = 0
  	var CID = 0 
  	val sJson = json.SmartBellJson()
- 	
+ 	var T = 0
  	var id = 0
  #]
  
@@ -677,8 +677,14 @@ QActor smartbell context ctxsmartbell {
 	 
 	State checkTemp {
 		onMsg ( ringBell : ringBell (T) ) {
-			[#
-				Temp = (36..38).random()
+			
+			[# T = payloadArg(0).toInt()#]
+			if [# T<34 || T>38 #] {
+					[#Temp = (36..38).random()#]
+			}else  { 
+				[#Temp = T#]
+			}
+			[#	
 				sJson.setBusy(true)
 				sJson.setClientArrived(true)
 			#]

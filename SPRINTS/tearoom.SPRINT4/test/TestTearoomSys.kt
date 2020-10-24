@@ -18,6 +18,7 @@ import kotlinx.coroutines.delay
 import org.eclipse.californium.core.CoapClient
 import org.eclipse.californium.core.CoapResponse
 import kotlinx.coroutines.channels.actor
+import org.json.JSONObject
 
 
 class testTearoomSys {
@@ -27,8 +28,9 @@ class testTearoomSys {
 	var barman: ActorBasic? = null
 	val mqttTest = MqttUtils("test")
 	val initDelayTime = 1500L   //
-
-
+	var bJson = json.BarmanJson()
+	val sJson = json.SmartBellJson()
+	
 	@kotlinx.coroutines.ObsoleteCoroutinesApi
 	@kotlinx.coroutines.ExperimentalCoroutinesApi
 	@Before
@@ -46,20 +48,11 @@ class testTearoomSys {
 	}
 
 
-	fun checkResource(value: String) {
-		if (waiter != null) {
-			assertTrue(waiter!!.geResourceRep() == value)
-		}
-	}
-
-
 	@kotlinx.coroutines.ObsoleteCoroutinesApi
 	@kotlinx.coroutines.ExperimentalCoroutinesApi
 	@Test
 	fun testWaiter() {
 		runBlocking {
-
-
 			while (waiter == null) {
 				delay(1000)
 				waiter = it.unibo.kactor.sysUtil.getActor("waiter")
@@ -79,26 +72,23 @@ class testTearoomSys {
 			//-----------------TEST RIFIUTO CLIENTE---------------
 			delay(1000)
 			println("---------------------------	MESSAGGIO INVIATO		---------------------------")
-			MsgUtil.sendMsg(MsgUtil.buildRequest("test", "ringBell", "ringBell(38)", "smartbell"), smartbell!!)
+			MsgUtil.sendMsg(MsgUtil.buildRequest("test", "ringBell", "ringBell(1)", "smartbell"), smartbell!!)
 			delay(1000)
-			checkResource("listening")
-
+			assertTrue(sJson.getClientArrived() == false)
 
 			//-----------------TEST ACCETTO CLIENTE---------------
 			delay(1000)
 			println("---------------------------	MESSAGGIO INVIATO		---------------------------")
-			MsgUtil.sendMsg(MsgUtil.buildRequest("test", "ringBell", "ringBell(36)", "smartbell"), smartbell!!)
+			MsgUtil.sendMsg(MsgUtil.buildRequest("test", "ringBell", "ringBell(1)", "smartbell"), smartbell!!)
 			delay(1000)
-			checkResource("listening")
-
+			assertTrue(sJson.getClientArrived() == false)
 
 			//-----------------TEST ORDINAZIONE TEA---------------
 			delay(1000)
 			println("---------------------------	MESSAGGIO INVIATO		---------------------------")
-			MsgUtil.sendMsg("test", "sendOrder", "sendOrder(tea, 2)", barman!!)
+			MsgUtil.sendMsg("test", "sendOrder", "sendOrder(tea, 2, 22)", barman!!)
 			delay(1000)
-			checkResource("listening")
-
+			assertTrue(bJson.getPreparingOrder().matches(".*?".toRegex()))
 
 		}
 	}

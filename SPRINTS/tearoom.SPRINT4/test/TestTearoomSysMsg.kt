@@ -49,7 +49,7 @@ class testTearoomSysMsg {
 		}
 
 		if (smartbellConn == null) {
-			smartbellConn = connQakCoap("localhost", "8072", "smartbell", "ctxtearoom")
+			smartbellConn = connQakCoap("localhost", "8071", "smartbell", "ctxsmartbell")
 			smartbellConn!!.createConnection()
 		}
 	}
@@ -64,7 +64,7 @@ class testTearoomSysMsg {
 	@kotlinx.coroutines.ObsoleteCoroutinesApi
 	@kotlinx.coroutines.ExperimentalCoroutinesApi
 	@Test
-	fun test_smartbellRingbell() = runBlocking {
+	fun test_multiClient() = runBlocking {
 		var CID = "0"
 		var Status = "0"
 		var V = "0"
@@ -72,9 +72,8 @@ class testTearoomSysMsg {
 		var reply: ApplMessage? = null
 		var ringRepArgs = arrayOf<String>()
 
-
 //-----------------TEST RIFIUTO CLIENTE---------------
-		ringMsg = MsgUtil.buildRequest("web", "ringBell", "ringBell(38)", "smartbell")
+		ringMsg = MsgUtil.buildRequest("web", "ringBell", "ringBell(35)", "smartbell")
 		reply = smartbellConn!!.request(ringMsg)
 		ringRepArgs = ApplMessageUtils.extractApplMessagePayloadArgs(reply)
 		Status = ringRepArgs[0].toString()
@@ -83,7 +82,7 @@ class testTearoomSysMsg {
 		assertTrue(ringRepArgs.size == 2)
 		assertTrue(Status.matches("-?\\d+(\\.\\d+)?".toRegex()))
 		assertTrue(CID.matches("-?\\d+(\\.\\d+)?".toRegex()))
-		assertTrue(Status.toInt() == 0)
+		delay(1000)
 
 //-----------------TEST ACCETTO CLIENTE---------------
 		ringMsg = MsgUtil.buildRequest("web", "ringBell", "ringBell(36)", "smartbell")
@@ -95,20 +94,23 @@ class testTearoomSysMsg {
 		assertTrue(ringRepArgs.size == 2)
 		assertTrue(Status.matches("-?\\d+(\\.\\d+)?".toRegex()))
 		assertTrue(CID.matches("-?\\d+(\\.\\d+)?".toRegex()))
-		assertTrue(Status.toInt() == 1)
-
-
+		
+		
+		ringMsg = MsgUtil.buildRequest("web", "waitTime", "waitTime($CID)", "waiter")
+		reply = waiterConn!!.request(ringMsg)
+		
+		
 //-----------------TEST WAITER DEPLOY ---------------	
 		ringMsg = MsgUtil.buildRequest("web", "deploy", "deploy(entrancedoor, table, $CID)", "waiter")
 		reply = waiterConn!!.request(ringMsg)
 		ringRepArgs = ApplMessageUtils.extractApplMessagePayloadArgs(reply)
 		V = ringRepArgs[0].toString()
-
+		
 		assertTrue(ringRepArgs.size == 1)
 		assertTrue(V.matches("-?\\d+(\\.\\d+)?".toRegex()))
 		println("=========================================================================   $V   ---------")
 
-		delay(1000)
+		delay(6000)
 //-----------------TEST CLIENT ORDER ---------------		
 		ringMsg = MsgUtil.buildRequest("web", "clientRequest", "clientRequest(order, $V, $CID)", "waiter")
 		reply = waiterConn!!.request(ringMsg)
@@ -147,6 +149,8 @@ class testTearoomSysMsg {
 
 		assertTrue(ringRepArgs.size == 1)
 		assertTrue(V.matches("-?\\d+(\\.\\d+)?".toRegex()))
+
+
 	}
 
 

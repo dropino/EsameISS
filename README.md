@@ -1,15 +1,16 @@
 # EsameIss2020
 
-Group project for the course: **Software Systems Engineering** at the University of Bologna.
+Group project for the course: **Software Systems Engineering** at the University of Bologna. 
+  
+To check out how we carried out our work go to our [ClickUp list view of tasks](https://share.clickup.com/l/h/4-4619775-1/b7a9e3a51c55fdc).
 
 SPRINT | GOAL
 ------------ | -------------
-10/09/2020 [Sprint1]() | Elaborate Requirement Analysis for the whole Project. Elaborate Problem Analysis and develop Project of a Prototype of the Waiter behavior to control a [Virtual Robot](https://github.com/anatali/iss2020LabBo/tree/master/it.unibo.virtualRobot2020).
-17/09/2020 [Sprint2]() | Develop Prototype of a UI to control a Client, implement separation Waiterwalker-Walker, write extended functional tests.
-24/09/2020 [Sprint3]() | Complete Prototype of the UI to control a Client, add multi-clients support, write extended functional tests.
-22/10/2020 [Sprint4]() | Developed manager interface, fatto refactoring dei controller che ora lavorano con 4 services: *smartbell service*, *waiter service*, *barman service* and *walker service*
-
-
+10/09/2020 [Sprint1](https://github.com/lauramazzuca21/EsameIss2020/blob/master/SPRINTS/UserDocs/SPRINT1-def.pdf) | Elaborate Requirement Analysis for the whole Project. Elaborate Problem Analysis and develop Project of a Prototype of the Waiter behavior to control a [Virtual Robot](https://github.com/anatali/iss2020LabBo/tree/master/it.unibo.virtualRobot2020).
+17/09/2020 [Sprint2](https://github.com/lauramazzuca21/EsameIss2020/blob/master/SPRINTS/UserDocs/SPRINT2-def.pdf) | Develop Prototype of a UI to control a Client, implement separation Waiterwalker-Walker, write extended functional tests.
+28/09/2020 [Sprint3](https://github.com/lauramazzuca21/EsameIss2020/blob/master/SPRINTS/UserDocs/SPRINT3-def.pdf) | Complete Prototype of the UI to control a Client, add multi-clients support, write extended functional tests.
+22/10/2020 [Sprint4](https://github.com/lauramazzuca21/EsameIss2020/blob/master/SPRINTS/UserDocs/SPRINT4-def.pdf) | Developed manager interface, refactoring of Server Controllers 4 services: *smartbell service*, *waiter service*, *barman service* and *walker service*, Basicrobot propagates collision cause to be handled by Walker to reposition on map based on obstacle found.
+  
 ## Required libraries and tools version
 **Kotlin** *version 1.3.61*  
 **Gradle** *version 6.2.2*  
@@ -37,23 +38,23 @@ To use Qak we move in Eclipse *"dropins"* folder those plugin:
 ## Sprint3  
 *To test the Sprint3:*
 1. Run the *MQTT* broker with **Mosquitto**
-2. Run the project [*Virtual Robot*](GitHub\EsameIss2020\SPRINTS\tools\it.unibo.virtualRobot2020\node\WEnv\server\src) with the command line **node main 8999**  
+2. Run the project [*Virtual Robot*](https://github.com/lauramazzuca21/EsameIss2020/tree/master/SPRINTS/tools/it.unibo.virtualRobot2020/node/WEnv/server/src) with the command line **node main 8999**  
 3. Open your browser and go to **localhost:8090**  
-4. Run *.bat* file **"it.unibo.qak20.basicrobot.bat"** in the following folder [tools](SPRINTS\tools\it.unibo.qak20.basicrobot\build\distributions\it.unibo.qak20.basicrobot-1.0\bin) 
+4. Run *.bat* file **"it.unibo.qak20.basicrobot.bat"** in the following folder [tools](https://github.com/lauramazzuca21/EsameIss2020/tree/master/SPRINTS/tools/it.unibo.qak20.basicrobot/build/distributions/it.unibo.qak20.basicrobot-1.0/bin) 
 5. Open Eclipse and import the following projects  
-  a. [**tearoom.SPRINT3**](https://github.com/lauramazzuca21/EsameIss2020/tree/sprint4/SPRINTS/tearoom.SPRINT3)  
-  b. [**tearoom.SPRINT3.ui**](https://github.com/lauramazzuca21/EsameIss2020/tree/sprint4/SPRINTS/tearoom.SPRINT3.ui)  
-6. In the workspace [SPRINT3/src](https://github.com/lauramazzuca21/EsameIss2020/tree/sprint4/SPRINTS/tearoom.SPRINT3/src) run "*MainCtxtearoom.kt*" as *kotlin application*
-7. In the workspace [SPRINT3.ui/src](https://github.com/lauramazzuca21/EsameIss2020/tree/sprint4/SPRINTS/tearoom.SPRINT3.ui/src) run "*Application.java*" as *java application*
+  a. [**tearoom.SPRINT3**](https://github.com/lauramazzuca21/EsameIss2020/tree/master/SPRINTS/tearoom.SPRINT3)  
+  b. [**tearoom.SPRINT3.ui**](https://github.com/lauramazzuca21/EsameIss2020/tree/master/SPRINTS/tearoom.SPRINT3.ui)  
+6. In the workspace [SPRINT3/src](https://github.com/lauramazzuca21/EsameIss2020/tree/master/SPRINTS/tearoom.SPRINT3/src) run "*MainCtxtearoom.kt*" as *kotlin application*
+7. In the workspace [SPRINT3.ui/src](https://github.com/lauramazzuca21/EsameIss2020/tree/master/SPRINTS/tearoom.SPRINT3.ui/src) run "*Application.java*" as *java application*
 8. Open your browser and go to **localhost:8080** and choose *client view*  
   8.1 You can also run some [tests](https://github.com/lauramazzuca21/EsameIss2020/tree/sprint4/SPRINTS/tearoom.SPRINT3/test), without *client view*, to verify waiter behaviour with CoAP message
 
 ## Sprint4  
 *To test the final system you have to:*
 1. Run the *MQTT* broker with **Mosquitto**
-2. Run the project [*Virtual Robot*](GitHub\EsameIss2020\SPRINTS\tools\it.unibo.virtualRobot2020\node\WEnv\server\src) with the command line **node main 8999**  
+2. Run the project Virtual Robot in EsameIss2020\SPRINTS\tools\it.unibo.virtualRobot2020\node\WEnv\server\src with the command line **node main 8999**  
 3. Open your browser and go to **localhost:8090**  
-4. Run *.bat* file **"it.unibo.qak20.basicrobot.bat"** in the following folder [tools](SPRINTS\tools\it.unibo.qak20.basicrobot\build\distributions\it.unibo.qak20.basicrobot-1.0\bin)  
+4. Run *.bat* file **"it.unibo.qak20.basicrobot.bat"** in the following folder EsameIss2020\SPRINTS\tools\it.unibo.qak20.basicrobot\build\distributions\it.unibo.qak20.basicrobot-1.0\bin  
 5. Open Eclipse and import the following projects  
   a. [**tearoom.SPRINT4**](https://github.com/lauramazzuca21/EsameIss2020/tree/sprint4/SPRINTS/tearoom.SPRINT4)  
   b. [**tearoom.SPRINT4.ui**](https://github.com/lauramazzuca21/EsameIss2020/tree/sprint4/SPRINTS/tearoom.SPRINT3.ui)   
@@ -63,7 +64,7 @@ To use Qak we move in Eclipse *"dropins"* folder those plugin:
 9. Open your browser and go to **localhost:8080** and choose *manager view* or *client view* 
 10. Enjoy our *Tearoom* 
 
-![MainMenuPage](https://github.com/lauramazzuca21/EsameIss2020/blob/sprint4/UserDocs/interfaccia.png)
+![MainMenuPage](UserDocs/interfaccia.png)
 
 
 ### Group composed by:   

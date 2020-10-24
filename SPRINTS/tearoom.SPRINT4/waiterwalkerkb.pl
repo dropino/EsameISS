@@ -26,4 +26,4 @@ corrPos(table2, leftDir, 5, 3).
 corrPos(wallUp, upDir, -1, 0).
 corrPos(wallDown, downDir, -1, 4).
 corrPos(wallLeft, leftDir, 0, -1).
-corrPos(wallRight, rightDir, 6, -1).
+corrPos(wallRight, rightDir, 5, -1).

@@ -64,7 +64,7 @@ To use Qak we move in Eclipse *"dropins"* folder those plugin:
 9. Open your browser and go to **localhost:8080** and choose *manager view* or *client view* 
 10. Enjoy our *Tearoom* 
 
-![MainMenuPage](https://github.com/lauramazzuca21/EsameIss2020/tree/sprint4/UserDocs/interfaccia.png)
+![MainMenuPage](UserDocs/interfaccia.png)
 
 
 ### Group composed by:   

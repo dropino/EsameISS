@@ -41,6 +41,7 @@ function handleSmartbellReply(msg) {
     console.log(msg.body);
     
     if(ttw < 0) {
+    	clearInterval(timeout);
         stompClient.send("/app/smartbell", {}, JSON.stringify({'name': 'waitTime', 'clientid': CID}));
     }
     else if (ttw == 0)    { 	

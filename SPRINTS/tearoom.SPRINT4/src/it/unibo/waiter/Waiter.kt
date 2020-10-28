@@ -244,7 +244,7 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 				state("confirmClientArrival") { //this:State
 					action { //it:State
 						println("WAITER -confirmClientArrival | SENDING CONFIRMATION to simclient $CCID: arrived $Dest $CTABLE")
-						answer("deploy", "arrived", "arrived($CTABLE)"   )  
+						answer("deploy", "arrived", "arrived($CTABLE,$MaxStayTime)"   )  
 								
 									wJson.setMovingFrom("")
 									wJson.setMovingTo("")
@@ -342,7 +342,7 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 						}
 						solve("teatable($CTABLE,V)","") //set resVar	
 						if( currentSolution.isSuccess() ) { Status = getCurSol("V").toString()  
-						println("WAITER -answerTime | numavailabletables=$Ntables")
+						println("WAITER -cleanTableReceived | teatable $CTABLE status = $Status")
 						}
 						else
 						{}
@@ -459,7 +459,6 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 									wJson.setMovingFrom("")	
 									wJson.setMovingTo("")
 									wJson.setArrival("table " + CTABLE)					
-									wJson.setWaitTime(MaxStayTime)
 						updateResourceRep( wJson.toJson()  
 						)
 						emit("deliver", "deliver(tea,$CTABLE)" ) 

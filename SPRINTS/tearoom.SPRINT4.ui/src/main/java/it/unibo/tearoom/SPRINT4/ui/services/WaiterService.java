@@ -222,7 +222,7 @@ public class WaiterService extends ActorService {
 						System.out.println("Waiter Service: DrinkReady arrived for delivery clientID " + clientID + "(" + users.get(clientID) + ") at table " + table);
 						System.out.println("Waiter Service: DrinkReady sending PERSONAL update");
 						ServerReply reply = new ServerReply();
-						reply.setWaitTime(Integer.toString(waitTime));
+						reply.setResult(order);
 						simpMessagingTemplate.convertAndSendToUser(users.get(clientID),WebSocketConfig.topicForClientInTearoom, reply);//waitTime contains the maximumStayTime
 					}
 					System.out.println("Waiter Service: DrinkReady sending STATE update");
@@ -301,6 +301,9 @@ public class WaiterService extends ActorService {
 		String[] repArgs = ApplMessageUtils.extractApplMessagePayloadArgs(reply);
 
 		result.setResult(repArgs[0]);
+		if (repArgs.length > 1) {
+			result.setWaitTime(repArgs[1]);
+		}
 		
 		return result;
 	}

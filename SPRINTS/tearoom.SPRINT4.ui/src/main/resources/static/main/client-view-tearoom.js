@@ -34,17 +34,17 @@ function handleWaiterReply(msg) {
       $( "#caption" ).hide();
       $( "#txt-input" ).hide();
       $( "#btn-waiter" ).show();
-      reqID='pay'
+      reqID='pay';
 	}
 	if(reqID == 'delivery') {
-      $( "#title" ).text('Enjoy your tea!');
+		//modified to contain the actual drink ordered
+      $( "#title" ).text('Enjoy your '+ JSON.parse(msg.body).result + '!');
       $( "#caption" ).show();
       $( "#caption" ).text("When you're ready to pay, call the Waiter by clicking the button below.");
       $( "#txt-input" ).hide();
       $( "#btn-waiter" ).show();
-      $("#countdown").show();
 		reqID = 'servicePay';
-		startTimer(JSON.parse(msg.body).waitTime/1000, $("#countdown") );
+//		startTimer(JSON.parse(msg.body).waitTime/1000, $("#countdown") );
 	}
 	if(reqID == 'serviceOrder') {
       $( "#title" ).text('What would you like to order?');
@@ -61,12 +61,15 @@ function handleWaiterReply(msg) {
 	    $( "#caption" ).show();
 	    $( "#caption" ).text('Call the Waiter by clicking the button below.');
 	    $( "#btn-waiter" ).show();
+//	    $("#countdown").show();
 	    reqID = 'serviceOrder';
+		startTimer(JSON.parse(msg.body).waitTime/1000, $("#countdown") );
 	}
 }
 
 function startTimer(duration, display) {
     console.log("Timer started");
+    display.show();
 
     var timer = duration, minutes, seconds;
     timeout = setInterval(function () {
@@ -79,6 +82,7 @@ function startTimer(duration, display) {
         display.text(minutes + ":" + seconds);
 
         if (--timer < 0) {
+        	display.hide();
 			maxStayTimeOver();
 			reqID = 'servicePay';
 			stompClient.send("/app/waiter", {}, JSON.stringify({'name': reqID, 'id': 'pay', 'table': Table, 'clientid': ClientID}));
@@ -139,7 +143,6 @@ function showWaitMessage() {
     $( "#caption" ).text('The waiter will arrive as soon as possible.');
     $( "#txt-input" ).hide();
     $( "#btn-waiter" ).hide();
-    $("#countdown").hide();
 }
 
 function showDeploymentMessage() {
@@ -156,17 +159,16 @@ function maxStayTimeOver() {
     $( "#caption" ).show();
     $( "#caption" ).text('Please, pay the amount due once the waiter gets to your table.');
 	$( "#btn-waiter" ).hide();
-	 $("#countdown").hide();
 }
 
 $(document).on("click", "#btn-waiter", function(event) {
 	
 	if(reqID == 'pay') {
 		stompClient.send("/app/waiter", {}, JSON.stringify({'name': reqID, 'payment': Bill, 'table': Table, 'clientid': ClientID}));
-		
         showDeploymentMessage();
 	}
 	if(reqID == 'servicePay') {
+	    $( "#countdown" ).hide();
 		clearInterval(timeout);
 		stompClient.send("/app/waiter", {}, JSON.stringify({'name': reqID, 'id': 'pay', 'table': Table, 'clientid': ClientID}));
         showWaitMessage();

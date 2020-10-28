@@ -2,8 +2,8 @@
 % tearoomkb.pl
 %===========================================
  
-maxStayTime(20000).
-maxWaitTime(120000).
+maxStayTime(45000).
+maxWaitTime(90000).
 timeToGoHome(15000).
 
 clientRequestPayload(order, ok).

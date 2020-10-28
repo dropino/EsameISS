@@ -33,7 +33,7 @@ Dispatch clientID	 		: clientID (CLIENTID)
 
 //waiter -> client
 Request	deploy				: deploy(FROM, TO, CID)
-Reply	arrived				: arrived(V) //V is either the table number or the exitdoor
+Reply	arrived				: arrived(V, MAXSTAY) //V is either the table number or the exitdoor
 
 Request waitTime			: waitTime(CID)
 Reply	wait				: wait(TIME)
@@ -306,7 +306,7 @@ QActor waiter context ctxtearoom {
 	State confirmClientArrival {		
 		println("WAITER -confirmClientArrival | SENDING CONFIRMATION to simclient $CCID: arrived $Dest $CTABLE")
 		
-		replyTo deploy with  arrived	: arrived($CTABLE)
+		replyTo deploy with  arrived	: arrived($CTABLE, $MaxStayTime)
 		
 		[#		
 			wJson.setMovingFrom("")
@@ -409,7 +409,7 @@ QActor waiter context ctxtearoom {
 		solve( teatable($CTABLE, V) ) 
 		ifSolved { 
 			[# Status = getCurSol("V").toString() #] 
-			println("WAITER -answerTime | numavailabletables=$Ntables")
+			println("WAITER -cleanTableReceived | teatable $CTABLE status = $Status")
 		}
 	}
 	Goto cleanTable if [# Status == "dirty" #] else listening	
@@ -529,7 +529,6 @@ QActor waiter context ctxtearoom {
 			wJson.setMovingFrom("")	
 			wJson.setMovingTo("")
 			wJson.setArrival("table " + CTABLE)					
-			wJson.setWaitTime(MaxStayTime)
 		#]
 		updateResource [# wJson.toJson() #]
 		emit deliver : deliver(tea, $CTABLE)
@@ -724,9 +723,6 @@ QActor smartbell context ctxsmartbell {
 	}
 	Goto waitForClient		
 }
-
-
-
 
 
 QActor barman context ctxbarman {

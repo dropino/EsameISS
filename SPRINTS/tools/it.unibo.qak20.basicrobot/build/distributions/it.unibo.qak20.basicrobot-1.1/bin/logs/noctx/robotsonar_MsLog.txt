@@ -1,0 +1,11 @@
+item(robotsonar,nostate,msg(sonarstart,dispatch,basicrobot,robotsonar,sonarstart(1),9)).
+item(robotsonar,nostate,msg(local_tout_basicrobot_doStep,event,timer_doStep,none,local_tout_basicrobot_doStep,12)).
+item(robotsonar,nostate,msg(local_tout_basicrobot_stepPerhapsDone,event,timer_stepPerhapsDone,none,local_tout_basicrobot_stepPerhapsDone,15)).
+item(robotsonar,nostate,msg(local_tout_basicrobot_doStep,event,timer_doStep,none,local_tout_basicrobot_doStep,19)).
+item(robotsonar,nostate,msg(local_tout_basicrobot_stepPerhapsDone,event,timer_stepPerhapsDone,none,local_tout_basicrobot_stepPerhapsDone,22)).
+item(robotsonar,nostate,msg(local_tout_basicrobot_doStep,event,timer_doStep,none,local_tout_basicrobot_doStep,26)).
+item(robotsonar,nostate,msg(local_tout_basicrobot_stepPerhapsDone,event,timer_stepPerhapsDone,none,local_tout_basicrobot_stepPerhapsDone,29)).
+item(robotsonar,nostate,msg(local_tout_basicrobot_doStep,event,timer_doStep,none,local_tout_basicrobot_doStep,33)).
+item(robotsonar,nostate,msg(local_tout_basicrobot_stepPerhapsDone,event,timer_stepPerhapsDone,none,local_tout_basicrobot_stepPerhapsDone,36)).
+item(robotsonar,nostate,msg(local_tout_basicrobot_doStep,event,timer_doStep,none,local_tout_basicrobot_doStep,40)).
+item(robotsonar,nostate,msg(local_tout_basicrobot_stepPerhapsDone,event,timer_stepPerhapsDone,none,local_tout_basicrobot_stepPerhapsDone,43)).

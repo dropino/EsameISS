@@ -29,9 +29,10 @@ class Smartbell ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, 
 				}	 
 				state("waitForClient") { //this:State
 					action { //it:State
+						
+									Temp = 0
+									CID = 0	
 						println("  SmartBell | Wait Client  ")
-						updateResourceRep("Waiting" 
-						)
 					}
 					 transition(edgeName="t030",targetState="checkTemp",cond=whenRequest("ringBell"))
 				}	 
@@ -39,7 +40,7 @@ class Smartbell ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, 
 					action { //it:State
 						if( checkMsgContent( Term.createTerm("ringBell(TEMP)"), Term.createTerm("ringBell(T)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
-								Temp = payloadArg(0).toString().toInt()  
+								Temp = (36..42).random()  
 								println("  SmartBell | Check Temp $Temp ")
 						}
 					}

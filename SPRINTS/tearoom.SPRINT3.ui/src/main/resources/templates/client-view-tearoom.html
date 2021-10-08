@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Client UI: Tearoom</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+     <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+    <script src="/webjars/jquery/jquery.min.js"></script>
+    <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+ 	<script src="client-view-tearoom.js"></script>
+    
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300&display=swap" rel="stylesheet">
+    <link  rel="stylesheet" href="tearoom-theme.css">
+    
+    <script>connect()</script>
+    
+</head>
+<body>
+  <noscript>
+    <div class="alert alert-danger" role="alert">Seems your browser doesn't support Javascript! Websocket relies on Javascript being
+    enabled. Please enable
+    Javascript and reload this page!
+    </div>
+  </noscript>
+
+    <section class="container-fluid px-0">
+      <!-- entire row -->
+      <div class="row">
+          <!-- image column -->
+        <div class="col-md-6 order-1 order-md-1 d-flex flex-column">
+            <img class="img-fluid d-none d-md-block" src="imgs/square-black-tea.png" alt="">
+            <img class="img-fluid d-md-none" src="imgs/cropped-horizontal-black-tea.png" alt="">
+        </div>
+        <!-- text column -->
+        <div class="col-md-6 order-2 order-md-2 d-flex flex-column">
+              <!-- title row -->
+              <div class="row" style="padding-top: 2rem;">
+                <div class="col-sm">
+                  <h2 id="cid">Client ID:</h2>
+                </div>
+                <div class="col-sm">
+                  <h2 id="table">Table:</h2> 
+                </div>
+          </div>
+            <!-- content row -->
+          <div class="row align-items-center justify-content-center flex-grow-1"> 
+              <div id="headingGroup" class="text-center w-100"> 
+                  <h1 id="title">Ready to order?</h1>
+                  
+                  <p id="caption"><b>Call the Waiter</b> by clicking the button below.</p>
+                    <div>
+                      <input id="txt-input" type="text" placeholder="Insert your choice here">
+                    </div>
+                    <div>
+                      <button id="btn-waiter" type="submit" class="btn btn-outline-light btn-lg" style="background-color: #6da177; width: 25%;"><i class="fas fa-robot"></i></button> 
+                    </div>
+              </div>
+          </div>  
+        </div>
+      </div>
+  </section>
+</body>
+
+</html>
+<!-- <div>Icons made by <a href="https://www.flaticon.com/authors/xnimrodx" title="xnimrodx">xnimrodx</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div> -->

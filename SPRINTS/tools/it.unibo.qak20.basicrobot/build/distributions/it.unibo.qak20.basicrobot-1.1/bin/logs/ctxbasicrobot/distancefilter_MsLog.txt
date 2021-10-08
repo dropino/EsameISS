@@ -1,0 +1,11 @@
+item(distancefilter,nostate,msg(walkerstarted,event,waiterwalker,none,walkerstarted(0),19)).
+item(distancefilter,nostate,msg(local_tout_basicrobot_doStep,event,timer_doStep,none,local_tout_basicrobot_doStep,12)).
+item(distancefilter,nostate,msg(local_tout_basicrobot_stepPerhapsDone,event,timer_stepPerhapsDone,none,local_tout_basicrobot_stepPerhapsDone,15)).
+item(distancefilter,nostate,msg(local_tout_basicrobot_doStep,event,timer_doStep,none,local_tout_basicrobot_doStep,19)).
+item(distancefilter,nostate,msg(local_tout_basicrobot_stepPerhapsDone,event,timer_stepPerhapsDone,none,local_tout_basicrobot_stepPerhapsDone,22)).
+item(distancefilter,nostate,msg(local_tout_basicrobot_doStep,event,timer_doStep,none,local_tout_basicrobot_doStep,26)).
+item(distancefilter,nostate,msg(local_tout_basicrobot_stepPerhapsDone,event,timer_stepPerhapsDone,none,local_tout_basicrobot_stepPerhapsDone,29)).
+item(distancefilter,nostate,msg(local_tout_basicrobot_doStep,event,timer_doStep,none,local_tout_basicrobot_doStep,33)).
+item(distancefilter,nostate,msg(local_tout_basicrobot_stepPerhapsDone,event,timer_stepPerhapsDone,none,local_tout_basicrobot_stepPerhapsDone,36)).
+item(distancefilter,nostate,msg(local_tout_basicrobot_doStep,event,timer_doStep,none,local_tout_basicrobot_doStep,40)).
+item(distancefilter,nostate,msg(local_tout_basicrobot_stepPerhapsDone,event,timer_stepPerhapsDone,none,local_tout_basicrobot_stepPerhapsDone,43)).

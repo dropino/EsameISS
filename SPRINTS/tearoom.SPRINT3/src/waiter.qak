@@ -1,19 +1,17 @@
 System tearoomsys
-//mqttBroker "localhost" : 1883 eventTopic "unibo/waiter"   
  
 //MESSAGES
 mqttBroker "localhost" : 1883 eventTopic "unibo/basicrobot"    
 
 //waiterwalker-walker
-Event    waiterwalkerstarted   : waiterwalkerstarted(X)
-Event    walkerstarted   	: walkerstarted(X)
+Event    walkerstarted   		: walkerstarted(X)
 
-Request	 doPlan 			: doPlan(X,Y)
-Reply 	 walkerError 		: walkerError( $XT,$YT )
-Reply	 walkerDone 		: walkerDone(X,Y)
+Request	 doPlan 				: doPlan(X,Y)
+Reply 	 walkerError 			: walkerError( $XT,$YT )
+Reply	 walkerDone 			: walkerDone(X,Y)
 
 //Waiter-Waiterwalker
-Event    waiterwalkerstarted : waiterwalkerstarted(X)
+Event    waiterwalkerstarted 	: waiterwalkerstarted(X)
 
 Request  moveForTask 		: moveForTask(TASK, N)
 Reply    movementDone   	: movementDone(OK)
@@ -279,7 +277,7 @@ QActor waiter context ctxtearoom {
 			
 	State leaveDrinkAtTable {
 		println("WAITER | giving the simclient the tea")
-		updateResource[# "waiter_rdy_bringDrink" #]
+		updateResource[# "deliver-tea-$CTABLE" #]
 		
 		emit deliver : deliver(tea, $CTABLE)
 	}
@@ -384,6 +382,11 @@ QActor smartbell context ctxtearoom {
 	Goto waitForClient
 	
 	State waitForClient {
+		[#
+			Temp = 0
+			CID = 0	
+		#
+		]
 		println("  SmartBell | Wait Client  ")
 //		updateResource[#"Waiting"#]
 	}
@@ -391,7 +394,7 @@ QActor smartbell context ctxtearoom {
 	 
 	State checkTemp {
 		onMsg ( ringBell : ringBell (T) ) {
-			[#Temp = payloadArg(0).toString().toInt() #]
+			[#Temp = (36..42).random() #]
 			
 			println("  SmartBell | Check Temp $Temp ")
 			
